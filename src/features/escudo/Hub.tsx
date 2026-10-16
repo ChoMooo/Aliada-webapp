@@ -3,12 +3,14 @@ import { ShieldCheck, ScanSearch, Gamepad2, ArrowRight, PhoneCall, Users, KeyRou
 import { useStore } from '../../store';
 import { PageHeader, Hero, Button, RowLink, Stagger, Item, Card, Ring, Bullets } from '../../ui';
 import { ESCENARIOS } from '../../content/escudo';
+import { DemoPlayer } from '../learn/Demo';
+import { ESCUDO_DEMO } from '../../content/learn/escudo';
 
 export default function EscudoHub() {
   const d = useStore((s) => s.d), v = d.escudo.vistos, n = Object.keys(v).length, ok = Object.values(v).filter((x) => x === 'ok').length;
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item><PageHeader kicker="Herramienta" title="Escudo antiestafas" lead="Las estafas por celular cambian todo el tiempo, pero usan siempre los mismos trucos. Aprendé a reconocerlos." /></Item>
+      <Item><PageHeader back={{ to: '/digital', label: 'Mundo digital' }} kicker="Módulo de Mundo digital" title="Escudo antiestafas" lead="Las estafas por celular cambian todo el tiempo, pero usan siempre los mismos trucos. Aprendé a reconocerlos." /></Item>
       <Item><Hero>
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -18,11 +20,15 @@ export default function EscudoHub() {
           </div>
           <Ring value={ok} max={ESCENARIOS.length} size={76} tone="glow"><span className="text-onbrand">{ok}/{ESCENARIOS.length}</span></Ring>
         </div>
-        <div className="mt-5"><Button variant="glow" to="/escudo/simulador" iconRight={<ArrowRight />}>{n ? 'Seguir practicando' : 'Empezar a practicar'}</Button></div>
+        <div className="mt-5"><Button variant="glow" to="/digital/escudo/simulador" iconRight={<ArrowRight />}>{n ? 'Seguir practicando' : 'Empezar a practicar'}</Button></div>
       </Hero></Item>
+      <Item><Card className="flex flex-col gap-4">
+        <h2 className="text-[1.3rem]">Mirá cómo frenar una estafa en 4 pasos</h2>
+        <DemoPlayer frames={ESCUDO_DEMO} title="Escudo antiestafas" />
+      </Card></Item>
       <Item className="flex flex-col gap-3">
-        <RowLink to="/escudo/analizador" tone="amber" icon={<ScanSearch />} title="Analizar un mensaje" sub="Pegá un mensaje sospechoso y mirá qué señales de alerta tiene" />
-        <RowLink to="/escudo/simulador" tone="amber" icon={<Gamepad2 />} title="Simulador de estafas" sub="Practicá con 10 situaciones reales" />
+        <RowLink to="/digital/escudo/analizador" tone="amber" icon={<ScanSearch />} title="Analizar un mensaje" sub="Pegá un mensaje sospechoso y mirá qué señales de alerta tiene" />
+        <RowLink to="/digital/escudo/simulador" tone="amber" icon={<Gamepad2 />} title="Simulador de estafas" sub="Practicá con 10 situaciones reales" />
       </Item>
       <Item><Card className="flex flex-col gap-3">
         <h2 className="text-[1.3rem] flex items-center gap-2"><ShieldCheck className="size-6 text-accent" />Las 3 reglas que frenan casi todo</h2>

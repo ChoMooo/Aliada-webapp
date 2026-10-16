@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ClipboardList, FolderCheck, LifeBuoy, BookOpen, ExternalLink, Copy, Share2, Printer, Plus, Trash2 } from 'lucide-react';
 import { useStore, mut } from '../../store';
+import { N } from '../../lib/narration';
 import { PageHeader, Card, Hero, Button, Field, TextInput, TextArea, Progress, Note, RowLink, Stagger, Item, Tag, Tabs, CheckRow, Disclosure, Chips, Choices, Legal, Bullets, ListenButton, ease } from '../../ui';
 import { fdate, uid } from '../../lib/format';
 import { copyText, wa } from '../../lib/share';
@@ -51,7 +52,7 @@ export function TramHub() {
             <Card key={g.id} to={'/finanzas/tramites/guia/' + g.id} className="flex gap-4 items-start">
               <span className={'grid place-items-center size-10 rounded-full shrink-0 font-bold ' + (full ? 'bg-accent text-onaccent' : 'bg-sunk')}>{full ? '✓' : i + 1}</span>
               <span className="flex-1 min-w-0 flex flex-col gap-1.5">
-                <b className="font-head font-normal text-[1.12rem] leading-tight">{g.t}</b>
+                <b className="font-head font-semibold text-[1.12rem] leading-tight">{g.t}</b>
                 <span className="text-muted text-[.9rem]">{e.why}</span>
                 <span className="flex flex-wrap gap-1.5"><OrgTag g={g} /><Tag tone={full ? 'ok' : 'neutral'}>{pr.n} de {pr.t}</Tag></span>
               </span>
@@ -77,7 +78,7 @@ export function Situacion() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader back={T.sit ? BACK : { to: '/finanzas', label: 'Finanzas' }} kicker="Mis trámites" title="¿En qué situación estás?" lead="Con esto te mostramos solo lo que te sirve ahora. Podés cambiarlo cuando quieras." />
-      <ListenButton text="¿En qué situación estás? Elegí una opción." />
+      <ListenButton text={N.tramSit} />
       <Choices options={SIT.map((s) => ({ k: s[0], t: s[1], s: s[2] }))} value={T.sit} onChange={set('sit')} />
       <Disclosure title="Afiná tus recomendaciones (opcional)" defaultOpen={!!(T.sexo || T.edad || T.aportes || T.hijos)}>
         <div className="flex flex-col gap-5">
@@ -97,7 +98,7 @@ export function Guias() {
   const d = useStore((s) => s.d), ids = plan(d).map((e) => e.id), otras = GUIAS.filter((g) => !ids.includes(g.id));
   const card = (g: any) => { const pr = gProg(d, g); return (
     <Card key={g.id} to={'/finanzas/tramites/guia/' + g.id} className="flex flex-col gap-1.5">
-      <b className="font-head font-normal text-[1.12rem]">{g.t}</b><span className="text-muted text-[.9rem]">{g.resuelve}</span>
+      <b className="font-head font-semibold text-[1.12rem]">{g.t}</b><span className="text-muted text-[.9rem]">{g.resuelve}</span>
       <span className="flex flex-wrap gap-1.5"><OrgTag g={g} /><EstTag g={g} /><Tag>{pr.n} de {pr.t}</Tag></span>
     </Card>); };
   return (
@@ -139,7 +140,7 @@ export function Guia() {
             <Card className="flex flex-col gap-3">
               <div><h3 className="text-[1.1rem]">Qué resuelve</h3><p>{g.resuelve}</p></div>
               <div><h3 className="text-[1.1rem]">Para quién</h3><p>{g.quien}</p></div>
-              <ListenButton getText={() => g.t + '. ' + g.resuelve + ' ' + g.gen.join('. ')} />
+              <ListenButton text={N.guia(g)} />
             </Card>
             <Card tone="mint" className="flex flex-col gap-2"><h3 className="text-[1.1rem]">Requisitos generales</h3><p className="text-[.85rem] text-muted">Lo que la fuente oficial indica para el caso general.</p><Bullets items={g.gen} /></Card>
             <Card tone="sunk" className="flex flex-col gap-2"><h3 className="text-[1.1rem]">Lo que depende de cada caso</h3><p className="text-[.85rem] text-muted">No lo podemos determinar acá: depende de tu situación.</p><Bullets items={g.caso} /></Card>
@@ -219,7 +220,7 @@ export function Preparar() {
   if (!g) return (
     <Stagger className="flex flex-col gap-4">
       <Item><PageHeader back={BACK} title="Preparar mi consulta" lead="Elegí para qué trámite vas a consultar. Te armamos la hoja con documentos, datos y preguntas." /></Item>
-      {GUIAS.map((x) => <Item key={x.id}><Card to={'/finanzas/tramites/preparar/' + x.id} className="flex items-center justify-between gap-3"><b className="font-head font-normal text-[1.08rem]">{x.t}</b><OrgTag g={x} /></Card></Item>)}
+      {GUIAS.map((x) => <Item key={x.id}><Card to={'/finanzas/tramites/preparar/' + x.id} className="flex items-center justify-between gap-3"><b className="font-head font-semibold text-[1.08rem]">{x.t}</b><OrgTag g={x} /></Card></Item>)}
     </Stagger>
   );
   const preg = d.tr.preg[g.id] || g.preg.map((t: string) => ({ id: t, t, ok: false, own: false }));

@@ -1,18 +1,20 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Check, X, Copy, Share2, Trophy, Lightbulb, Wrench, HelpCircle, Hand, ListChecks, Flag } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, X, Copy, Share2, Trophy, Lightbulb, Wrench, HelpCircle, Hand, ListChecks, Flag, PlayCircle } from 'lucide-react';
 import { useStore, mut } from '../../store';
 import { BackLink, Card, Button, Chips, Note, CheckRow, ListenButton, Bullets, Celebrate, Ring, ease, cx, Tag } from '../../ui';
-import { MOD } from '../../content/digital';
+import { MOD, modPath } from '../../content/learn';
+import { N } from '../../lib/narration';
+import { DemoPlayer, VisualGuide } from './Demo';
 import { copyText, wa } from '../../lib/share';
-import { userOS } from './logic';
-import { SIMS } from './sims';
-import { TONE, MOD_ICON } from './Hub';
+import { userOS } from '../digital/logic';
+import { SIMS } from '../digital/sims';
+import { TONE, MOD_ICON, sectionOf } from './meta';
 
-type Sec = 'intro' | 'practica' | 'pasos' | 'sino' | 'quiz' | 'fin';
+type Sec = 'intro' | 'video' | 'practica' | 'pasos' | 'sino' | 'quiz' | 'fin';
 const META: Record<Sec, [string, React.ReactNode]> = {
-  intro: ['La idea', <Lightbulb key="i" />], practica: ['Practicá sin riesgo', <Hand key="p" />], pasos: ['Hacelo en tu celular', <ListChecks key="s" />],
+  intro: ['La idea', <Lightbulb key="i" />], video: ['Mirá cómo se hace', <PlayCircle key="v" />], practica: ['Practicá sin riesgo', <Hand key="p" />], pasos: ['Hacelo en tu celular', <ListChecks key="s" />],
   sino: ['Si algo no sale', <Wrench key="w" />], quiz: ['Mini desafío', <HelpCircle key="q" />], fin: ['¡Terminaste!', <Flag key="f" />]
 };
 
@@ -25,9 +27,11 @@ export default function Leccion() {
   const [qi, setQi] = useState(0);
   const [ans, setAns] = useState<(number | null)[]>([]);
   const [simDone, setSimDone] = useState(false);
-  const secs = useMemo<Sec[]>(() => (l ? (['intro', l.sim ? 'practica' : null, 'pasos', 'sino', 'quiz', 'fin'].filter(Boolean) as Sec[]) : []), [l]);
-  if (!m || !l) return <div className="flex flex-col gap-4"><BackLink to="/digital" label="Mundo digital" /><Note tone="warn">No encontramos esta lección.</Note></div>;
+  React.useEffect(() => { setK(0); setQi(0); setAns([]); setSimDone(false); }, [lec]);
+  const secs = useMemo<Sec[]>(() => (l ? (['intro', l.demo.length ? 'video' : null, l.sim ? 'practica' : null, 'pasos', 'sino', 'quiz', 'fin'].filter(Boolean) as Sec[]) : []), [l]);
+  if (!m || !l) return <div className="flex flex-col gap-4"><BackLink to="/" label="Inicio" /><Note tone="warn">No encontramos esta lección.</Note></div>;
   const sec = secs[k], st = d.md.lec[l.id] || {}, Sim = l.sim ? SIMS[l.sim] : null;
+  const base = modPath(m), sc = sectionOf(m);
   const idx = m.lessons.findIndex((x) => x.id === l.id), nextL = m.lessons[idx + 1];
   const score = ans.filter((a, i) => a === l.quiz[i]?.c).length;
   const go = (n: number) => { setDir(n > k ? 1 : -1); setK(n); window.scrollTo({ top: 0, behavior: 'smooth' }); if (secs[n] === 'fin') mut((x) => { x.md.lec[l.id] = { ...(x.md.lec[l.id] || {}), done: true, score }; }); };
@@ -35,9 +39,9 @@ export default function Leccion() {
   const canNext = sec !== 'quiz' || (ans[qi] != null && qi === l.quiz.length - 1);
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between gap-3"><BackLink to={'/digital/m/' + m.id} label={m.n} /><Tag>{l.min} min</Tag></div>
+      <div className="flex items-center justify-between gap-3"><BackLink to={base} label={m.n} /><Tag>{l.min} min</Tag></div>
       <div className="flex items-start gap-3">
-        <span className={cx('grid place-items-center size-12 rounded-2xl shrink-0 [&_svg]:size-6', TONE[m.tone])}>{MOD_ICON[m.id]}</span>
+        <span className={cx('grid place-items-center size-12 rounded-xl shrink-0 [&_svg]:size-6', TONE[m.tone])}>{MOD_ICON[m.id]}</span>
         <h1 className="text-[1.7rem] sm:text-[2rem] leading-tight">{l.t}</h1>
       </div>
       {/* Progreso por secciones */}
@@ -50,12 +54,19 @@ export default function Leccion() {
         <motion.div key={sec + qi} custom={dir} initial={{ opacity: 0, x: 40 * dir }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 * dir }} transition={{ duration: 0.35, ease }} className="flex flex-col gap-4">
           {sec === 'intro' && (<>
             <p className="text-[1.15rem] leading-relaxed"><b>Para qué te sirve:</b> {l.para}</p>
-            <ListenButton getText={() => l.t + '. ' + l.para + ' ' + l.idea.join(' ')} />
+            <ListenButton text={N.lessonIntro(l)} />
             {l.idea.map((t, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.1 }}>
-                <Card className="flex gap-4 items-start"><span className="font-head text-[1.6rem] text-accent leading-none">{i + 1}</span><p className="text-[1.02rem]">{t}</p></Card>
+                <Card className="flex gap-4 items-start"><span className="font-head font-semibold text-[1.6rem] text-accent leading-none">{i + 1}</span><p className="text-[1.02rem]">{t}</p></Card>
               </motion.div>
             ))}
+          </>)}
+          {sec === 'video' && (<>
+            <p className="text-[1.05rem] text-muted">Un video corto con voz: mirá dónde se toca en cada pantalla. Podés pausar y avanzar paso por paso.</p>
+            <DemoPlayer key={l.id} frames={l.demo} title={l.t} />
+            <h3 className="text-[1.2rem] mt-3">La guía en imágenes</h3>
+            <VisualGuide frames={l.demo} />
+            <p className="text-[.82rem] text-muted">Pantallas ilustrativas: en tu celular los colores y la ubicación de algunos botones pueden variar.</p>
           </>)}
           {sec === 'practica' && Sim && (<>
             {l.simIntro && <p className="text-[1.05rem]">{l.simIntro}</p>}
@@ -70,7 +81,7 @@ export default function Leccion() {
                 return <CheckRow key={key} done={dn} onToggle={() => mut((x) => { const o = (x.md.lec[l.id] ||= {}); const s = (o.steps ||= {}); if (s[key]) delete s[key]; else s[key] = 1; })}><span className="text-muted mr-1.5">{i + 1}.</span>{p}</CheckRow>;
               })}
             </Card>
-            <ListenButton getText={() => pasos.join('. ')} />
+            <ListenButton text={N.steps(pasos)} label="Escuchar los pasos" />
             <Note tone="info">Pasos generales: los menús pueden cambiar un poco según tu modelo y la versión de la app. Si no ves algo, buscá la palabra con la lupa.</Note>
           </>)}
           {sec === 'sino' && (<>
@@ -88,7 +99,7 @@ export default function Leccion() {
                   return (
                     <motion.button key={o} whileTap={{ scale: 0.985 }} disabled={a != null} onClick={() => setAns((s) => { const n = [...s]; n[qi] = i; return n; })}
                       animate={a != null && picked && !ok ? { x: [0, -6, 6, -4, 4, 0] } : {}} transition={{ duration: 0.4 }}
-                      className={cx('flex items-center gap-3 text-left min-h-[3.8rem] px-4 py-3 rounded-2xl border-2 font-bold',
+                      className={cx('flex items-center gap-3 text-left min-h-[3.8rem] px-4 py-3 rounded-xl border-2 font-bold',
                         a == null ? 'border-line bg-surface hover:border-ink/25' : ok ? 'border-accent bg-mint' : picked ? 'border-bad bg-badsoft' : 'border-line bg-surface opacity-60')}>
                       <span className="flex-1">{o}</span>{a != null && ok && <Check className="size-5 text-accent" />}{a != null && picked && !ok && <X className="size-5 text-bad" />}
                     </motion.button>
@@ -117,8 +128,8 @@ export default function Leccion() {
               </div>
             </Card>
             <div className="flex flex-wrap gap-3">
-              {nextL ? <Button iconRight={<ArrowRight />} onClick={() => { nav(`/digital/m/${m.id}/${nextL.id}`); }}>Siguiente: {nextL.t}</Button> : <Button to={'/digital'}>Volver a Mundo digital</Button>}
-              <Button variant="ghost" to={'/digital/m/' + m.id}>Ver el módulo</Button>
+              {nextL ? <Button iconRight={<ArrowRight />} onClick={() => { nav(`${base}/${nextL.id}`); }}>Siguiente: {nextL.t}</Button> : <Button to={sc.to}>Volver a {sc.label}</Button>}
+              <Button variant="ghost" to={base}>Ver el módulo</Button>
             </div>
           </>)}
         </motion.div>

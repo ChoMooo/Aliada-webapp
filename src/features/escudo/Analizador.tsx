@@ -13,7 +13,7 @@ export default function Analizador() {
   const head = lv === 'alto' ? ['Muchas señales de alerta', 'bg-badsoft border-bad text-bad', <ShieldAlert key="a" />] : lv === 'medio' ? ['Algunas señales de alerta', 'bg-warn border-amber text-warnink', <ShieldQuestion key="m" />] : ['No encontramos señales típicas', 'bg-mint border-accent text-accent', <ShieldCheck key="b" />];
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader back={{ to: '/escudo', label: 'Escudo' }} kicker="Escudo antiestafas" title="Analizar un mensaje" lead="Copiá el mensaje sospechoso y pegalo acá. Lo revisamos dentro de tu celular: no se envía a ningún lado." />
+      <PageHeader back={{ to: '/digital/escudo', label: 'Escudo antiestafas' }} kicker="Escudo antiestafas" title="Analizar un mensaje" lead="Copiá el mensaje sospechoso y pegalo acá. Lo revisamos dentro de tu celular: no se envía a ningún lado." />
       <Card className="flex flex-col gap-3">
         <TextArea label="Mensaje sospechoso" value={t} onChange={(v) => { setT(v); setRes(null); }} placeholder="Pegá acá el mensaje (mantené apretado y elegí “Pegar”)" className="!min-h-[9rem]" />
         <div className="flex flex-wrap gap-2">
@@ -25,7 +25,7 @@ export default function Analizador() {
       <AnimatePresence mode="wait">
         {res && (
           <motion.div key={t} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-4">
-            <motion.div initial={{ scale: 0.96 }} animate={{ scale: 1 }} className={cx('flex items-center gap-3 rounded-2xl border-2 px-4 py-4 font-bold text-[1.15rem] [&_svg]:size-8', head[1] as string)}>{head[2]}{head[0]}</motion.div>
+            <motion.div initial={{ scale: 0.96 }} animate={{ scale: 1 }} className={cx('flex items-center gap-3 rounded-xl border-2 px-4 py-4 font-bold text-[1.15rem] [&_svg]:size-8', head[1] as string)}>{head[2]}{head[0]}</motion.div>
             {res.found.length > 0 ? (<>
               <div className="flex flex-col gap-3">
                 {res.found.map((s, k) => (

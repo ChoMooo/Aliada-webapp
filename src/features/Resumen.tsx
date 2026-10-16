@@ -5,7 +5,7 @@ import { PageHeader, Button, Card } from '../ui';
 import { fmt, money, pn } from '../lib/format';
 import { calc, progresoTram, plan, gProg, SIT_N, W, taPlanProg } from './finanzas/calc';
 import { GUIA, OP } from '../content/finanzas';
-import { MODULES } from '../content/digital';
+import { MODULES, FIN_MODULES } from '../content/learn';
 import { modProg, setupProg } from './digital/logic';
 import { copyText, wa } from '../lib/share';
 import { toast } from '../ui/toast';
@@ -28,9 +28,11 @@ export function resumenTexto(d: Data) {
   const w = W(d), op = d.ta.sel ? OP(d.ta.sel) : null;
   if (op && w) { L.push('Oportunidad elegida: ' + op.n); if (w.of.que) L.push('Mi oferta: ' + w.of.que + (pn(w.of.precio) > 0 ? ' · ' + money(pn(w.of.precio)) : '')); const pp = taPlanProg(d); if (pp.t) L.push('Plan de 30 días: ' + pp.n + ' de ' + pp.t + ' tareas'); }
   else L.push('Todavía sin oportunidad elegida.');
+  FIN_MODULES.forEach((m) => { const p = modProg(d, m); L.push('', m.n.toUpperCase(), p.n + ' de ' + p.t + ' lecciones'); });
   L.push('', 'MUNDO DIGITAL');
   const sp = setupProg(d); L.push('Primeros ajustes del celular: ' + sp.n + ' de ' + sp.t);
-  MODULES.filter((m) => m.lessons.length).forEach((m) => { const p = modProg(d, m); L.push(m.n + ': ' + p.n + ' de ' + p.t + ' lecciones'); });
+  MODULES.forEach((m) => { const p = modProg(d, m); L.push(m.n + ': ' + p.n + ' de ' + p.t + ' lecciones'); });
+  L.push('Escudo antiestafas: ' + Object.keys(d.escudo.vistos).length + ' situaciones practicadas');
   L.push('', 'Información de orientación general. Verificá en fuentes oficiales.');
   return L.join('\n');
 }

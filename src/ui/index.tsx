@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Check, ChevronLeft, ChevronRight, Volume2, Square, Info, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { cx } from './cx';
 import { useToasts } from './toast';
-import { speak, stopSpeak } from '../lib/share';
+import { playText, stopAll } from '../lib/audio';
 import { useD } from '../store';
 import logo from '../logo.png';
 
@@ -32,18 +32,18 @@ type BtnProps = {
   className?: string; disabled?: boolean; type?: 'button' | 'submit'; label?: string; pressed?: boolean;
 };
 const VAR: Record<string, string> = {
-  primary: 'bg-accent text-onaccent border-2 border-accent shadow-[0_6px_18px_-8px_rgb(var(--accent)/.7)] hover:brightness-110',
+  primary: 'bg-accent text-onaccent border-2 border-accent hover:brightness-110',
   secondary: 'bg-transparent text-accent border-2 border-accent hover:bg-accent/5',
   ghost: 'bg-surface text-ink border border-line hover:border-ink/30',
-  glow: 'bg-glow text-[#032216] border-2 border-glow shadow-[0_8px_24px_-10px_rgb(var(--glow)/.9)] hover:brightness-105',
+  glow: 'bg-glow text-[#032216] border-2 border-glow hover:brightness-105',
   onbrand: 'bg-white/5 text-onbrand border border-onbrand/30 hover:bg-white/10',
   danger: 'bg-transparent text-bad border-2 border-bad hover:bg-bad/5',
   quiet: 'bg-sunk text-ink border border-transparent hover:bg-line/60'
 };
-const SIZE: Record<string, string> = { md: 'min-h-[3.4rem] px-5 text-[1rem] rounded-2xl', sm: 'min-h-[2.8rem] px-4 text-[.92rem] rounded-xl', lg: 'min-h-[3.8rem] px-6 text-[1.06rem] rounded-2xl' };
+const SIZE: Record<string, string> = { md: 'min-h-[3.3rem] px-5 text-[1rem] rounded-lg', sm: 'min-h-[2.75rem] px-4 text-[.92rem] rounded-lg', lg: 'min-h-[3.6rem] px-6 text-[1.04rem] rounded-lg' };
 export function Button({ children, onClick, to, href, icon, iconRight, variant = 'primary', size = 'md', block, className, disabled, type = 'button', label, pressed }: BtnProps) {
   const nav = useNavigate();
-  const cls = cx('inline-flex items-center justify-center gap-2 font-bold text-center select-none transition-[filter,background-color,border-color] duration-200 disabled:opacity-40 disabled:pointer-events-none [&_svg]:size-[1.2em] [&_svg]:shrink-0', VAR[variant], SIZE[size], block && 'w-full', className);
+  const cls = cx('inline-flex items-center justify-center gap-2 font-semibold tracking-[-.005em] text-center select-none transition-[filter,background-color,border-color] duration-200 disabled:opacity-40 disabled:pointer-events-none [&_svg]:size-[1.2em] [&_svg]:shrink-0', VAR[variant], SIZE[size], block && 'w-full', className);
   if (href) return (
     <motion.a whileTap={{ scale: 0.97 }} className={cls} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>{icon}{children}{iconRight}</motion.a>
   );
@@ -71,7 +71,7 @@ export function Card({ children, className, onClick, to, tone = 'surface', pad =
   const cls = cx('rounded-xl2 text-left', toneCls, pad && 'p-5', interactive && 'cursor-pointer w-full block', tone === 'surface' && 'shadow-card', className);
   if (!interactive) return <div className={cls}>{children}</div>;
   return (
-    <motion.button type="button" className={cls} whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+    <motion.button type="button" className={cls} whileTap={{ scale: 0.99 }}
       onClick={() => { onClick?.(); if (to) nav(to); }}>
       {children}
     </motion.button>
@@ -79,23 +79,22 @@ export function Card({ children, className, onClick, to, tone = 'surface', pad =
 }
 export function Hero({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cx('relative overflow-hidden rounded-xl3 hero-glow text-onbrand p-6 sm:p-7 shadow-lift', className)}>
+    <div className={cx('relative overflow-hidden rounded-xl3 hero-glow text-onbrand p-6 sm:p-8', className)}>
       <div className="absolute inset-0 grain opacity-60 pointer-events-none" />
-      <motion.img src={LOGO} alt="" aria-hidden className="absolute -right-10 -top-10 w-48 opacity-[.13] pointer-events-none"
-        animate={{ y: [0, -6, 0], rotate: [0, 2, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }} />
+      <img src={LOGO} alt="" aria-hidden className="absolute -right-12 -bottom-14 w-52 opacity-[.07] pointer-events-none grayscale" />
       <div className="relative">{children}</div>
     </div>
   );
 }
 export const Kicker = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={cx('text-[.82rem] font-bold tracking-[.02em] text-accent', className)}>{children}</div>
+  <div className={cx('text-[.82rem] font-semibold tracking-[.01em] text-accent', className)}>{children}</div>
 );
 
 /* ---------- Encabezado de página ---------- */
 export function BackLink({ to, label = 'Volver' }: { to: string; label?: string }) {
   const nav = useNavigate();
   return (
-    <button onClick={() => nav(to)} className="no-print inline-flex items-center gap-1 min-h-[2.8rem] -ml-1 pr-2 font-bold text-muted hover:text-ink">
+    <button onClick={() => nav(to)} className="no-print inline-flex items-center gap-1 min-h-[2.8rem] -ml-1 pr-2 font-semibold whitespace-nowrap text-muted hover:text-ink">
       <ChevronLeft className="size-5" />{label}
     </button>
   );
@@ -118,8 +117,8 @@ export function SavedMark() {
   useEffect(() => { if (!savedAt) return; setShow(true); const t = setTimeout(() => setShow(false), 1600); return () => clearTimeout(t); }, [savedAt]);
   return (
     <AnimatePresence>{show && (
-      <motion.span initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-[.8rem] text-muted inline-flex items-center gap-1.5">
-        <span className="size-2 rounded-full bg-accent" />Guardado en este dispositivo
+      <motion.span initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-[.8rem] text-muted inline-flex items-center gap-1.5 whitespace-nowrap">
+        <span className="size-2 rounded-full bg-accent" />Guardado
       </motion.span>)}
     </AnimatePresence>
   );
@@ -165,7 +164,7 @@ export function Chips({ options, value, onChange, multi }: { options: ReadonlyAr
             if (multi) { const a = value as T[]; onChange(a.includes(k) ? a.filter((x) => x !== k) : [...a, k]); }
             else onChange(value === k ? '' : k);
           }}
-          className={cx('min-h-[2.75rem] px-4 rounded-full border-2 font-bold text-[.92rem] transition-colors',
+          className={cx('min-h-[2.75rem] px-3.5 rounded-lg border-[1.5px] font-semibold text-[.92rem] transition-colors',
             sel(k) ? 'bg-ink text-bg border-ink' : 'bg-surface border-line hover:border-ink/30')}>
           {sel(k) && <Check className="inline size-4 -ml-1 mr-1 align-[-2px]" />}{l}
         </motion.button>
@@ -183,9 +182,9 @@ export function Choices({ options, value, onChange, multi }: { options: { k: str
             if (multi) { const a = value as string[]; onChange(a.includes(o.k) ? a.filter((x) => x !== o.k) : [...a, o.k]); }
             else onChange(o.k);
           }}
-          className={cx('flex items-center gap-4 w-full text-left min-h-[4rem] px-4 py-3 rounded-2xl border-2 transition-colors',
-            sel(o.k) ? 'border-accent bg-mint' : 'border-line bg-surface hover:border-ink/25')}>
-          {o.icon && <span className="grid place-items-center size-11 rounded-xl bg-sunk shrink-0 [&_svg]:size-6">{o.icon}</span>}
+          className={cx('flex items-center gap-4 w-full text-left min-h-[4rem] px-4 py-3 rounded-xl border-[1.5px] transition-colors',
+            sel(o.k) ? 'border-accent bg-accent/[.06]' : 'border-line bg-surface hover:border-ink/25')}>
+          {o.icon && <span className="grid place-items-center size-11 rounded-lg bg-sunk shrink-0 [&_svg]:size-6">{o.icon}</span>}
           <span className="flex-1 min-w-0"><span className="block font-bold text-[1.02rem]">{o.t}</span>{o.s && <span className="block text-[.88rem] text-muted">{o.s}</span>}</span>
           <span className={cx('grid place-items-center size-7 rounded-full border-2 shrink-0 transition-colors', sel(o.k) ? 'bg-accent border-accent text-onaccent' : 'border-line text-transparent')}>
             <Check className="size-4" strokeWidth={3} />
@@ -240,12 +239,12 @@ export function CountUp({ value, format = (n: number) => String(Math.round(n)), 
 /* ---------- Etiquetas y avisos ---------- */
 export function Tag({ children, tone = 'neutral' }: { children: React.ReactNode; tone?: 'neutral' | 'ok' | 'warn' | 'sky' | 'amber' | 'violet' | 'bad' }) {
   const t = { neutral: 'bg-sunk text-muted', ok: 'bg-mint text-accent', warn: 'bg-warn text-warnink', sky: 'bg-skysoft text-sky', amber: 'bg-ambersoft text-amber', violet: 'bg-violetsoft text-violet', bad: 'bg-badsoft text-bad' }[tone];
-  return <span className={cx('inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[.78rem] font-bold', t)}>{children}</span>;
+  return <span className={cx('inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[.76rem] font-semibold', t)}>{children}</span>;
 }
 export function Note({ children, tone = 'info', title }: { children: React.ReactNode; tone?: 'info' | 'warn' | 'good' | 'bad'; title?: React.ReactNode }) {
   const t = { info: ['bg-skysoft border-sky', <Info key="i" />], warn: ['bg-warn border-amber text-warnink', <AlertTriangle key="w" />], good: ['bg-mint border-accent', <CheckCircle2 key="g" />], bad: ['bg-badsoft border-bad', <AlertTriangle key="b" />] }[tone] as [string, React.ReactNode];
   return (
-    <div className={cx('flex gap-3 rounded-2xl border-l-4 px-4 py-3.5 text-[.95rem]', t[0])}>
+    <div className={cx('flex gap-3 rounded-lg border-l-[3px] px-4 py-3.5 text-[.95rem]', t[0])}>
       <span className="mt-0.5 [&_svg]:size-5 shrink-0 opacity-80">{t[1]}</span>
       <div className="min-w-0 flex-1">{title && <b className="block mb-0.5">{title}</b>}{children}</div>
     </div>
@@ -273,11 +272,11 @@ export function RowLink({ to, onClick, icon, tone = 'mint', title, sub, right }:
   const nav = useNavigate();
   const t = { mint: 'bg-mint text-accent', sky: 'bg-skysoft text-sky', amber: 'bg-ambersoft text-amber', violet: 'bg-violetsoft text-violet', sunk: 'bg-sunk text-ink' }[tone];
   return (
-    <motion.button type="button" whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+    <motion.button type="button" whileTap={{ scale: 0.99 }}
       onClick={() => { onClick?.(); if (to) nav(to); }}
-      className="w-full flex items-center gap-4 text-left p-4 rounded-xl2 bg-surface border border-line shadow-card">
-      <span className={cx('grid place-items-center size-12 rounded-2xl shrink-0 [&_svg]:size-6', t)}>{icon}</span>
-      <span className="flex-1 min-w-0"><span className="block font-head text-[1.12rem] leading-tight">{title}</span>{sub && <span className="block text-[.88rem] text-muted mt-0.5">{sub}</span>}</span>
+      className="w-full flex items-center gap-4 text-left p-4 rounded-xl2 bg-surface border border-line hover:border-ink/20 transition-colors">
+      <span className={cx('grid place-items-center size-11 rounded-lg shrink-0 [&_svg]:size-[1.35rem]', t)}>{icon}</span>
+      <span className="flex-1 min-w-0"><span className="block font-head font-semibold text-[1.08rem] leading-tight tracking-[-.01em]">{title}</span>{sub && <span className="block text-[.88rem] text-muted mt-0.5">{sub}</span>}</span>
       {right ?? <ChevronRight className="size-5 text-muted shrink-0" />}
     </motion.button>
   );
@@ -286,7 +285,7 @@ export function CheckRow({ done, onToggle, children, sub, actions }: { done: boo
   return (
     <div className="flex items-start gap-3 py-3 border-b border-line last:border-0">
       <motion.button type="button" whileTap={{ scale: 0.85 }} onClick={onToggle} aria-pressed={done} aria-label={done ? 'Desmarcar' : 'Marcar como hecho'}
-        className={cx('mt-0.5 grid place-items-center size-8 rounded-lg border-2 shrink-0 transition-colors', done ? 'bg-accent border-accent text-onaccent' : 'border-line bg-surface')}>
+        className={cx('mt-0.5 grid place-items-center size-7 rounded-md border-[1.5px] shrink-0 transition-colors', done ? 'bg-accent border-accent text-onaccent' : 'border-line bg-surface')}>
         <AnimatePresence>{done && (
           <motion.svg key="c" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round">
             <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} exit={{ pathLength: 0 }} transition={{ duration: 0.3 }} />
@@ -305,11 +304,11 @@ export function CheckRow({ done, onToggle, children, sub, actions }: { done: boo
 /* ---------- Pestañas, desplegables ---------- */
 export function Tabs<T extends string>({ tabs, value, onChange, id }: { tabs: [T, string][]; value: T; onChange: (v: T) => void; id: string }) {
   return (
-    <div role="tablist" className="flex gap-1 p-1 rounded-2xl bg-sunk overflow-x-auto">
+    <div role="tablist" className="flex gap-1 p-1 rounded-xl bg-sunk overflow-x-auto">
       {tabs.map(([k, l]) => (
         <button key={k} role="tab" aria-selected={value === k} onClick={() => onChange(k)}
-          className={cx('relative flex-1 whitespace-nowrap min-h-[2.8rem] px-3.5 rounded-xl font-bold text-[.92rem] transition-colors', value === k ? 'text-ink' : 'text-muted hover:text-ink')}>
-          {value === k && <motion.span layoutId={'tab-' + id} className="absolute inset-0 rounded-xl bg-surface shadow-card" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+          className={cx('relative flex-1 whitespace-nowrap min-h-[2.8rem] px-3.5 rounded-lg font-semibold text-[.92rem] transition-colors', value === k ? 'text-ink' : 'text-muted hover:text-ink')}>
+          {value === k && <motion.span layoutId={'tab-' + id} className="absolute inset-0 rounded-lg bg-surface shadow-card" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
           <span className="relative">{l}</span>
         </button>
       ))}
@@ -334,15 +333,17 @@ export function Disclosure({ title, children, defaultOpen = false, icon }: { tit
 }
 
 /* ---------- Voz ---------- */
-export function ListenButton({ text, getText }: { text?: string; getText?: () => string }) {
+export function ListenButton({ text, getText, label = 'Escuchar' }: { text?: string; getText?: () => string; label?: string }) {
   const voz = useD((d) => d.aj.voz);
   const [on, setOn] = useState(false);
-  useEffect(() => () => stopSpeak(), []);
+  const onRef = useRef(false); onRef.current = on;
+  useEffect(() => () => { if (onRef.current) stopAll(); }, []);
   if (!voz) return null;
   return (
-    <button type="button" onClick={() => { if (on) { stopSpeak(); setOn(false); return; } speak(getText ? getText() : text || ''); setOn(true); setTimeout(() => setOn(false), 8000); }}
-      className="no-print inline-flex items-center gap-2 self-start rounded-full bg-sunk px-4 min-h-[2.6rem] font-bold text-[.88rem] hover:bg-line/60">
-      {on ? <Square className="size-4" /> : <Volume2 className="size-4" />}{on ? 'Detener' : 'Escuchar'}
+    <button type="button" aria-pressed={on} onClick={() => { if (on) { stopAll(); setOn(false); return; } playText(getText ? getText() : text || '', () => setOn(false)); setOn(true); }}
+      className="no-print inline-flex items-center gap-2 self-start rounded-full border border-line bg-surface px-4 min-h-[2.75rem] font-semibold text-[.9rem] hover:border-ink/30">
+      {on ? <span className="flex items-end gap-[3px] h-4" aria-hidden>{[0, 1, 2].map((i) => <motion.span key={i} className="w-[3px] rounded-full bg-accent" animate={{ height: ['30%', '100%', '45%'] }} transition={{ duration: 0.7, repeat: Infinity, repeatType: 'mirror', delay: i * 0.15 }} />)}</span> : <Volume2 className="size-4 text-accent" />}
+      {on ? 'Detener' : label}
     </button>
   );
 }
@@ -360,19 +361,16 @@ export function Toaster() {
   );
 }
 
-/* ---------- Celebración ---------- */
+/* ---------- Confirmación sobria ---------- */
 export function Celebrate({ show }: { show: boolean }) {
   const reduce = useReducedMotion();
   if (!show || reduce) return null;
-  const bits = Array.from({ length: 18 }, (_, i) => i);
-  const cols = ['rgb(var(--glow))', 'rgb(var(--sky))', 'rgb(var(--amber))', 'rgb(var(--accent))', 'rgb(var(--violet))'];
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden>
-      {bits.map((i) => {
-        const a = (i / bits.length) * Math.PI * 2, d = 70 + (i % 4) * 22;
-        return <motion.span key={i} className="absolute left-1/2 top-1/2 size-2.5 rounded-sm" style={{ background: cols[i % cols.length] }}
-          initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }} animate={{ x: Math.cos(a) * d, y: Math.sin(a) * d + 30, opacity: 0, rotate: 200 }} transition={{ duration: 1.1, ease: 'easeOut' }} />;
-      })}
+    <div className="pointer-events-none absolute inset-0 grid place-items-center" aria-hidden>
+      {[0, 1].map((i) => (
+        <motion.span key={i} className="absolute size-24 rounded-full border-2 border-accent"
+          initial={{ scale: 0.6, opacity: 0.5 }} animate={{ scale: 2.4, opacity: 0 }} transition={{ duration: 1.4, delay: i * 0.25, ease: 'easeOut' }} />
+      ))}
     </div>
   );
 }

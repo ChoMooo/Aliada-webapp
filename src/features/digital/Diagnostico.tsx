@@ -5,9 +5,10 @@ import { ArrowRight, ArrowLeft, Smartphone, Apple, Check, X, BookOpen, Headphone
 import { useStore, mut } from '../../store';
 import { PageHeader, Card, Hero, Button, Chips, Choices, Field, ListenButton, Tag, Stagger, Item, Celebrate, ease, cx } from '../../ui';
 import { detectOS } from '../../lib/device';
-import { DIAG_APPS, DIAG_AREAS, NIVELES, METAS, MIEDOS, RETOS } from '../../content/digital';
+import { DIAG_APPS, DIAG_AREAS, NIVELES, METAS, MIEDOS, RETOS, DIAG_Q } from '../../content/learn';
+import { N } from '../../lib/narration';
 import { ruta, startLevel } from './logic';
-import { MOD_ICON, TONE } from './Hub';
+import { MOD_ICON, TONE } from '../learn/meta';
 
 type Step = { id: string; t: string; h?: string; skip?: boolean; when?: () => boolean };
 
@@ -19,14 +20,14 @@ export default function Diagnostico() {
   React.useEffect(() => { if (det && !g.os) mut((x) => { x.md.diag.os = det; }); }, []);
   const set = (k: keyof typeof g) => (v: any) => mut((x) => { (x.md.diag as any)[k] = v; });
   const steps: Step[] = [
-    { id: 'os', t: '¿Qué celular tenés?', h: det ? `Por lo que vemos, parece ${det === 'ios' ? 'un iPhone' : 'un Android'}. Confirmalo.` : 'Así te mostramos los pasos exactos para tu celular.' },
-    { id: 'marca', t: '¿De qué marca es?', h: 'En Android los menús cambian un poco según la marca.', when: () => g.os === 'android', skip: true },
-    { id: 'apps', t: '¿Qué apps usás hoy?', h: 'Marcá todas las que uses, aunque sea poco.', skip: true },
-    { id: 'nivel', t: '¿Cómo te llevás con cada tema?', h: 'Sin vueltas: así sabemos por dónde empezar.', skip: true },
-    ...RETOS.map((r, k) => ({ id: r.id, t: `Desafío ${k + 1} de 3`, h: r.q, skip: true })),
-    { id: 'metas', t: '¿Qué te gustaría lograr?', h: 'Elegí todo lo que quieras.', skip: true },
-    { id: 'miedos', t: '¿Qué te preocupa del celular?', skip: true },
-    { id: 'aprende', t: '¿Cómo preferís aprender?', skip: true }
+    { id: 'os', ...DIAG_Q.os(det) },
+    { id: 'marca', ...DIAG_Q.marca, when: () => g.os === 'android', skip: true },
+    { id: 'apps', ...DIAG_Q.apps, skip: true },
+    { id: 'nivel', ...DIAG_Q.nivel, skip: true },
+    ...RETOS.map((r, k) => ({ id: r.id, ...DIAG_Q.reto(k), skip: true })),
+    { id: 'metas', ...DIAG_Q.metas, skip: true },
+    { id: 'miedos', ...DIAG_Q.miedos, skip: true },
+    { id: 'aprende', ...DIAG_Q.aprende, skip: true }
   ];
   const vis = steps.filter((s) => !s.when || s.when());
   const st = vis[Math.min(i, vis.length - 1)];
@@ -44,8 +45,8 @@ export default function Diagnostico() {
       </div>
       <AnimatePresence mode="wait">
         <motion.div key={st.id} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.35, ease }} className="flex flex-col gap-5">
-          <div><h1 className="text-[1.85rem]">{st.t}</h1>{st.h && <p className={cx('mt-1.5', reto ? 'text-[1.1rem] text-ink bg-surface border border-line rounded-2xl p-4 shadow-card' : 'text-muted')}>{st.h}</p>}</div>
-          <ListenButton text={st.t + '. ' + (st.h || '')} />
+          <div><h1 className="text-[1.85rem]">{st.t}</h1>{st.h && <p className={cx('mt-1.5', reto ? 'text-[1.1rem] text-ink bg-surface border border-line rounded-xl p-4 shadow-card' : 'text-muted')}>{st.h}</p>}</div>
+          <ListenButton text={N.ask(st.t, st.h)} />
           {st.id === 'os' && <Choices value={g.os} onChange={set('os')} options={[{ k: 'android', t: 'Android', s: 'Samsung, Motorola, Xiaomi y otros', icon: <Smartphone /> }, { k: 'ios', t: 'iPhone', s: 'De Apple', icon: <Apple /> }]} />}
           {st.id === 'marca' && <Choices value={g.marca} onChange={set('marca')} options={[{ k: 'samsung', t: 'Samsung' }, { k: 'motorola', t: 'Motorola' }, { k: 'xiaomi', t: 'Xiaomi' }, { k: 'otra', t: 'Otra marca' }]} />}
           {st.id === 'apps' && <Chips multi options={DIAG_APPS} value={g.apps} onChange={set('apps')} />}
@@ -65,7 +66,7 @@ export default function Diagnostico() {
                 return (
                   <motion.button key={o} whileTap={{ scale: 0.985 }} disabled={ans != null}
                     onClick={() => mut((x) => { x.md.diag.retos[reto.id] = String(k); })}
-                    className={cx('flex items-center gap-3 text-left min-h-[3.8rem] px-4 py-3 rounded-2xl border-2 font-bold transition-colors',
+                    className={cx('flex items-center gap-3 text-left min-h-[3.8rem] px-4 py-3 rounded-xl border-2 font-bold transition-colors',
                       ans == null ? 'border-line bg-surface hover:border-ink/25' : ok ? 'border-accent bg-mint' : picked ? 'border-bad bg-badsoft' : 'border-line bg-surface opacity-60')}>
                     <span className="flex-1">{o}</span>
                     {ans != null && ok && <Check className="size-5 text-accent" />}{ans != null && picked && !ok && <X className="size-5 text-bad" />}
@@ -79,7 +80,7 @@ export default function Diagnostico() {
           {st.id === 'miedos' && <Chips multi options={MIEDOS} value={g.miedos} onChange={set('miedos')} />}
           {st.id === 'aprende' && (
             <div className="flex flex-col gap-5">
-              <Choices value={g.aprende} onChange={set('aprende')} options={[{ k: 'leer', t: 'Leyendo', icon: <BookOpen /> }, { k: 'escuchar', t: 'Escuchando', s: 'Activamos los botones “Escuchar”', icon: <Headphones /> }, { k: 'ver', t: 'Mirando paso a paso', s: 'Con simuladores y desafíos', icon: <Eye /> }]} />
+              <Choices value={g.aprende} onChange={set('aprende')} options={[{ k: 'leer', t: 'Leyendo', icon: <BookOpen /> }, { k: 'escuchar', t: 'Escuchando', s: 'Activamos los botones “Escuchar”', icon: <Headphones /> }, { k: 'ver', t: 'Mirando paso a paso', s: 'Con videos, simuladores y desafíos', icon: <Eye /> }]} />
               <Field label="¿Cuánto tiempo tenés por día?"><Chips options={[['5', '5 minutos'], ['15', '15 minutos'], ['30', '30 minutos o más']]} value={g.tiempo} onChange={set('tiempo')} /></Field>
             </div>
           )}
@@ -105,9 +106,9 @@ function Resultado({ onGo }: { onGo: (p: string) => void }) {
       </Hero></Item>
       {r.map((x, k) => (
         <Item key={x.m.id}><Card to={'/digital/m/' + x.m.id} className="flex items-start gap-4">
-          <span className="font-head text-[1.6rem] text-muted w-6 shrink-0">{k + 1}</span>
-          <span className={cx('grid place-items-center size-12 rounded-2xl [&_svg]:size-6 shrink-0', TONE[x.m.tone])}>{MOD_ICON[x.m.id]}</span>
-          <span className="flex-1 min-w-0"><b className="block font-head font-normal text-[1.15rem]">{x.m.n}</b><span className="text-[.9rem] text-muted">{x.why}</span>
+          <span className="font-head font-semibold text-[1.6rem] text-muted w-6 shrink-0">{k + 1}</span>
+          <span className={cx('grid place-items-center size-12 rounded-xl [&_svg]:size-6 shrink-0', TONE[x.m.tone])}>{MOD_ICON[x.m.id]}</span>
+          <span className="flex-1 min-w-0"><b className="block font-head font-semibold text-[1.15rem]">{x.m.n}</b><span className="text-[.9rem] text-muted">{x.why}</span>
             <span className="flex gap-1.5 mt-1.5"><Tag tone={startLevel(d, x.m.id) === 'intermedio' ? 'violet' : 'neutral'}>Empezás en {startLevel(d, x.m.id) === 'intermedio' ? 'intermedio' : 'básico'}</Tag></span></span>
         </Card></Item>
       ))}

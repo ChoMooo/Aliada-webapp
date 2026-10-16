@@ -18,8 +18,8 @@ import * as Tal2 from './features/finanzas/talento2';
 import DigitalHub from './features/digital/Hub';
 import Diagnostico from './features/digital/Diagnostico';
 import PrimerosAjustes from './features/digital/PrimerosAjustes';
-import Modulo from './features/digital/Modulo';
-import Leccion from './features/digital/Leccion';
+import Modulo from './features/learn/Modulo';
+import Leccion from './features/learn/Leccion';
 import EscudoHub from './features/escudo/Hub';
 import Simulador from './features/escudo/Simulador';
 import Analizador from './features/escudo/Analizador';
@@ -85,9 +85,15 @@ export default function App() {
           <Route path="/digital/ajustes" element={R(<PrimerosAjustes />)} />
           <Route path="/digital/m/:mod" element={R(<Modulo />)} />
           <Route path="/digital/m/:mod/:lec" element={R(<Leccion />)} />
-          <Route path="/escudo" element={R(<EscudoHub />)} />
-          <Route path="/escudo/simulador" element={R(<Simulador />)} />
-          <Route path="/escudo/analizador" element={R(<Analizador />)} />
+          <Route path="/digital/escudo" element={R(<EscudoHub />)} />
+          <Route path="/digital/escudo/simulador" element={R(<Simulador />)} />
+          <Route path="/digital/escudo/analizador" element={R(<Analizador />)} />
+          <Route path="/finanzas/m/:mod" element={R(<Modulo />)} />
+          <Route path="/finanzas/m/:mod/:lec" element={R(<Leccion />)} />
+          <Route path="/escudo" element={<Navigate to="/digital/escudo" replace />} />
+          <Route path="/escudo/simulador" element={<Navigate to="/digital/escudo/simulador" replace />} />
+          <Route path="/escudo/analizador" element={<Navigate to="/digital/escudo/analizador" replace />} />
+          <Route path="/digital/m/pay" element={<Navigate to="/finanzas/m/pay" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster />

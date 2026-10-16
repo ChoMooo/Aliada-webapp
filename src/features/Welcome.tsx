@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wallet, Smartphone, ShieldCheck, Lock, ArrowRight } from 'lucide-react';
+import { Wallet, Smartphone, Lock, ArrowRight } from 'lucide-react';
 import { useD, mut } from '../store';
 import { Button, Choices, Field, TextInput, LOGO, ease } from '../ui';
 import { toast } from '../ui/toast';
@@ -12,9 +12,8 @@ const ETAPAS = [
   { k: 'jubilado', t: 'Ya cobro la jubilación', s: 'Quiero cuidar mi plata y aprender cosas nuevas' }
 ];
 const PILARES = [
-  { i: <Wallet />, t: 'Finanzas', s: 'Tu plata bajo control, tus trámites en orden y nuevas formas de generar ingresos.', c: 'bg-glow/15 text-glow' },
-  { i: <Smartphone />, t: 'Mundo digital', s: 'WhatsApp, inteligencia artificial y pagos con el celular, aprendidos a tu ritmo.', c: 'bg-[rgb(157_176_255/.18)] text-[rgb(157_176_255)]' },
-  { i: <ShieldCheck />, t: 'Escudo antiestafas', s: 'Practicá con estafas reales y analizá cualquier mensaje sospechoso.', c: 'bg-[rgb(240_178_88/.18)] text-[rgb(240_178_88)]' }
+  { i: <Wallet />, t: 'Finanzas', s: 'Tu plata bajo control, tus trámites en orden, pagos con el celular sin miedo y nuevas formas de generar ingresos.', c: 'bg-glow/15 text-glow' },
+  { i: <Smartphone />, t: 'Mundo digital', s: 'WhatsApp, inteligencia artificial, Google, redes y creación de contenido, con videos cortos y narración. Incluye el Escudo antiestafas.', c: 'bg-[rgb(157_176_255/.18)] text-[rgb(157_176_255)]' }
 ];
 
 export default function Welcome() {
@@ -29,7 +28,7 @@ export default function Welcome() {
             <motion.div key="a" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.5, ease }} className="flex flex-col gap-8 flex-1">
               <div className="flex items-center gap-3">
                 <motion.img src={LOGO} alt="" className="size-16 rounded-full shadow-lift" initial={{ scale: 0.6, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 180, damping: 14 }} />
-                <div><div className="font-head text-[1.35rem] leading-none">Aliada Digital</div><div className="text-[.85rem] opacity-75 mt-1">Jubilación con calma</div></div>
+                <div><div className="font-head font-semibold text-[1.35rem] leading-none">Aliada Digital</div><div className="text-[.85rem] opacity-75 mt-1">Jubilación con calma</div></div>
               </div>
               <div className="flex flex-col gap-4">
                 <motion.h1 className="text-[2.3rem] sm:text-[2.7rem] text-onbrand" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6, ease }}>
@@ -42,7 +41,7 @@ export default function Welcome() {
               <div className="flex flex-col gap-3">
                 {PILARES.map((p, i) => (
                   <motion.div key={p.t} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.1, duration: 0.5, ease }}
-                    className="flex gap-4 items-start rounded-2xl bg-white/[.06] border border-white/10 p-4">
+                    className="flex gap-4 items-start rounded-xl bg-white/[.06] border border-white/10 p-4">
                     <span className={'grid place-items-center size-11 rounded-xl shrink-0 [&_svg]:size-6 ' + p.c}>{p.i}</span>
                     <div><b className="block">{p.t}</b><span className="text-[.92rem] opacity-80">{p.s}</span></div>
                   </motion.div>

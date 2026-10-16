@@ -8,6 +8,8 @@ import { fmt, money, pn } from '../../lib/format';
 import { wa } from '../../lib/share';
 import { calc, simInf } from './calc';
 import { RowEditor } from './shared';
+import { PLATA_STEPS } from '../../content/finanzas';
+import { N } from '../../lib/narration';
 import { resumenTexto } from '../Resumen';
 
 const BACK = { to: '/finanzas/plata', label: 'Mi plata' };
@@ -26,12 +28,12 @@ export function PlataHub() {
             <div className="mt-5"><Button variant="glow" to="/finanzas/plata/numeros/0" iconRight={<ArrowRight />}>Empezar</Button></div>
           </>) : c.anios != null ? (<>
             <div className="text-glow font-bold text-[.85rem]">Tus ahorros alcanzan</div>
-            <div className="font-head text-[3.6rem] leading-none text-glow mt-2"><CountUp value={Math.min(c.anios, 99.9)} format={(n) => fmt(n, 1)} /><span className="font-body text-[1.1rem] text-onbrand ml-2">años</span></div>
+            <div className="font-head font-semibold text-[3.6rem] leading-none text-glow mt-2"><CountUp value={Math.min(c.anios, 99.9)} format={(n) => fmt(n, 1)} /><span className="font-body text-[1.1rem] text-onbrand ml-2">años</span></div>
             <p className="opacity-85 mt-2">Cada mes gastás {money(c.gastoNeto)} más de lo que ingresa. Con tus ahorros netos de {money(c.neto)}, te alcanza este tiempo si nada cambia.</p>
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
           </>) : (<>
             <div className="text-glow font-bold text-[.85rem]">Cada mes</div>
-            <div className="font-head text-[2.6rem] leading-none text-glow mt-2">Te sobran <CountUp value={c.brecha} format={money} /></div>
+            <div className="font-head font-semibold text-[2.6rem] leading-none text-glow mt-2">Te sobran <CountUp value={c.brecha} format={money} /></div>
             <p className="opacity-85 mt-2">Tus ingresos cubren tus gastos. Ese margen puede ir a tu meta de ahorro.</p>
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
           </>)}
@@ -49,12 +51,7 @@ export function PlataHub() {
   );
 }
 
-const STEPS = [
-  { k: 'ing', t: '¿Cuánto entra por mes?', h: 'Jubilación, alquileres, trabajos, ayudas de la familia. Montos mensuales.', add: 'Agregar otro ingreso', label: 'Total de ingresos' },
-  { k: 'gas', t: '¿En qué gastás por mes?', h: 'Revisá cada rubro. Si un gasto es anual, dividilo por 12.', add: 'Agregar otro gasto', label: 'Total de gastos' },
-  { k: 'aho', t: '¿Qué ahorros tenés?', h: 'Lo que tenés guardado hoy: cuentas, efectivo, plazos fijos, dólares.', add: 'Agregar otro ahorro', label: 'Total de ahorros (en pesos)', cur: true },
-  { k: 'deu', t: '¿Tenés deudas?', h: 'Tarjetas, préstamos, cuotas pendientes. Si no tenés, seguí adelante.', add: 'Agregar una deuda', label: 'Total de deudas' }
-] as const;
+const STEPS = PLATA_STEPS;
 
 export function Numeros() {
   const { i: is } = useParams(); const nav = useNavigate();
@@ -68,7 +65,7 @@ export function Numeros() {
       <AnimatePresence mode="wait">
         <motion.div key={i} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.35, ease }} className="flex flex-col gap-5">
           <div><div className="text-accent font-bold text-[.85rem]">Paso {i + 1} de 4</div><h1 className="text-[1.9rem] mt-1">{st.t}</h1><p className="text-muted mt-1">{st.h}</p></div>
-          <ListenButton text={st.t + '. ' + st.h} />
+          <ListenButton text={N.ask(st.t, st.h)} />
           <Card><RowEditor path={'plata.' + st.k} rows={(d.plata as any)[st.k]} currency={'cur' in st} addLabel={st.add} /></Card>
           {'cur' in st && (
             <Field label="Cotización del dólar que usás" htmlFor="cot" hint="El valor al que podrías vender hoy. Si no tenés dólares, dejalo vacío.">
@@ -76,7 +73,7 @@ export function Numeros() {
             </Field>
           )}
           {'cur' in st && c.usdSinCot && <Note tone="warn">Cargaste dólares pero falta la cotización: sin ella no se suman a tus ahorros.</Note>}
-          <Card tone="sunk" className="flex items-center justify-between gap-3"><span>{st.label}</span><b className="font-head font-normal text-[1.6rem]"><CountUp value={tot} format={money} /></b></Card>
+          <Card tone="sunk" className="flex items-center justify-between gap-3"><span>{st.label}</span><b className="font-head font-semibold text-[1.6rem]"><CountUp value={tot} format={money} /></b></Card>
         </motion.div>
       </AnimatePresence>
       <div className="flex gap-3">

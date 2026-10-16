@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Wallet, Smartphone, ShieldCheck, ScanSearch, FileText, Settings, ArrowRight, Sparkles, ChevronRight } from 'lucide-react';
+import { Wallet, Smartphone, FileText, Settings, ArrowRight, Sparkles, ChevronRight } from 'lucide-react';
 import { useStore, useD } from '../store';
 import { Button, Hero, Stagger, Item, Ring, Note, cx, Kicker } from '../ui';
 import { fmt, money } from '../lib/format';
 import { calc, progresoTram, tramSiguiente, taSiguiente } from './finanzas/calc';
-import { digitalProg, nextLesson } from './digital/logic';
+import { digitalProg, nextLesson, finModProg } from './digital/logic';
 import { LEGAL } from '../config';
 
 function useNextSteps() {
@@ -29,7 +29,8 @@ export default function Home() {
   const nombre = useD((x) => x.perfil.nombre);
   const due = Date.now() - d.lastBackup > 30 * 864e5 && (c.has || d.md.diag.done || Object.keys(d.tr.docs).length > 0);
   const main = steps[0];
-  const finPct = (c.has ? 1 : 0) + (pt.t ? pt.n / pt.t : 0) + (d.ta.sel ? 1 : 0);
+  const fp = finModProg(d);
+  const finPct = (c.has ? 1 : 0) + (pt.t ? pt.n / pt.t : 0) + (d.ta.sel ? 1 : 0) + (fp.t ? fp.n / fp.t : 0);
   return (
     <Stagger className="flex flex-col gap-6">
       <Item>
@@ -49,30 +50,22 @@ export default function Home() {
       )}
 
       <Item className="grid sm:grid-cols-2 gap-4">
-        <SectionCard to="/finanzas" icon={<Wallet />} tone="mint" title="Finanzas" ring={finPct / 3}
+        <SectionCard to="/finanzas" icon={<Wallet />} tone="mint" title="Finanzas" ring={finPct / 4}
           lines={[
             c.has ? (c.anios == null ? 'Tus ingresos cubren tus gastos' : 'Tus ahorros alcanzan ~' + fmt(c.anios, 1) + ' años') : 'Mi plata: sin cargar',
             d.tr.sit.sit ? `Trámites: ${pt.n} de ${pt.t} tareas` : 'Trámites: elegí tu situación',
-            d.ta.sel ? 'Talento: oportunidad elegida' : 'Talento: descubrí oportunidades'
+            d.ta.sel ? 'Talento: oportunidad elegida' : 'Talento: descubrí oportunidades',
+            `Plata en el celular: ${fp.n} de ${fp.t} lecciones`
           ]} />
         <SectionCard to="/digital" icon={<Smartphone />} tone="violet" title="Mundo digital" ring={dp.t ? dp.n / dp.t : 0}
-          lines={[d.md.diag.done ? `${dp.n} de ${dp.t} lecciones` : 'Encuesta de 3 minutos', 'WhatsApp · Inteligencia artificial', 'Pagos con el celular']} />
-      </Item>
-
-      <Item>
-        <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} onClick={() => nav('/escudo/analizador')}
-          className="w-full text-left flex items-center gap-4 rounded-xl2 p-5 bg-ambersoft border border-amber/25">
-          <span className="grid place-items-center size-12 rounded-2xl bg-amber text-white shrink-0 [&_svg]:size-6"><ScanSearch /></span>
-          <span className="flex-1 min-w-0"><b className="block font-head font-normal text-[1.15rem]">¿Te llegó un mensaje raro?</b><span className="text-[.9rem] text-muted">Pegalo en el analizador y mirá qué señales de alerta tiene.</span></span>
-          <ChevronRight className="size-5 text-muted" />
-        </motion.button>
+          lines={[d.md.diag.done ? `${dp.n} de ${dp.t} lecciones` : 'Encuesta de 3 minutos', 'WhatsApp · Inteligencia artificial · Google', 'Redes sociales · Crear con el celular', 'Escudo antiestafas']} />
       </Item>
 
       {steps.length > 1 && (
         <Item className="flex flex-col gap-2.5">
           <h2 className="text-[1.3rem]">También te sugerimos</h2>
           {steps.slice(1, 4).map((s) => (
-            <motion.button key={s.go + s.t} whileHover={{ x: 3 }} onClick={() => nav(s.go)} className="flex items-center gap-3 text-left rounded-2xl bg-surface border border-line px-4 py-3.5">
+            <motion.button key={s.go + s.t} whileHover={{ x: 3 }} onClick={() => nav(s.go)} className="flex items-center gap-3 text-left rounded-xl bg-surface border border-line px-4 py-3.5">
               <span className="flex-1 min-w-0"><span className="text-[.78rem] font-bold text-accent">{s.tag}</span><span className="block font-bold leading-snug">{s.t}</span></span>
               <ChevronRight className="size-5 text-muted shrink-0" />
             </motion.button>
@@ -84,7 +77,6 @@ export default function Home() {
 
       <Item className="flex flex-wrap gap-3">
         <Button variant="ghost" icon={<FileText />} to="/resumen">Mi resumen</Button>
-        <Button variant="ghost" icon={<ShieldCheck />} to="/escudo/simulador">Practicar estafas</Button>
         <Button variant="ghost" icon={<Settings />} to="/ajustes">Ajustes</Button>
       </Item>
       <Item><p className="text-[.8rem] text-muted border-t border-line pt-4">{LEGAL}</p></Item>
@@ -99,7 +91,7 @@ function SectionCard({ to, icon, tone, title, lines, ring }: { to: string; icon:
     <motion.button whileHover={{ y: -3 }} whileTap={{ scale: 0.985 }} transition={{ type: 'spring', stiffness: 400, damping: 28 }} onClick={() => nav(to)}
       className="text-left rounded-xl2 bg-surface border border-line shadow-card p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <span className={cx('grid place-items-center size-12 rounded-2xl [&_svg]:size-6', t)}>{icon}</span>
+        <span className={cx('grid place-items-center size-12 rounded-xl [&_svg]:size-6', t)}>{icon}</span>
         <Ring value={Math.round(ring * 100)} size={52} stroke={6} tone={tone === 'mint' ? 'accent' : 'sky'}>{Math.round(ring * 100)}%</Ring>
       </div>
       <div>

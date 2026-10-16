@@ -20,7 +20,7 @@ export default function Simulador() {
   const ok = Object.values(d.escudo.vistos).filter((x) => x === 'ok').length;
   if (end) return (
     <div className="flex flex-col gap-5">
-      <PageHeader back={{ to: '/escudo', label: 'Escudo' }} title="Resultado" />
+      <PageHeader back={{ to: '/digital/escudo', label: 'Escudo antiestafas' }} title="Resultado" />
       <Card className="relative flex flex-col items-center gap-3 text-center py-8 overflow-visible">
         <Celebrate show={ok >= 7} />
         <Ring value={ok} max={ESCENARIOS.length} size={110} stroke={10}><span className="flex flex-col items-center"><Trophy className="size-7 text-accent" /><span className="text-[1rem]">{ok}/{ESCENARIOS.length}</span></span></Ring>
@@ -29,14 +29,14 @@ export default function Simulador() {
       </Card>
       <div className="flex flex-wrap gap-3">
         <Button icon={<RotateCcw />} onClick={() => { mut((x) => { x.escudo.vistos = {}; }); setI(0); setPick(null); setEnd(false); }}>Practicar de nuevo</Button>
-        <Button variant="ghost" to="/escudo/analizador">Analizar un mensaje real</Button>
+        <Button variant="ghost" to="/digital/escudo/analizador">Analizar un mensaje real</Button>
       </div>
     </div>
   );
   const c = CANAL[e.canal];
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader back={{ to: '/escudo', label: 'Escudo' }} title="Simulador de estafas" />
+      <PageHeader back={{ to: '/digital/escudo', label: 'Escudo antiestafas' }} title="Simulador de estafas" />
       <div className="flex flex-col gap-2">
         <div className="flex justify-between text-[.85rem] text-muted"><span>Situación {i + 1} de {ESCENARIOS.length}</span><span>{ok} detectadas</span></div>
         <div className="flex gap-1">{ESCENARIOS.map((x, k) => <span key={x.id} className={cx('h-2 flex-1 rounded-full', d.escudo.vistos[x.id] === 'ok' ? 'bg-accent' : d.escudo.vistos[x.id] === 'mal' ? 'bg-bad' : k === i ? 'bg-ink/40' : 'bg-line')} />)}</div>
@@ -48,7 +48,7 @@ export default function Simulador() {
               <span className={cx('grid place-items-center size-11 rounded-xl [&_svg]:size-5', c[2])}>{c[1]}</span>
               <div><b className="block text-[.95rem]">{c[0]}</b><span className="text-[.82rem] text-muted">{e.de}</span></div>
             </div>
-            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className={cx('rounded-2xl px-4 py-3 text-[1.04rem] leading-relaxed', e.canal === 'llamada' ? 'bg-sunk italic' : 'bg-sunk rounded-tl-md')}>{e.msg}</motion.div>
+            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className={cx('rounded-xl px-4 py-3 text-[1.04rem] leading-relaxed', e.canal === 'llamada' ? 'bg-sunk italic' : 'bg-sunk rounded-tl-md')}>{e.msg}</motion.div>
           </Card>
           <h2 className="text-[1.3rem]">¿Qué hacés?</h2>
           <div className="flex flex-col gap-2.5">
@@ -58,7 +58,7 @@ export default function Simulador() {
                 <motion.button key={o.t} whileTap={{ scale: 0.985 }} disabled={pick != null}
                   onClick={() => { setPick(k); mut((x) => { x.escudo.vistos[e.id] = o.ok ? 'ok' : 'mal'; }); }}
                   animate={pick != null && picked && !o.ok ? { x: [0, -6, 6, -4, 4, 0] } : {}}
-                  className={cx('flex items-center gap-3 text-left min-h-[3.8rem] px-4 py-3 rounded-2xl border-2 font-bold',
+                  className={cx('flex items-center gap-3 text-left min-h-[3.8rem] px-4 py-3 rounded-xl border-2 font-bold',
                     pick == null ? 'border-line bg-surface hover:border-ink/25' : o.ok ? 'border-accent bg-mint' : picked ? 'border-bad bg-badsoft' : 'border-line bg-surface opacity-60')}>
                   <span className="flex-1">{o.t}</span>{pick != null && o.ok && <Check className="size-5 text-accent" />}{pick != null && picked && !o.ok && <X className="size-5 text-bad" />}
                 </motion.button>

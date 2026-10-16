@@ -1,5 +1,5 @@
 import type { Data } from '../../store';
-import { MODULES, RETOS, SETUP, type Module } from '../../content/digital';
+import { MODULES, FIN_MODULES, RETOS, SETUP, type Module } from '../../content/learn';
 import { detectOS } from '../../lib/device';
 
 export const userOS = (d: Data) => d.md.diag.os || detectOS() || 'android';
@@ -8,7 +8,12 @@ export function modProg(d: Data, m: Module) { const n = m.lessons.filter((l) => 
 export function setupProg(d: Data) { return { n: SETUP.filter((s) => d.md.setup[s.id]).length, t: SETUP.length }; }
 export function digitalProg(d: Data) {
   let n = 0, t = 0;
-  MODULES.filter((m) => m.lessons.length).forEach((m) => { const p = modProg(d, m); n += p.n; t += p.t; });
+  MODULES.forEach((m) => { const p = modProg(d, m); n += p.n; t += p.t; });
+  return { n, t };
+}
+export function finModProg(d: Data) {
+  let n = 0, t = 0;
+  FIN_MODULES.forEach((m) => { const p = modProg(d, m); n += p.n; t += p.t; });
   return { n, t };
 }
 
@@ -23,17 +28,22 @@ export function startLevel(d: Data, modId: string): 'basico' | 'intermedio' {
 /* Ruta: módulos disponibles ordenados según metas, miedos, nivel y desafíos */
 export function ruta(d: Data) {
   const g = d.md.diag;
-  const avail = MODULES.filter((m) => m.lessons.length);
+  const avail = MODULES;
   const score: Record<string, number> = {};
   const why: Record<string, string> = {};
   avail.forEach((m) => { score[m.id] = 0; });
   const bump = (id: string, n: number, w?: string) => { if (id in score) { score[id] += n; if (w && !why[id]) why[id] = w; } };
   if (g.metas.includes('familia')) bump('wa', 3, 'Querés hablar más con tu familia');
   if (g.metas.includes('ia') || g.metas.includes('aprender')) bump('ia', 3, 'Querés usar la inteligencia artificial');
-  if (g.metas.includes('pagos')) bump('pay', 3, 'Querés pagar y comprar sin miedo');
-  if (g.metas.includes('proteger')) { bump('pay', 1); bump('wa', 1); }
-  if (g.miedos.includes('estafas') || g.miedos.includes('plata')) bump('pay', 2, 'Te preocupan las estafas con plata');
+  if (g.metas.includes('fotos')) bump('google', 3, 'Querés cuidar tus fotos');
+  if (g.metas.includes('moverme')) bump('google', 2, 'Querés moverte y viajar con el celular');
+  if (g.metas.includes('redes')) bump('redes', 3, 'Querés usar mejor las redes');
+  if (g.metas.includes('crear')) bump('crear', 3, 'Querés crear tarjetas y videos');
+  if (g.metas.includes('proteger')) { bump('wa', 1); bump('redes', 1); }
   if (g.miedos.includes('cuentas')) bump('wa', 2, 'Te preocupa que te roben las cuentas');
+  if (g.miedos.includes('fotos')) bump('google', 2, 'Te preocupa perder tus fotos');
+  if (g.miedos.includes('privacidad')) bump('redes', 2, 'Te preocupa que desconocidos vean tus datos');
+  if (g.miedos.includes('estafas')) { bump('wa', 1); bump('redes', 1, 'Te preocupan las estafas'); }
   avail.forEach((m) => {
     const lv = g.nivel[m.id];
     if (lv === 'cuesta') bump(m.id, 1, 'Es un tema que te cuesta');

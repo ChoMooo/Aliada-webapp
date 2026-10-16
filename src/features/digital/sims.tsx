@@ -175,7 +175,7 @@ function PayQr({ onDone, done }: SimProps) {
             </motion.div>}
             {st === 'confirm' && <motion.div key="c" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-3">
               <span className="text-[.85rem] text-muted">Vas a pagar a</span><b className="text-[1.2rem]">Kiosco Don Pepe</b>
-              <div className="font-head text-[2.4rem]">$ 2.350</div>
+              <div className="font-head font-semibold text-[2.4rem]">$ 2.350</div>
               <p className="text-[.85rem] text-muted">Revisá el comercio y el monto antes de confirmar.</p>
               <Button block onClick={() => { setSt('ok'); onDone(); }}>Pagar</Button>
               <Button block variant="ghost" onClick={() => setSt('cancel')}>Cancelar</Button>
@@ -210,7 +210,7 @@ function PayTransfer({ onDone, done }: SimProps) {
             {st === 'confirm' && <motion.div key="c" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-3">
               <span className="text-[.85rem] text-muted">Vas a transferir a</span>
               <b className="text-[1.25rem]">{titular}</b><span className="text-[.82rem] text-muted">Alias: {alias}</span>
-              <div className="font-head text-[2.2rem]">{money(pn(monto))}</div>
+              <div className="font-head font-semibold text-[2.2rem]">{money(pn(monto))}</div>
               <Button block onClick={() => { if (ok && pn(monto) === 15000) { setSt('ok'); onDone(); } else setSt('bad'); }}>Confirmar transferencia</Button>
               <Button block variant="ghost" onClick={() => setSt('form')}>Cancelar y revisar</Button>
             </motion.div>}

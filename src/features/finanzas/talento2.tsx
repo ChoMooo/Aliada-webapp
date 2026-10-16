@@ -109,7 +109,7 @@ export function Precio() {
       {!r.ok ? <Note tone="warn">{warn.map((x) => <div key={x}>{x}</div>)}</Note> : (<>
         <Hero>
           <div className="text-glow font-bold text-[.85rem]">Precio inicial orientativo por servicio</div>
-          <div className="font-head text-[3.2rem] leading-none text-glow mt-2"><CountUp value={r.redo} format={money} /></div>
+          <div className="font-head font-semibold text-[3.2rem] leading-none text-glow mt-2"><CountUp value={r.redo} format={money} /></div>
           <p className="opacity-85 mt-2">Cálculo exacto: {money(r.precio)}, redondeado hacia arriba a múltiplos de $ 50. Es un punto de partida para probar, no un precio “correcto”.</p>
         </Hero>
         <Card>

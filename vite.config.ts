@@ -35,7 +35,8 @@ export default defineConfig(({ mode }) => {
             workbox: {
               globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
               runtimeCaching: [
-                { urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i, handler: 'CacheFirst', options: { cacheName: 'fonts', expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 } } }
+                { urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i, handler: 'CacheFirst', options: { cacheName: 'fonts', expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 } } },
+                { urlPattern: /\/audio\/[0-9a-f]+\.mp3$/i, handler: 'CacheFirst', options: { cacheName: 'audio', rangeRequests: true, expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 365 } } }
               ]
             }
           })

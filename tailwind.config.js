@@ -11,12 +11,12 @@ export default {
         warn: v('warn'), warnink: v('warnink'), bad: v('bad'), badsoft: v('badsoft'), violet: v('violet'), violetsoft: v('violetsoft')
       },
       fontFamily: {
-        head: ['"Young Serif"', 'Georgia', 'serif'],
-        body: ['"Atkinson Hyperlegible"', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+        head: ['"Instrument Sans"', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        body: ['"Public Sans"', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
       },
-      borderRadius: { xl2: '1.25rem', xl3: '1.75rem' },
+      borderRadius: { xl2: '0.875rem', xl3: '1.125rem' },
       boxShadow: {
-        card: '0 1px 2px rgb(var(--shadow) / .06), 0 8px 24px -8px rgb(var(--shadow) / .12)',
+        card: '0 1px 2px rgb(var(--shadow) / .05), 0 4px 14px -6px rgb(var(--shadow) / .10)',
         lift: '0 2px 4px rgb(var(--shadow) / .08), 0 18px 40px -12px rgb(var(--shadow) / .22)'
       }
     }

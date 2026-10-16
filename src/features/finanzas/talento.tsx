@@ -85,7 +85,7 @@ export function Perfil() {
         <Field label="Esfuerzo físico"><Chips options={[['0', 'Poco'], ['1', 'Moderado'], ['2', 'Puedo hacer trabajos pesados']]} value={P.fis} onChange={set('fis')} /></Field>
       </Sec>
       <motion.div layout className="sticky bottom-[5.6rem] lg:bottom-4 z-20">
-        <div className="rounded-2xl bg-ink text-bg p-4 shadow-lift flex flex-wrap items-center gap-3 justify-between">
+        <div className="rounded-xl bg-ink text-bg p-4 shadow-lift flex flex-wrap items-center gap-3 justify-between">
           <span className="text-[.95rem]">{perfilVacio(d) ? 'Todavía no respondiste nada.' : <><b className="text-glow text-[1.2rem]">{n}</b> oportunidades relacionadas</>}</span>
           <Button variant="glow" size="sm" iconRight={<ArrowRight />} onClick={() => { mut((x) => { x.ta.done = true; }); nav('/finanzas/talento/ideas'); }}>Ver mis oportunidades</Button>
         </div>
@@ -192,7 +192,7 @@ export function Comparar() {
       <PageHeader back={{ to: '/finanzas/talento/ideas', label: 'Mis oportunidades' }} title="Comparar oportunidades" lead="Mirá en qué se diferencian antes de elegir." />
       <Card pad={false} className="scroll-x">
         <table className="w-full min-w-[38rem] text-[.92rem]">
-          <thead><tr><th className="sticky left-0 bg-surface" />{ev.map((x) => <th key={x.o.id} className="text-left align-top p-4 min-w-[11rem]"><button className="font-head font-normal text-[1.05rem] text-left hover:underline" onClick={() => nav('/finanzas/talento/op/' + x.o.id)}>{x.o.n}</button></th>)}</tr></thead>
+          <thead><tr><th className="sticky left-0 bg-surface" />{ev.map((x) => <th key={x.o.id} className="text-left align-top p-4 min-w-[11rem]"><button className="font-head font-semibold text-[1.05rem] text-left hover:underline" onClick={() => nav('/finanzas/talento/op/' + x.o.id)}>{x.o.n}</button></th>)}</tr></thead>
           <tbody>
             {rows.map(([t, f]) => <tr key={t} className="border-t border-line"><th scope="row" className="sticky left-0 bg-surface text-left align-top p-4 text-muted font-bold text-[.85rem] w-32">{t}</th>{ev.map((x) => <td key={x.o.id} className="align-top p-4">{f(x)}</td>)}</tr>)}
             <tr className="border-t border-line"><th className="sticky left-0 bg-surface" />{ev.map((x) => <td key={x.o.id} className="p-4"><div className="flex flex-col gap-2">
