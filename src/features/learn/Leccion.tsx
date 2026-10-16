@@ -136,7 +136,7 @@ export default function Leccion() {
       </AnimatePresence>
 
       {sec !== 'fin' && (
-        <div className="sticky bottom-[5.2rem] lg:bottom-0 z-20 flex gap-3 -mx-4 px-4 pt-6 pb-3 bg-gradient-to-t from-bg via-bg/95 to-transparent">
+        <div className={cx('z-20 flex gap-3 -mx-4 px-4 pt-6 pb-3', sec === 'video' ? 'relative' : 'sticky bottom-[5.2rem] lg:bottom-0 bg-gradient-to-t from-bg via-bg/95 to-transparent')}>
           {k > 0 && <Button variant="ghost" icon={<ArrowLeft />} onClick={() => { if (sec === 'quiz' && qi > 0) setQi(qi - 1); else go(k - 1); }}>Atrás</Button>}
           <Button className="flex-1 shadow-lift" disabled={!canNext} iconRight={<ArrowRight />} onClick={() => go(k + 1)}>
             {sec === 'quiz' ? 'Terminar' : sec === 'practica' && !simDone && !st.done ? 'Seguir sin practicar' : 'Siguiente'}

@@ -15,7 +15,7 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
   const [muted, setMuted] = useState(false);
   const [noAudio, setNoAudio] = useState(false);
   const [t, setT] = useState(0);
-  const [pw] = useState(() => (typeof window !== 'undefined' && window.innerWidth < 520 ? 224 : 262));
+  const [pw] = useState(() => (typeof window !== 'undefined' && window.innerWidth < 520 ? 214 : 250));
   const audio = useRef<HTMLAudioElement | null>(null);
   const timer = useRef<any>(null);
   const marks = e?.m || [];
@@ -44,8 +44,8 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
   const go = (k: number) => { seek(Math.max(0, Math.min(frames.length - 1, k))); setStarted(true); };
   const ended = !playing && t >= total - 0.05 && started;
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative">
+    <div className="flex flex-col md:flex-row md:items-center items-center gap-4 md:gap-8">
+      <div className="relative shrink-0">
         <PhoneScreen frame={frames[i]} width={pw} />
         <AnimatePresence>{!started && (
           <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={play}
@@ -54,7 +54,7 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
           </motion.button>)}
         </AnimatePresence>
       </div>
-      <div className="w-full max-w-[24rem] flex flex-col gap-3">
+      <div className="w-full max-w-[24rem] flex flex-col gap-3 md:self-center">
         <div className="flex gap-1" aria-hidden>
           {frames.map((_, k) => {
             const s = startOf(k), d = durOf(k), p = Math.max(0, Math.min(1, (t - s) / d));

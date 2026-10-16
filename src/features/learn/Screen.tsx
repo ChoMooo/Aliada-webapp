@@ -281,7 +281,7 @@ export function PhoneScreen({ frame, width = 280, animateFinger = true, classNam
     <div className={cx('relative shrink-0', className)} style={{ width, height: 580 * scale }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: 280, height: 580, transform: `scale(${scale})` }}>
         <div className="w-[280px] h-[580px] rounded-[34px] bg-[#0f1714] p-[9px] shadow-[0_18px_40px_-14px_rgba(0,0,0,.45)]">
-          <div ref={ref} className="relative w-full h-full rounded-[26px] overflow-hidden bg-white flex flex-col font-body">
+          <div ref={ref} className="relative w-full h-full rounded-[26px] overflow-hidden bg-white text-[#13201b] [color-scheme:light] flex flex-col font-body">
             <div className="flex items-center justify-between px-5 h-6 text-[9.5px] font-semibold text-[#13201b] bg-white shrink-0"><span>9:41</span><span className="w-14 h-3.5 rounded-full bg-[#0f1714]" /><span>100%</span></div>
             <div className="flex-1 flex flex-col min-h-0"><Body s={frame.s} /></div>
             {pt && (
