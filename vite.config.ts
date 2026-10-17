@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
             manifest: {
               name: 'Aliada Digital',
               short_name: 'Aliada',
-              description: 'Tu plata, tus trámites y el mundo digital, para jubilarte con calma.',
+              description: 'Tu plata, tus inversiones y el mundo digital, a tu ritmo y con calma.',
               lang: 'es-AR',
               start_url: './',
               scope: './',

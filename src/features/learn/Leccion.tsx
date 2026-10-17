@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, X, Copy, Share2, Trophy, Lightbulb, Wrench, HelpCircle, Hand, ListChecks, Flag, PlayCircle } from 'lucide-react';
 import { useStore, mut } from '../../store';
-import { BackLink, Card, Button, Chips, Note, CheckRow, ListenButton, Bullets, Celebrate, Ring, ease, cx, Tag } from '../../ui';
+import { BackLink, Card, Button, Chips, Note, CheckRow, ListenButton, Bullets, Celebrate, Ring, ease, cx, Tag, Mascot } from '../../ui';
 import { MOD, modPath } from '../../content/learn';
 import { N } from '../../lib/narration';
 import { DemoPlayer, VisualGuide } from './Demo';
@@ -113,9 +113,12 @@ export default function Leccion() {
           {sec === 'fin' && (<>
             <Card className="relative flex flex-col items-center text-center gap-3 py-8 overflow-visible">
               <Celebrate show />
-              <motion.div initial={{ scale: 0.6, rotate: -15 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 220, damping: 12 }}>
-                <Ring value={score} max={l.quiz.length || 1} size={96} stroke={9}><Trophy className="size-8 text-accent" /></Ring>
-              </motion.div>
+              <div className="flex items-end gap-4">
+                <Mascot pose="wave" gesture="hop" size={84} />
+                <motion.div initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 14 }}>
+                  <Ring value={score} max={l.quiz.length || 1} size={84} stroke={8}><Trophy className="size-7 text-accent" /></Ring>
+                </motion.div>
+              </div>
               <h2 className="text-[1.6rem]">¡Lección completada!</h2>
               <p className="text-muted">Desafío: {score} de {l.quiz.length} respuestas correctas.</p>
             </Card>

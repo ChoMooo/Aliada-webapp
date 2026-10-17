@@ -1,0 +1,34 @@
+/* Página interna para revisar todas las pantallas (no aparece en el menú) */
+import React from 'react';
+import { PhoneScreen, type Screen } from './Screen';
+import { WA_CHATS } from './screens/social';
+
+const L: [string, Screen][] = [
+  ['phone', { app: 'phone', hl: 'YouTube' }], ['store', { app: 'phone', v: 'store', q: 'ChatGPT', dev: 'OpenAI', hl: 'install0' }], ['camera', { app: 'phone', v: 'camera', hl: 'shot' }],
+  ['wa chats', { app: 'wa', hl: 'c0' }], ['wa sel', { app: 'wa', sel: 3, hl: 'pin' }], ['wa chat', { app: 'wa', v: 'chat', msgs: [{ t: '¿Cómo te fue en el médico?' }, { me: true, audio: true }, { t: 'Contame' }], hl: 'mic' }],
+  ['wa rec', { app: 'wa', v: 'chat', msgs: [{ t: 'Hola' }], rec: true, hl: 'lock' }], ['wa attach', { app: 'wa', v: 'attach', msgs: [{ t: 'Hola' }], hl: 'o4' }], ['wa call', { app: 'wa', v: 'call', hl: 'end' }],
+  ['wa list', { app: 'wa', v: 'list', title: 'Ajustes', profile: true, items: [{ t: 'Cuenta', i: 'key' }, { t: 'Privacidad', i: 'lock' }, { t: 'Chats', i: 'comment' }], hl: 'r1' }], ['wa status', { app: 'wa', v: 'status', hl: 'mine' }],
+  ['yt home', { app: 'yt', hl: 'search' }], ['yt search', { app: 'yt', v: 'search', q: 'gimnasia en silla', sugg: ['gimnasia en silla para mayores', 'gimnasia en silla 15 minutos'], kb: true, hl: 's0' }], ['yt watch', { app: 'yt', v: 'watch', hl: 'sub' }],
+  ['yt gear', { app: 'yt', v: 'gear', hl: 'o2' }], ['yt subs', { app: 'yt', v: 'subs', hl: 'ch0' }],
+  ['fb feed', { app: 'fb', hl: 'think' }], ['fb compose', { app: 'fb', v: 'compose', text: '¡Qué lindo día en el club!', photo: 4, hl: 'aud' }], ['fb aud', { app: 'fb', v: 'audience', hl: 'o1' }], ['fb menu', { app: 'fb', v: 'menu', items: [{ t: 'Configuración y privacidad', i: 'settings' }], hl: 'r0' }], ['fb groups', { app: 'fb', v: 'groups', hl: 'join0' }], ['fb market', { app: 'fb', v: 'market', hl: 'it0' }],
+  ['ig feed', { app: 'ig', hl: 'st0' }], ['ig profile', { app: 'ig', v: 'profile', hl: 'menu' }], ['ig new', { app: 'ig', v: 'new', sel: [0], hl: 'next' }], ['ig story', { app: 'ig', v: 'story', hl: 'reply' }], ['ig privacy', { app: 'ig', v: 'privacy', on: true, hl: 'priv' }],
+  ['tt', { app: 'tt', hl: 'save' }], ['tt menu', { app: 'tt', v: 'menu', hl: 'o0' }],
+  ['maps', { app: 'maps', hl: 'search' }], ['maps place', { app: 'maps', v: 'place', hl: 'dir' }], ['maps route', { app: 'maps', v: 'route', mode: 'bus', hl: 'bus' }], ['maps transit', { app: 'maps', v: 'route', mode: 'bus', transit: true, hl: 'opt0' }], ['maps nav', { app: 'maps', v: 'nav', hl: 'exit' }], ['maps share', { app: 'maps', v: 'share', pick: 0, hl: 'ok' }], ['maps saved', { app: 'maps', v: 'saved', hl: 'l0' }], ['maps results', { app: 'maps', q: 'farmacias', results: [{ t: 'Farmacia Central', r: '4,6', d: '400 m' }, { t: 'Farmacia del Sol', r: '4,4', d: '650 m', o: 'Cierra a las 21' }], hl: 'res0' }],
+  ['photos', { app: 'photos', hl: 'avatar', off: true }], ['photos acct', { app: 'photos', v: 'account', hl: 'o0' }], ['photo view', { app: 'photos', v: 'photo', hl: 'edit' }], ['photo edit', { app: 'photos', v: 'edit', tool: 0, hl: 'opt0', dark: true }], ['photos search', { app: 'photos', v: 'search', hl: 'q' }], ['album', { app: 'photos', v: 'album', hl: 'invite' }],
+  ['drive', { app: 'drive', hl: 'new' }], ['drive new', { app: 'drive', v: 'new', hl: 'o2' }], ['drive scan', { app: 'drive', v: 'scan', hl: 'shot' }], ['drive save', { app: 'drive', v: 'save', name: 'Receta presión', hl: 'name' }],
+  ['translate', { app: 'translate', hl: 'conv' }], ['translate res', { app: 'translate', text: '¿Dónde queda la farmacia?', result: 'Where is the pharmacy?', hl: 'speak' }], ['conv', { app: 'translate', v: 'conv', listening: 'a', hl: 'micA' }], ['tcam', { app: 'translate', v: 'camera' }],
+  ['google', { app: 'google', hl: 'lens' }], ['lens', { app: 'google', v: 'lens', results: 'Lavanda (Lavandula)', hl: 'r1' }], ['calendar', { app: 'calendar', hl: 'fab' }], ['cal new', { app: 'calendar', v: 'new', title: 'Turno Dr. López', hl: 'save' }],
+  ['ai', { app: 'ai', hl: 'in' }], ['ai conv', { app: 'ai', msgs: [{ me: true, t: 'Explicame qué es la inflación' }, { t: '**Inflación**\nEs cuando los precios suben de manera general…' }], hl: 'read1' }], ['gemini', { app: 'ai', name: 'Gemini', hl: 'mic' }], ['claude', { app: 'ai', name: 'Claude', typing: 'Hola', kb: true, hl: 'send' }], ['ai voice', { app: 'ai', v: 'voice', said: 'Quiero organizar un viaje' }],
+  ['wallet', { app: 'wallet', hl: 'qr' }], ['scan', { app: 'wallet', v: 'scan', hl: 'code' }], ['pay', { app: 'wallet', v: 'pay', hl: 'shop' }], ['done', { app: 'wallet', v: 'done', hl: 'receipt' }], ['to', { app: 'wallet', v: 'to', alias: 'lucia.fer.rio', hl: 'next' }], ['who', { app: 'wallet', v: 'who', hl: 'name' }], ['cvu', { app: 'wallet', v: 'cvu', hl: 'share' }], ['services', { app: 'wallet', v: 'services', hl: 'sv0' }],
+  ['ml', { app: 'ml', hl: 'search' }], ['ml res', { app: 'ml', v: 'results', q: 'pava eléctrica', hl: 'p0' }], ['ml product', { app: 'ml', v: 'product', hl: 'seller' }], ['ml checkout', { app: 'ml', v: 'checkout', hl: 'ok' }], ['ml orders', { app: 'ml', v: 'orders', hl: 'track' }],
+  ['broker', { app: 'broker', hl: 'deposit' }], ['market', { app: 'broker', v: 'market', cat: 1, hl: 't1' }], ['asset', { app: 'broker', v: 'asset', hl: 'buy' }], ['order', { app: 'broker', v: 'order', hl: 'term' }], ['signup', { app: 'broker', v: 'signup', step: 3, pick: 1, hl: 'next' }], ['pf', { app: 'broker', v: 'pf', hl: 'days' }], ['mep', { app: 'broker', v: 'mep', hl: 'amt' }], ['fci', { app: 'broker', v: 'fci', hl: 'f0' }],
+  ['crypto', { app: 'crypto', hl: 'buy' }], ['crypto sec', { app: 'crypto', v: 'security', hl: 'r0' }],
+  ['canva', { app: 'canva', hl: 'search' }], ['canva tpl', { app: 'canva', v: 'templates', hl: 't0' }], ['canva ed', { app: 'canva', v: 'editor', sel: 'title', photo: 3, hl: 'color' }], ['canva share', { app: 'canva', v: 'share', hl: 'o1' }],
+  ['capcut', { app: 'capcut', hl: 'new' }], ['cc pick', { app: 'capcut', v: 'pick', sel: [0, 2, 4], hl: 'add' }], ['cc ed', { app: 'capcut', v: 'editor', music: true, text: 'Mendoza 2026', hl: 'export' }],
+  ['settings', { app: 'settings', hl: 'pantalla' }], ['set list', { app: 'settings', v: 'list', title: 'Pantalla', items: [{ t: 'Modo oscuro', tg: true }, { t: 'Tamaño y estilo de fuente', s: 'Grande', blue: true }, { t: 'Tamaño', slider: 70 }], preview: 15, hl: 'r1' }],
+  ['dialog', { app: 'ai', dialog: { title: '¿Permitir que la app grabe audio?', icon: 'mic' }, hl: 'ok' }]
+];
+export default function Gallery() {
+  return <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-4 bg-white">{L.map(([n, s], i) => <div key={i} className="flex flex-col items-center gap-1"><PhoneScreen frame={{ s, cap: n }} width={240} animateFinger={false} /><span className="text-xs">{n}</span></div>)}</div>;
+}
+void WA_CHATS;

@@ -8,6 +8,7 @@ import { isIOS, isStandalone } from '../lib/device';
 import { LEGAL } from '../config';
 import { CONTENIDO_VERSION } from '../content/finanzas';
 import { CONTENIDO_DIGITAL } from '../content/digital';
+import { ETAPAS, SEXOS } from './Welcome';
 import { fdate } from '../lib/format';
 
 let deferred: any = null;
@@ -45,8 +46,9 @@ export default function Settings() {
         <h2 className="text-[1.3rem]">Tu perfil</h2>
         <Field label="Tu nombre" htmlFor="n2"><TextInput id="n2" value={d.perfil.nombre} onChange={(v) => mut((x) => { x.perfil.nombre = v; })} /></Field>
         <Field label="Tu momento">
-          <Choices options={[{ k: 'falta', t: 'Todavía me falta para jubilarme' }, { k: 'tramitando', t: 'Estoy haciendo el trámite' }, { k: 'jubilado', t: 'Ya cobro la jubilación' }]} value={d.perfil.etapa} onChange={(v) => mut((x) => { x.perfil.etapa = v; })} />
+          <Choices options={ETAPAS} value={d.perfil.etapa} onChange={(v) => mut((x) => { x.perfil.etapa = v; })} />
         </Field>
+        <Field label="¿Cómo te identificás?" hint="Si elegís “Mujer”, aparece la sección Mi nueva versión."><Chips options={SEXOS} value={d.perfil.sexo} onChange={(v) => mut((x) => { x.perfil.sexo = v; })} /></Field>
       </Card>
       <Card className="flex flex-col gap-4">
         <h2 className="text-[1.3rem]">Tus datos</h2>
@@ -86,9 +88,9 @@ export default function Settings() {
       </Card>
       <Card tone="sunk" className="flex flex-col gap-2">
         <h3 className="text-[1.1rem]">Acerca de</h3>
-        <p className="text-[.85rem] text-muted">Aliada Digital 2.0 · Trámites verificados el {fdate(CONTENIDO_VERSION)} · Mundo digital: contenido del {fdate(CONTENIDO_DIGITAL.fecha)}.</p>
+        <p className="text-[.85rem] text-muted">Aliada Digital 2.1 · Trámites verificados el {fdate(CONTENIDO_VERSION)} · Mundo digital: contenido del {fdate(CONTENIDO_DIGITAL.fecha)}.</p>
         <p className="text-[.85rem] text-muted">{LEGAL}</p>
-        <p className="text-[.85rem] text-muted">Voz de las narraciones: generada con la voz sintética «Daniela» (Piper, español de Argentina), entrenada con el corpus de habla argentina de Google publicado en OpenSLR (recurso 61) bajo licencia CC BY-SA 4.0. Los audios de la app se distribuyen bajo la misma licencia. Las pantallas de los videos son ilustraciones propias y no reproducen el diseño oficial de cada aplicación; los nombres de las apps pertenecen a sus respectivos dueños.</p>
+        <p className="text-[.85rem] text-muted">Voz de las narraciones: generada con la voz sintética «em_alex» del modelo Kokoro v1.0 (licencia Apache 2.0). Las pantallas de los videos son ilustraciones propias que reproducen la disposición de cada app, sin sus logos; los nombres de las apps pertenecen a sus respectivos dueños.</p>
       </Card>
     </div>
   );

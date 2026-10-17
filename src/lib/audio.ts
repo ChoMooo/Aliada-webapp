@@ -8,18 +8,21 @@ export const norm = (t: string) => t.replace(/\s+/g, ' ').trim();
 /* Versión "para decir en voz alta" de un texto de pantalla */
 export function speechify(t: string) {
   return norm(t)
-    .replace(/\s*→\s*/g, ', después ')
+    .replace(/\s*→\s*/g, ', después, ')
     .replace(/[“”«»"]/g, '')
-    .replace(/\$\s?([\d.]+(?:,\d+)?)/g, '$1 pesos')
+    .replace(/US\$\s?([\d.]+(?:,\d+)?)/g, '$1 dólares').replace(/\$\s?([\d.]+(?:,\d+)?)/g, '$1 pesos')
+    .replace(/(\d+(?:,\d+)?)\s?%/g, '$1 por ciento')
     .replace(/(\d),(\d)x\b/g, '$1 coma $2 equis').replace(/\b(\d)x\b/g, '$1 equis')
-    .replace(/\bGB\b/g, 'gigas').replace(/\bMB\b/g, 'megas')
-    .replace(/\bCVU\b/g, 'ce ve u').replace(/\bCBU\b/g, 'ce be u').replace(/\bDNI\b/g, 'de ene i').replace(/\bPIN\b/g, 'pin')
-    .replace(/\bQR\b/g, 'cu erre').replace(/\bIA\b/g, 'i a').replace(/\bPDF\b/g, 'pe de efe').replace(/\bPNG\b/g, 'pe ene ge')
-    .replace(/\bANSES\b/g, 'Anses').replace(/\bPAMI\b/g, 'Pami').replace(/\biPhone\b/g, 'aifon').replace(/\bwifi\b/gi, 'uaifai')
-    .replace(/\bWhatsApp\b/g, 'Guasap').replace(/\bYouTube\b/g, 'Iutiub').replace(/\bGoogle\b/g, 'Gúgol').replace(/\bChatGPT\b/g, 'Chat yi pi ti')
-    .replace(/\bMaps\b/g, 'Maps').replace(/\bDrive\b/g, 'Draiv').replace(/\bCanva\b/g, 'Canva').replace(/\bCapCut\b/g, 'Cap cat')
-    .replace(/\bTikTok\b/g, 'Tik tok').replace(/\bInstagram\b/g, 'Instagram').replace(/\bFacebook\b/g, 'Feisbuk').replace(/\bShorts\b/g, 'Shorts')
-    .replace(/[❤️💛🙂😓⚠️👑✓◉★☆♡▶⇄·]/gu, ' ').replace(/\s+/g, ' ').trim();
+    .replace(/\b(\d+)\s?hs\b/g, '$1 horas').replace(/\bGB\b/g, 'gigas').replace(/\bMB\b/g, 'megas').replace(/\bkB\b/g, 'kilobytes')
+    .replace(/\bCVU\b/g, 'ce ve u').replace(/\bCBU\b/g, 'ce be u').replace(/\bDNI\b/g, 'de ene i').replace(/\bPIN\b/g, 'pin').replace(/\bSMS\b/g, 'ese eme ese')
+    .replace(/\bQR\b/g, 'cu erre').replace(/\bIA\b/g, 'i a').replace(/\bPDF\b/g, 'pe de efe').replace(/\bPNG\b/g, 'pe ene ge').replace(/\bHD\b/g, 'hache de')
+    .replace(/\bCNV\b/g, 'ce ene ve').replace(/\bBYMA\b/g, 'Bima').replace(/\bFCI\b/g, 'efe ce i').replace(/\bTNA\b/g, 'te ene a').replace(/\bTEA\b/g, 'te e a')
+    .replace(/\bALyC\b/g, 'álic').replace(/\bPSAV\b/g, 'pe ese a ve').replace(/\bUSDT\b/g, 'u ese de te').replace(/\bUSDC\b/g, 'u ese de ce').replace(/\bON\b/g, 'o ene')
+    .replace(/\bCEDEARs?\b/g, (m) => (m.endsWith('s') ? 'cedears' : 'cedear')).replace(/\bSUBE\b/g, 'Sube').replace(/\bIVA\b/g, 'iva').replace(/\bANSES\b/g, 'Anses').replace(/\bPAMI\b/g, 'Pami')
+    .replace(/\biPhone\b/g, 'aifon').replace(/\bwifi\b/gi, 'uaifai').replace(/\bYouTube\b/g, 'Iutub').replace(/\bChatGPT\b/g, 'Chat ye pe te')
+    .replace(/\bDrive\b/g, 'Draiv').replace(/\bCapCut\b/g, 'Cap Cat').replace(/\bTikTok\b/g, 'Tik Tok').replace(/\bFacebook\b/g, 'Feisbuk').replace(/\bLens\b/g, 'Lens')
+    .replace(/\bReels\b/g, 'Rils').replace(/\bShorts\b/g, 'Shorts').replace(/\.gob\.ar/g, ' punto gob punto ar').replace(/web\.whatsapp\.com/g, 'web punto WhatsApp punto com')
+    .replace(/[❤️💛💙🙂😓⚠️👑✓◉★☆♡▶⇄·🌱🥂🎂🥟🙌🌅☀️]/gu, ' ').replace(/\s+/g, ' ').trim();
 }
 export function hash(t: string) {
   let h = 0x811c9dc5;

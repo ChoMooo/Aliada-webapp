@@ -5,7 +5,7 @@ import { PageHeader, Button, Card } from '../ui';
 import { fmt, money, pn } from '../lib/format';
 import { calc, progresoTram, plan, gProg, SIT_N, W, taPlanProg } from './finanzas/calc';
 import { GUIA, OP } from '../content/finanzas';
-import { MODULES, FIN_MODULES } from '../content/learn';
+import { MODULES, FIN_MODULES, INV_MODULES } from '../content/learn';
 import { modProg, setupProg } from './digital/logic';
 import { copyText, wa } from '../lib/share';
 import { toast } from '../ui/toast';
@@ -33,6 +33,9 @@ export function resumenTexto(d: Data) {
   const sp = setupProg(d); L.push('Primeros ajustes del celular: ' + sp.n + ' de ' + sp.t);
   MODULES.forEach((m) => { const p = modProg(d, m); L.push(m.n + ': ' + p.n + ' de ' + p.t + ' lecciones'); });
   L.push('Escudo antiestafas: ' + Object.keys(d.escudo.vistos).length + ' situaciones practicadas');
+  L.push('', 'INVERSIONES');
+  INV_MODULES.forEach((m) => { const p = modProg(d, m); L.push(m.n + ': ' + p.n + ' de ' + p.t + ' lecciones'); });
+  if (d.perfil.sexo === 'mujer') L.push('', 'MI NUEVA VERSIÓN', 'Programa de 30 días: ' + Object.keys(d.libro.dias).length + ' de 30');
   L.push('', 'Información de orientación general. Verificá en fuentes oficiales.');
   return L.join('\n');
 }

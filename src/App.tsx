@@ -21,6 +21,10 @@ import PrimerosAjustes from './features/digital/PrimerosAjustes';
 import Modulo from './features/learn/Modulo';
 import Leccion from './features/learn/Leccion';
 import EscudoHub from './features/escudo/Hub';
+import InvHub from './features/inversiones/Hub';
+import Calculadora from './features/inversiones/Calculadora';
+import Glosario from './features/inversiones/Glosario';
+import Libro from './features/libro/Libro';
 import Simulador from './features/escudo/Simulador';
 import Analizador from './features/escudo/Analizador';
 
@@ -89,6 +93,12 @@ export default function App() {
           <Route path="/digital/escudo/simulador" element={R(<Simulador />)} />
           <Route path="/digital/escudo/analizador" element={R(<Analizador />)} />
           <Route path="/finanzas/m/:mod" element={R(<Modulo />)} />
+          <Route path="/inversiones" element={R(<InvHub />)} />
+          <Route path="/inversiones/calculadora" element={R(<Calculadora />)} />
+          <Route path="/inversiones/glosario" element={R(<Glosario />)} />
+          <Route path="/inversiones/m/:mod" element={R(<Modulo />)} />
+          <Route path="/inversiones/m/:mod/:lec" element={R(<Leccion />)} />
+          <Route path="/libro" element={R(<Libro />)} />
           <Route path="/finanzas/m/:mod/:lec" element={R(<Leccion />)} />
           <Route path="/escudo" element={<Navigate to="/digital/escudo" replace />} />
           <Route path="/escudo/simulador" element={<Navigate to="/digital/escudo/simulador" replace />} />

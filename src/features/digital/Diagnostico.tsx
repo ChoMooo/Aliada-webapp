@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Smartphone, Apple, Check, X, BookOpen, Headphones, Eye, Sparkles } from 'lucide-react';
 import { useStore, mut } from '../../store';
-import { PageHeader, Card, Hero, Button, Chips, Choices, Field, ListenButton, Tag, Stagger, Item, Celebrate, ease, cx } from '../../ui';
+import { PageHeader, Card, Hero, Button, Chips, Choices, Field, ListenButton, Tag, Stagger, Item, Celebrate, ease, cx, Mascot, Topo } from '../../ui';
 import { detectOS } from '../../lib/device';
 import { DIAG_APPS, DIAG_AREAS, NIVELES, METAS, MIEDOS, RETOS, DIAG_Q } from '../../content/learn';
 import { N } from '../../lib/narration';
@@ -16,6 +16,7 @@ export default function Diagnostico() {
   const d = useStore((s) => s.d), g = d.md.diag, nav = useNavigate();
   const [i, setI] = useState(0);
   const [fin, setFin] = useState(false);
+  const [intro, setIntro] = useState(true);
   const det = detectOS();
   React.useEffect(() => { if (det && !g.os) mut((x) => { x.md.diag.os = det; }); }, []);
   const set = (k: keyof typeof g) => (v: any) => mut((x) => { (x.md.diag as any)[k] = v; });
@@ -35,6 +36,21 @@ export default function Diagnostico() {
   const canNext = st.id !== 'os' || !!g.os;
 
   if (fin) return <Resultado onGo={(p) => nav(p)} />;
+  if (intro) return (
+    <div className="relative -mx-4 sm:-mx-6 -mt-5 px-4 sm:px-6 pt-10 pb-8 min-h-[78vh] flex flex-col items-center justify-center text-center overflow-hidden">
+      <Topo className="absolute w-[min(150vw,760px)] text-accent/60" draw />
+      <motion.div className="relative flex flex-col items-center gap-5" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.7, ease }}>
+        <Mascot size={110} gesture="nod" />
+        <div className="flex flex-col gap-2 max-w-[26rem]">
+          <span className="text-[.8rem] font-semibold tracking-wide uppercase text-accent">Tu ruta en Mundo digital</span>
+          <h1 className="text-[2rem] leading-tight">Empecemos por donde estás</h1>
+          <p className="text-muted text-[1.05rem]">Unas preguntas cortas sobre tu celular y lo que te gustaría lograr. Te lleva unos 3 minutos y podés saltear lo que quieras.</p>
+        </div>
+        <Button size="lg" onClick={() => setIntro(false)} iconRight={<ArrowRight />}>Empezar</Button>
+        <button className="text-muted underline underline-offset-4 font-semibold" onClick={() => nav('/digital')}>Ahora no</button>
+      </motion.div>
+    </div>
+  );
   const reto = RETOS.find((r) => r.id === st.id);
   return (
     <div className="flex flex-col gap-6">
@@ -80,7 +96,7 @@ export default function Diagnostico() {
           {st.id === 'miedos' && <Chips multi options={MIEDOS} value={g.miedos} onChange={set('miedos')} />}
           {st.id === 'aprende' && (
             <div className="flex flex-col gap-5">
-              <Choices value={g.aprende} onChange={set('aprende')} options={[{ k: 'leer', t: 'Leyendo', icon: <BookOpen /> }, { k: 'escuchar', t: 'Escuchando', s: 'Activamos los botones “Escuchar”', icon: <Headphones /> }, { k: 'ver', t: 'Mirando paso a paso', s: 'Con videos, simuladores y desafíos', icon: <Eye /> }]} />
+              <Choices value={g.aprende} onChange={set('aprende')} options={[{ k: 'leer', t: 'Leyendo', icon: <BookOpen /> }, { k: 'escuchar', t: 'Escuchando', s: 'Activamos los botones “Escuchar”', icon: <Headphones /> }, { k: 'ver', t: 'Mirando videos paso a paso', s: 'Con pantallas de cada app y desafíos', icon: <Eye /> }]} />
               <Field label="¿Cuánto tiempo tenés por día?"><Chips options={[['5', '5 minutos'], ['15', '15 minutos'], ['30', '30 minutos o más']]} value={g.tiempo} onChange={set('tiempo')} /></Field>
             </div>
           )}

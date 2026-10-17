@@ -396,3 +396,6 @@ export const Section = ({ title, children, right, className }: { title?: React.R
     {children}
   </section>
 );
+
+export { Mascot } from './Mascot';
+export { Topo, EntryVeil } from './Motion';

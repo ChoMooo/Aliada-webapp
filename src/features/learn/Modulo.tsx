@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { CheckCircle2, Clock, ArrowRight, PlayCircle } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, Card, Progress, Stagger, Item, Tag, Note, Button, BackLink, cx } from '../../ui';
+import { PageHeader, Card, Progress, Stagger, Item, Tag, Note, Button, BackLink, EntryVeil, cx } from '../../ui';
 import { MOD, modPath, CONTENIDO_DIGITAL } from '../../content/learn';
 import { fdate } from '../../lib/format';
 import { modProg, isDone, startLevel } from '../digital/logic';
@@ -16,6 +16,7 @@ export default function Modulo() {
   const next = m.lessons.find((l) => !isDone(d, l.id) && (lv === 'basico' || l.nivel === 'intermedio')) || m.lessons.find((l) => !isDone(d, l.id));
   return (
     <Stagger className="flex flex-col gap-5">
+      <EntryVeil id={m.id} icon={MOD_ICON[m.id]} title={m.n} sub={`${m.lessons.length} lecciones con video`} tone={m.tone} />
       <Item><PageHeader back={sec} kicker={m.apps} title={m.n} lead={m.desc} right={<span className={cx('grid place-items-center size-14 rounded-xl shrink-0 [&_svg]:size-7', TONE[m.tone])}>{MOD_ICON[m.id]}</span>} /></Item>
       <Item><Card className="flex flex-col gap-4">
         <Progress value={p.n} max={p.t} label="Tu avance" right={`${p.n} de ${p.t} lecciones`} />
@@ -38,7 +39,7 @@ export default function Modulo() {
           </Card></Item>
         );
       })}
-      <Item><Note tone="info">Los pasos son generales y se revisan periódicamente: los menús cambian según la marca, el modelo y la versión de cada app. Las pantallas de los videos son ilustrativas. Contenido del {fdate(CONTENIDO_DIGITAL.fecha)}.</Note></Item>
+      <Item><Note tone="info">Los pasos son generales y se revisan periódicamente: los menús cambian según la marca, el modelo y la versión de cada app. Las pantallas de los videos son ilustraciones propias que reproducen la disposición de cada app, sin sus logos. Contenido del {fdate(CONTENIDO_DIGITAL.fecha)}.</Note></Item>
     </Stagger>
   );
 }

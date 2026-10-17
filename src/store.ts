@@ -9,11 +9,11 @@ export type Row = { id: string; n: string; m: string; mon?: 'ARS' | 'USD' };
 export const DEF = () => ({
   v: 2,
   lastBackup: 0,
-  perfil: { nombre: '', etapa: '' as '' | 'falta' | 'tramitando' | 'jubilado', onb: false },
+  perfil: { nombre: '', etapa: '' as '' | 'falta' | 'tramitando' | 'jubilado', sexo: '' as '' | 'mujer' | 'hombre' | 'nd', onb: false },
   aj: { fs: '1', tema: 'auto' as 'auto' | 'light' | 'dark', voz: true },
   acceso: { ok: false },
   plata: {
-    ing: [{ id: uid(), n: 'Jubilación o ingreso principal', m: '' }] as Row[],
+    ing: [{ id: uid(), n: 'Ingreso principal', m: '' }] as Row[],
     gas: [
       { id: uid(), n: 'Vivienda (alquiler, expensas)', m: '' }, { id: uid(), n: 'Comida', m: '' },
       { id: uid(), n: 'Salud y medicamentos', m: '' }, { id: uid(), n: 'Servicios (luz, gas, internet)', m: '' },
@@ -47,7 +47,9 @@ export const DEF = () => ({
     setup: {} as Record<string, 1>,
     lec: {} as Record<string, { done?: boolean; score?: number; steps?: Record<string, 1> }>
   },
-  escudo: { vistos: {} as Record<string, 'ok' | 'mal'>, analisis: 0 }
+  escudo: { vistos: {} as Record<string, 'ok' | 'mal'>, analisis: 0 },
+  libro: { dias: {} as Record<string, 1>, desc: 0 },
+  ui: { seen: {} as Record<string, 1> }
 });
 export type Data = ReturnType<typeof DEF>;
 
@@ -69,6 +71,7 @@ function migrateV1(): Data | null {
     const o = JSON.parse(r);
     const d = DEF();
     if (o.perfil) { d.perfil.nombre = o.perfil.nombre || ''; d.perfil.etapa = o.perfil.etapa || ''; d.perfil.onb = !!o.perfil.onb; }
+    if (o.tr?.sit?.sexo) d.perfil.sexo = o.tr.sit.sexo === 'F' ? 'mujer' : o.tr.sit.sexo === 'M' ? 'hombre' : '';
     if (o.aj) { d.aj.fs = String(o.aj.fs || '1'); d.aj.tema = o.aj.tema || 'auto'; d.aj.voz = o.aj.voz !== false; }
     if (o.plata) merge(d.plata, o.plata);
     if (o.tr) merge(d.tr, o.tr);

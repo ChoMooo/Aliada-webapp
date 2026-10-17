@@ -43,7 +43,7 @@ export function ruta(d: Data) {
   if (g.miedos.includes('cuentas')) bump('wa', 2, 'Te preocupa que te roben las cuentas');
   if (g.miedos.includes('fotos')) bump('google', 2, 'Te preocupa perder tus fotos');
   if (g.miedos.includes('privacidad')) bump('redes', 2, 'Te preocupa que desconocidos vean tus datos');
-  if (g.miedos.includes('estafas')) { bump('wa', 1); bump('redes', 1, 'Te preocupan las estafas'); }
+  if (g.miedos.includes('tocar')) bump('wa', 1, 'Empezamos por lo que más usás');
   avail.forEach((m) => {
     const lv = g.nivel[m.id];
     if (lv === 'cuesta') bump(m.id, 1, 'Es un tema que te cuesta');
@@ -63,4 +63,4 @@ export function nextLesson(d: Data) {
   }
   return null;
 }
-export const escudoWanted = (d: Data) => d.md.diag.miedos.includes('estafas') || d.md.diag.metas.includes('proteger') || d.md.diag.retos.r1 === '0';
+export const escudoWanted = (d: Data) => d.md.diag.metas.includes('proteger');

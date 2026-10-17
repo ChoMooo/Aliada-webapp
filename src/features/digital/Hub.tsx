@@ -30,18 +30,16 @@ export function ModCard({ m, tag, base = '/digital/m/' }: { m: Module; tag?: str
 function EscudoCard() {
   const d = useStore((s) => s.d), nav = useNavigate(), n = Object.keys(d.escudo.vistos).length;
   return (
-    <div className="rounded-xl2 border border-amber/30 bg-surface shadow-card p-5 flex flex-col gap-3 sm:col-span-2">
+    <div className="rounded-xl2 border border-line bg-surface shadow-card p-5 flex flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
         <span className={cx('grid place-items-center size-12 rounded-xl [&_svg]:size-6', TONE.amber)}><ShieldCheck /></span>
-        <Tag tone="warn">Práctica interactiva</Tag>
+        <Tag>Práctica</Tag>
       </div>
       <div><h3 className="text-[1.22rem]">Escudo antiestafas</h3><p className="text-[.85rem] text-muted">WhatsApp, llamadas, SMS, correos y redes</p></div>
-      <p className="text-[.92rem]">Aprendé a reconocer las trampas más usadas practicando con situaciones reales, y analizá cualquier mensaje sospechoso que te llegue.</p>
+      <p className="text-[.92rem]">Practicá con situaciones reales y analizá un mensaje cuando tengas dudas.</p>
       <Progress size="sm" value={n} max={ESCENARIOS.length} label={<span className="text-[.85rem] font-normal text-muted">{n} de {ESCENARIOS.length} situaciones practicadas</span>} />
       <div className="flex flex-wrap gap-2 pt-1">
-        <Button size="sm" icon={<Gamepad2 />} onClick={() => nav('/digital/escudo/simulador')}>Practicar</Button>
-        <Button size="sm" variant="ghost" icon={<ScanSearch />} onClick={() => nav('/digital/escudo/analizador')}>Analizar un mensaje</Button>
-        <Button size="sm" variant="quiet" iconRight={<ArrowRight />} onClick={() => nav('/digital/escudo')}>Ver el módulo</Button>
+        <Button size="sm" variant="ghost" iconRight={<ArrowRight />} onClick={() => nav('/digital/escudo')}>Entrar</Button>
       </div>
     </div>
   );
