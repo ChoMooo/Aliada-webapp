@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { veilDelay } from './lib/navhist';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useD } from './store';
@@ -38,8 +39,9 @@ function useThemeSync() {
 }
 
 function Page({ children }: { children: React.ReactNode }) {
+  const [wait] = useState(veilDelay);
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease }}>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease, delay: wait }}>
       {children}
     </motion.div>
   );

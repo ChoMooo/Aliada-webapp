@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Home, Wallet, Smartphone, Settings, TrendingUp, BookHeart } from 'lucide-react';
 import { useD } from '../store';
-import { cx, IconButton, LOGO } from '../ui';
+import { cx, IconButton, LOGO, SectionVeil } from '../ui';
+import { track } from '../lib/navhist';
 
 const NAV_ALL = [
   { to: '/', label: 'Inicio', icon: <Home />, match: (p: string) => p === '/' },
@@ -16,11 +17,13 @@ const NAV_ALL = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const nav = useNavigate();
+  const h = track(pathname);
   useEffect(() => { window.scrollTo({ top: 0 }); }, [pathname]);
   const mujer = useD((d) => d.perfil.sexo === 'mujer');
   const NAV = NAV_ALL.filter((n) => !n.women || mujer);
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[17rem_1fr]">
+      {h.veil?.kind === 'section' && <SectionVeil key={h.veilKey} id={h.veil.id} />}
       {/* Barra superior */}
       <header className="no-print sticky top-0 z-30 lg:col-span-2 safe-t bg-bg/85 backdrop-blur-md border-b border-line">
         <div className="flex items-center gap-3 px-4 sm:px-6 h-16">

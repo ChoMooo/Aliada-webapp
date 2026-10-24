@@ -7,6 +7,7 @@ import { useToasts } from './toast';
 import { playText, stopAll } from '../lib/audio';
 import { useD } from '../store';
 import logo from '../logo.png';
+import { veilDelay } from '../lib/navhist';
 
 export { cx };
 export const LOGO = logo;
@@ -15,8 +16,9 @@ export const LOGO = logo;
 export const ease = [0.22, 1, 0.36, 1] as const;
 export const fadeUp = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease } } };
 export function Stagger({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const [wait] = useState(veilDelay); // si hay una animación de entrada, el contenido aparece cuando termina
   return (
-    <motion.div className={className} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: delay } } }}>
+    <motion.div className={className} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: delay + wait } } }}>
       {children}
     </motion.div>
   );
@@ -398,4 +400,4 @@ export const Section = ({ title, children, right, className }: { title?: React.R
 );
 
 export { Mascot } from './Mascot';
-export { Topo, EntryVeil } from './Motion';
+export { Topo, EntryVeil, SectionVeil, SECTION_INFO } from './Motion';
