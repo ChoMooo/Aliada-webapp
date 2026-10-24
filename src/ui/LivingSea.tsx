@@ -35,7 +35,16 @@ export function LivingSea({ src, mask, hz, className, imgClass, pos, posSm }: Pr
   const [live, setLive] = useState(false);
 
   useEffect(() => {
-    const canvas = cv.current!;
+    /* Todo va protegido: si algo falla (WebGL raro, imagen bloqueada), queda la foto fija y la app sigue andando */
+    let cleanup: void | (() => void);
+    try { cleanup = start(); } catch (e) { console.warn('[mar] sin animación:', e); }
+    return () => { try { cleanup && cleanup(); } catch { /* */ } };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function start(): void | (() => void) {
+    const canvas = cv.current;
+    if (!canvas || typeof ResizeObserver === 'undefined' || typeof IntersectionObserver === 'undefined') return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const gl = canvas.getContext('webgl', { antialias: false, alpha: false, preserveDrawingBuffer: false, powerPreference: 'low-power' }) as WebGLRenderingContext | null;
     if (!gl) return;
@@ -53,14 +62,16 @@ export function LivingSea({ src, mask, hz, className, imgClass, pos, posSm }: Pr
     gl.uniform1f(U('uHz'), hz); gl.uniform1i(U('uImg'), 0); gl.uniform1i(U('uMask'), 1);
 
     const tex = (unit: number, url: string, onload: (im: HTMLImageElement) => void) => {
-      const t = gl.createTexture(); const im = new Image(); im.decoding = 'async';
+      const t = gl.createTexture(); const im = new Image(); im.decoding = 'async'; im.crossOrigin = 'anonymous';
       im.onload = () => {
         if (stop) return;
+        try {
         gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im);
         onload(im); ready++; if (ready === 2) { fit(); loop(); }
+        } catch (e) { stop = true; console.warn('[mar] sin animación:', e); }
       };
       im.src = url;
     };
@@ -84,15 +95,13 @@ export function LivingSea({ src, mask, hz, className, imgClass, pos, posSm }: Pr
       raf = requestAnimationFrame(loop);
       if (!visible || document.hidden) return;
       const now = performance.now(); if (now - last < 1000 / 40) return; last = now; // ~40 cuadros por segundo alcanzan y cuidan la batería
-      gl.uniform1f(uT, (now - t0) / 1000);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      try { gl.uniform1f(uT, (now - t0) / 1000); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); } catch { stop = true; return; }
       if (!shown) { shown = true; setLive(true); }
     };
     const ro = new ResizeObserver(() => ready === 2 && fit()); ro.observe(canvas);
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }); io.observe(canvas);
     return () => { stop = true; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); gl.getExtension('WEBGL_lose_context')?.loseContext(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }
 
   return (
     <div className={cx('absolute inset-0', className)} aria-hidden>

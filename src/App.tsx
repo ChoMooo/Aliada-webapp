@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useD } from './store';
 import { AppShell } from './layout/AppShell';
 import { Toaster, ease } from './ui';
+import { ErrorBoundary } from './ui/ErrorBoundary';
 import { ACCESS_REQUIRED } from './config';
 import Welcome from './features/Welcome';
 import AccessGate from './features/AccessGate';
@@ -57,6 +58,7 @@ export default function App() {
   const R = (el: React.ReactNode) => <Page>{el}</Page>;
   return (
     <AppShell>
+      <ErrorBoundary resetKey={loc.pathname}>
       <Routes location={loc} key={loc.pathname}>
           <Route path="/" element={R(<Home />)} />
           <Route path="/ajustes" element={R(<Settings />)} />
@@ -108,6 +110,7 @@ export default function App() {
           <Route path="/digital/m/pay" element={<Navigate to="/finanzas/m/pay" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </ErrorBoundary>
       <Toaster />
     </AppShell>
   );

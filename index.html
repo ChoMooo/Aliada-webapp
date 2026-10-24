@@ -35,21 +35,39 @@
       </div>
     </div>
     <script>
+      window.__errs = [];
+      window.addEventListener('error', function (e) { window.__errs.push(String(e.message || e.error || 'error')); });
+      window.addEventListener('unhandledrejection', function (e) { window.__errs.push(String(e.reason && e.reason.message || e.reason)); });
       (function () {
         var el = document.getElementById('splash'), v = document.getElementById('sp-v'), done = false, ready = false, ended = false, t0 = Date.now();
         var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-        function hide() { if (done || !el) return; done = true; el.classList.add('out'); setTimeout(function () { el.parentNode && el.parentNode.removeChild(el); }, 500); }
+        function hide() {
+          if (done || !el) return;
+          var root = document.getElementById('root');
+          if (root && !root.children.length) { // la app todavía no se dibujó
+            if (!window.__errs.length && Date.now() - t0 < 15000) { setTimeout(hide, 300); return; }
+            // no llegó a abrirse: mejor un aviso que una pantalla en blanco
+            done = true;
+            el.classList.add('static');
+            var box = document.createElement('div');
+            box.style.cssText = 'position:absolute;left:16px;right:16px;bottom:8vh;text-align:center;color:#e6f4ec;font:16px/1.45 system-ui,sans-serif';
+            box.innerHTML = '<b style="font-size:18px">No se pudo abrir la app</b><br>Tocá para volver a intentar.<br><small style="opacity:.6;word-break:break-all"></small>';
+            box.querySelector('small').textContent = (window.__errs || []).slice(0, 2).join(' · ');
+            el.appendChild(box); el.onclick = function () { location.reload(); };
+            return;
+          }
+          done = true; el.classList.add('out'); setTimeout(function () { el.parentNode && el.parentNode.removeChild(el); }, 500); }
         function check() { if (ready && ended) setTimeout(hide, 150); }
         function fin() { if (!ended) { ended = true; check(); } }
         window.__splash = { ready: function () { ready = true; check(); }, until: function () { return done ? 0 : Math.max(0, 3000 - (Date.now() - t0)); } };
-        el.addEventListener('click', function () { ready = true; fin(); hide(); });
+        el.addEventListener('click', function () { if (!done) { ready = true; fin(); hide(); } });
         if (reduce) { el.classList.add('static'); try { v.pause(); } catch (e) {} setTimeout(fin, 700); return; }
         v.muted = true; v.defaultMuted = true;
         v.addEventListener('ended', fin);
         var p = v.play && v.play(); if (p && p.catch) p.catch(function () { el.classList.add('static'); setTimeout(fin, 900); });
         setTimeout(function () { if (v.paused || v.currentTime === 0) { el.classList.add('static'); setTimeout(fin, 900); } }, 900);
         setTimeout(fin, 3300);
-        setTimeout(function () { ready = true; fin(); }, 9000);
+        setTimeout(function () { ready = true; fin(); }, 12000);
       })();
     </script>
     <div id="root"></div>
