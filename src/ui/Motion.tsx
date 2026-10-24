@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Home, Wallet, TrendingUp, Smartphone, BookHeart } from 'lucide-react';
-import { hist, MODULE_HOLD, SECTION_HOLD, type SectionId } from '../lib/navhist';
+import { SECTION_HOLD, INTRO_HOLD, type SectionId } from '../lib/navhist';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cx } from './cx';
 
@@ -64,21 +64,6 @@ function Veil({ hold, tone, children, onDone }: { hold: number; tone: string; ch
       )}
     </AnimatePresence>,
     document.body
-  );
-}
-
-/** Entrada de un módulo: aparece cada vez que se entra desde afuera (no al volver de una de sus lecciones) */
-export function EntryVeil({ icon, title, sub, tone = 'mint' }: { id?: string; icon: React.ReactNode; title: string; sub?: string; tone?: string }) {
-  const [on] = useState(() => hist.veil?.kind === 'module' && hist.veil.path === hist.cur);
-  if (!on) return null;
-  const T = TONE[tone] || TONE.mint;
-  return (
-    <Veil hold={MODULE_HOLD} tone={tone}>
-      <motion.span className={cx('grid place-items-center size-[4.5rem] rounded-2xl [&_svg]:size-9 shadow-card', T.chip)}
-        initial={{ rotate: -8, scale: 0.8 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 14, delay: 0.1 }}>{icon}</motion.span>
-      <b className="font-head text-[1.6rem] leading-tight">{title}</b>
-      {sub && <span className="text-muted text-[.98rem] -mt-2">{sub}</span>}
-    </Veil>
   );
 }
 
@@ -177,6 +162,7 @@ export const SECTION_INFO: Record<SectionId, { title: string; sub: string; tone:
 
 /** Entrada de sección: cada vez que se cambia entre Inicio, Finanzas, Invertir, Digital y Mi libro */
 export function SectionVeil({ id }: { id: SectionId }) {
+  if (id === 'inicio') return <IntroVeil />;
   const info = SECTION_INFO[id];
   const T = TONE[info.tone];
   return (
@@ -187,5 +173,34 @@ export function SectionVeil({ id }: { id: SectionId }) {
       <b className="font-head text-[1.75rem] leading-tight">{info.title}</b>
       <span className="text-muted text-[1rem] -mt-2">{info.sub}</span>
     </Veil>
+  );
+}
+
+/** Inicio: la misma animación del logo que la pantalla de carga */
+function IntroVeil() {
+  const [show, setShow] = useState(true);
+  const vref = React.useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const t = setTimeout(() => setShow(false), INTRO_HOLD);
+    const v = vref.current;
+    if (v) { v.muted = true; v.play().catch(() => setShow(false)); }
+    return () => clearTimeout(t);
+  }, []);
+  return createPortal(
+    <AnimatePresence>
+      {show && (
+        <motion.div className="fixed inset-0 z-[70] grid place-items-center intro-bg" role="presentation" onClick={() => setShow(false)}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.4 } }} transition={{ duration: 0.18 }}>
+          <motion.div className="relative aspect-square w-[min(92vw,62vh,460px)]" exit={{ scale: 1.05 }} transition={{ duration: 0.5 }}>
+            <video ref={vref} className="intro-video absolute inset-0 size-full object-cover" muted playsInline autoPlay preload="auto" poster="intro/logo-poster.webp"
+              onEnded={() => setTimeout(() => setShow(false), 120)}>
+              <source src="intro/logo.webm" type="video/webm" />
+              <source src="intro/logo.mp4" type="video/mp4" />
+            </video>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body
   );
 }

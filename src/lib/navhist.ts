@@ -10,15 +10,14 @@ export function sectionOf(p: string): SectionId {
   return 'inicio';
 }
 
-const MOD_RE = /^\/(finanzas|digital|inversiones)\/m\/[^/]+$/;
 export const SECTION_HOLD = 1000;
-export const MODULE_HOLD = 1150;
+export const INTRO_HOLD = 2900; // Inicio repite la animación del logo (la misma de la pantalla de carga)
 
 export const hist = {
   cur: '' as string,
   prev: '' as string,
   veilKey: 0,
-  veil: null as null | { kind: 'section'; id: SectionId } | { kind: 'module'; path: string },
+  veil: null as null | { kind: 'section'; id: SectionId },
   until: 0
 };
 
@@ -35,14 +34,15 @@ export function track(pathname: string) {
   hist.veil = null;
   hist.until = 0;
   if (first) { // al abrir la app está la pantalla de carga: el contenido entra cuando se va
-    if (document.getElementById('splash')) hist.until = Date.now() + Math.max(0, (reduced() ? 700 : 2450) - performance.now());
+    const sp = (window as any).__splash;
+    if (sp && document.getElementById('splash')) hist.until = Date.now() + sp.until();
     return hist;
   }
   if (reduced()) return hist;
-  if (MOD_RE.test(pathname)) {
-    if (!hist.prev.startsWith(pathname + '/')) { hist.veil = { kind: 'module', path: pathname }; hist.until = Date.now() + MODULE_HOLD - 120; hist.veilKey++; }
-  } else if (sectionOf(pathname) !== sectionOf(hist.prev)) {
-    hist.veil = { kind: 'section', id: sectionOf(pathname) }; hist.until = Date.now() + SECTION_HOLD - 120; hist.veilKey++;
+  /* Solo las 5 secciones tienen animación de entrada (los módulos no, para que sea más ágil) */
+  const id = sectionOf(pathname);
+  if (id !== sectionOf(hist.prev)) {
+    hist.veil = { kind: 'section', id }; hist.until = Date.now() + (id === 'inicio' ? INTRO_HOLD : SECTION_HOLD) - 120; hist.veilKey++;
   }
   return hist;
 }

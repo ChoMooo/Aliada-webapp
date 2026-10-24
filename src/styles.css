@@ -37,14 +37,9 @@ button,input,select,textarea{ font:inherit; color:inherit; }
   radial-gradient(120% 90% at 100% 0%, rgb(36 72 60 / .55) 0%, transparent 55%),
   radial-gradient(90% 80% at 0% 100%, rgb(10 22 18 / .6) 0%, transparent 60%),
   linear-gradient(150deg, rgb(28 48 41) 0%, rgb(var(--brand)) 48%, rgb(17 30 26) 100%); }
-/* Foto del inicio: en el celular la foto va arriba y se funde con el fondo de la tarjeta */
-.hero-photo{ background: linear-gradient(180deg, #0b1a29 0%, #0d1e25 55%, #12241f 100%); }
-.hero-photo-shade{ background: linear-gradient(180deg, transparent 45%, rgb(11 26 41 / .55) 80%, #0b1a29 100%); }
-@media (min-width:640px){
-  .hero-photo-shade{ background:
-    linear-gradient(90deg, rgb(7 18 24 / .88) 0%, rgb(7 18 24 / .66) 34%, rgb(7 18 24 / .15) 58%, transparent 72%),
-    linear-gradient(0deg, rgb(7 18 24 / .35), transparent 40%); }
-}
+/* Foto del inicio (pantallas anchas): un velo claro a la izquierda para que el texto se lea sobre el cielo y el mar */
+.hero-sea-veil{ background:
+  linear-gradient(90deg, rgb(244 250 253 / .9) 0%, rgb(240 248 252 / .78) 30%, rgb(236 246 251 / .35) 47%, transparent 58%); }
 /* Fondo general: un degradado muy leve del mismo verde (fijo, detrás de todo) */
 body::before{ content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   background:
@@ -61,3 +56,7 @@ details > summary{ list-style:none; } details > summary::-webkit-details-marker{
   body{ background:#fff; color:#000; } .no-print{ display:none !important; }
 }
 @media (prefers-reduced-motion: reduce){ *{ scroll-behavior:auto !important; } }
+
+/* Animación del logo (pantalla de carga y entrada a Inicio) */
+.intro-bg{ background: radial-gradient(circle at 50% 50%, #052629 0, #03191c 32vmax, #010c0e 75vmax); }
+.intro-video{ -webkit-mask-image: radial-gradient(closest-side, #000 84%, transparent 100%); mask-image: radial-gradient(closest-side, #000 84%, transparent 100%); }

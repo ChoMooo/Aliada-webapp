@@ -400,4 +400,5 @@ export const Section = ({ title, children, right, className }: { title?: React.R
 );
 
 export { Mascot } from './Mascot';
-export { Topo, EntryVeil, SectionVeil, SECTION_INFO } from './Motion';
+export { Topo, SectionVeil, SECTION_INFO } from './Motion';
+export { LivingSea } from './LivingSea';

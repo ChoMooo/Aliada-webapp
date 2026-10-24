@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Wallet, Smartphone, TrendingUp, BookHeart, ArrowRight, ChevronRight, FileText, Settings } from 'lucide-react';
 import { useStore, useD } from '../store';
-import { Button, Stagger, Item, Note, cx, Kicker, Mascot } from '../ui';
+import { Button, Stagger, Item, Note, cx, Kicker, Mascot, LivingSea } from '../ui';
 import { calc, tramSiguiente, taSiguiente } from './finanzas/calc';
 import { nextLesson } from './digital/logic';
 import { INV_MODULES, modPath } from '../content/learn';
@@ -80,28 +80,24 @@ function Tile({ to, icon, t, s, tone, row }: { to: string; icon: React.ReactNode
   );
 }
 
-/* "Tu próximo paso" sobre la foto del escritorio frente al mar.
-   El escritorio queda siempre a la derecha: en el celular la foto va arriba y entera a lo ancho;
-   en pantallas más anchas la foto cubre la tarjeta y el texto se apoya a la izquierda. */
-const DESK = 'inicio/escritorio-960.webp';
-const DESK_SET = 'inicio/escritorio-960.webp 960w, inicio/escritorio-1600.webp 1600w';
+/* "Tu próximo paso" sobre la foto del escritorio en el mar, con la marea en movimiento.
+   El escritorio queda siempre a la derecha y el texto nunca lo pisa:
+   - celular: la foto arriba (entera, un poco acercada al escritorio) y el texto debajo;
+   - pantallas más anchas: la foto cubre la tarjeta y el texto va a la izquierda, sobre el cielo y el mar. */
 function NextStepHero({ tag, title, sub, go }: { tag: string; title: string; sub: string; go: string }) {
   return (
-    <section className="hero-photo relative overflow-hidden rounded-xl3 text-white shadow-lift isolate">
-      <div className="relative sm:absolute sm:inset-0 aspect-[16/8.4] sm:aspect-auto overflow-hidden">
-        <div className="absolute inset-0 origin-[100%_88%] scale-[1.22] sm:scale-100">
-        <motion.img src={DESK} srcSet={DESK_SET} sizes="(min-width: 1024px) 44rem, (min-width: 640px) 90vw, 100vw" alt="" aria-hidden decoding="async"
-          className="absolute inset-0 size-full object-cover object-[100%_72%] sm:object-[100%_70%]"
-          initial={{ scale: 1.06 }} animate={{ scale: 1 }} transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }} style={{ transformOrigin: '80% 70%' }} />
+    <section className="relative overflow-hidden rounded-xl3 shadow-lift isolate bg-surface border border-line sm:border-0">
+      <div className="relative sm:absolute sm:inset-0 aspect-[16/9] sm:aspect-auto overflow-hidden">
+        <div className="absolute inset-0 origin-[96%_78%] scale-[1.16] sm:scale-100">
+          <LivingSea src="inicio/mar-1000.webp" mask="inicio/mar-mask.png" hz={0.292} pos={[1, 0.6]} posSm={[1, 0.62]} imgClass="object-[100%_60%] sm:object-[100%_62%]" />
         </div>
-        <div className="absolute inset-0 hero-photo-shade" />
-        <span className="absolute left-4 bottom-3 sm:hidden inline-flex items-center gap-1.5 rounded-full bg-black/35 backdrop-blur-sm px-3 py-1 text-[.74rem] font-semibold tracking-wide uppercase text-glow">Tu próximo paso · {tag}</span>
+        <div className="hidden sm:block absolute inset-0 hero-sea-veil" />
       </div>
-      <div className="relative px-5 pt-3 pb-6 sm:p-8 sm:pr-[42%] sm:min-h-[19rem] flex flex-col sm:justify-center">
-        <div className="hidden sm:block text-glow font-semibold text-[.8rem] tracking-wide uppercase">Tu próximo paso · {tag}</div>
-        <h2 className="text-[1.5rem] sm:text-[1.8rem] text-white sm:mt-2 leading-tight [text-shadow:0_1px_12px_rgb(0_0_0/.35)]">{title}</h2>
-        <p className="text-white/85 mt-1.5">{sub}</p>
-        <div className="mt-5"><Button variant="glow" to={go} iconRight={<ArrowRight />}>Continuar</Button></div>
+      <div className="relative px-5 pt-4 pb-6 sm:p-8 sm:pr-[50%] sm:min-h-[20rem] flex flex-col sm:justify-center">
+        <div className="text-accent sm:text-[#0a6e57] font-semibold text-[.78rem] tracking-wide uppercase">Tu próximo paso · {tag}</div>
+        <h2 className="text-[1.5rem] sm:text-[1.8rem] text-ink sm:text-[#0b2236] mt-1.5 sm:mt-2 leading-tight">{title}</h2>
+        <p className="text-muted sm:text-[#23455a] mt-1.5">{sub}</p>
+        <div className="mt-5"><Button to={go} iconRight={<ArrowRight />} className="sm:!bg-[#0a6e57] sm:!border-[#0a6e57] sm:!text-white">Continuar</Button></div>
       </div>
     </section>
   );

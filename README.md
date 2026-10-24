@@ -42,9 +42,9 @@ VOICE_DIR=ruta/kokoro-multi-lang-v1_0 python3 scripts/audio-batch.py textos.json
 ```
 
 ## Animaciones
-- **Pantalla de carga** (`index.html`, bloque `#splash`): el logo se arma en SVG + CSS (aro, cola de ballena, luna y estrellas), sin sonido, y se va en menos de 3 s cuando la app ya cargó. Tocarla la saltea.
-- **Entradas de sección** (`src/ui/Motion.tsx`, `SectionVeil`): cada vez que se cambia entre Inicio, Finanzas, Invertir, Digital y Mi libro aparece su animación propia (~1 s). Los módulos muestran la suya al entrar desde afuera (no al volver de una lección). La lógica está en `src/lib/navhist.ts`. Con "reducir movimiento" activado no se muestran.
-- **Foto del inicio**: `public/inicio/escritorio-*.webp`.
+- **Pantalla de carga** (`index.html`, bloque `#splash`): el video del logo (`public/intro/logo.webm` y `.mp4`, 2,8 s, sin sonido, recortado y acelerado del original). Se va cuando el video termina y la app ya cargó; tocarla la saltea. Si el celular no reproduce video o pidió "reducir movimiento", muestra el logo fijo.
+- **Entradas de sección** (`src/ui/Motion.tsx`, `SectionVeil`): solo al cambiar entre Inicio, Finanzas, Invertir, Digital y Mi libro. Inicio repite el video del logo; las demás tienen su dibujo animado (~1 s). Los módulos no tienen animación de entrada. Lógica en `src/lib/navhist.ts`.
+- **Mar en movimiento** (`src/ui/LivingSea.tsx`): la foto del inicio (`public/inicio/mar-*.webp`) se anima con un shader WebGL. `mar-mask.png` marca qué es agua (blanco) y qué queda quieto (negro: cielo, escritorio, silla). Si se cambia la foto, hay que regenerar la máscara.
 
 ## Antes de vender
 - Probar cada lección de Mundo digital en celulares reales (Samsung, Motorola, iPhone) y actualizar `CONTENIDO_DIGITAL`.

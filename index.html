@@ -15,70 +15,43 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" />
   </head>
   <body>
-    <!-- Pantalla de carga: el logo se arma solo (CSS + SVG, sin sonido, menos de 3 s) -->
+    <!-- Pantalla de carga: la animación del logo (video sin sonido, 2,8 s). Se va cuando termina y la app ya cargó. -->
     <style>
-      #splash{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(120% 80% at 50% 38%,#143a32 0%,#0b231e 45%,#06120f 100%);color:#e6f4ec;transition:opacity .4s ease,visibility .4s;font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+      #splash{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,#052629 0,#03191c 32vmax,#010c0e 75vmax);transition:opacity .45s ease,visibility .45s}
       #splash.out{opacity:0;visibility:hidden}
-      #splash .sp-in{display:flex;flex-direction:column;align-items:center;gap:22px;transition:transform .45s cubic-bezier(.22,1,.36,1)}
-      #splash.out .sp-in{transform:scale(1.06)}
-      #splash svg{width:min(46vw,210px);height:auto;overflow:visible}
-      #splash .sp-glow{position:absolute;width:min(80vw,420px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(79,120,220,.22),rgba(79,120,220,0) 62%);animation:sp-glow 2.4s ease-out both}
-      #splash .sp-disc{transform-box:fill-box;transform-origin:center;animation:sp-disc .6s cubic-bezier(.22,1,.36,1) both}
-      #splash .sp-ring{stroke-dasharray:1.02 1.02;stroke-dashoffset:1.02;animation:sp-ring .9s cubic-bezier(.65,0,.35,1) .05s forwards}
-      #splash .sp-tail{animation:sp-tail .8s cubic-bezier(.2,.9,.3,1.12) .45s both}
-      #splash .sp-moon{animation:sp-moon .7s cubic-bezier(.22,1,.36,1) .85s both}
-      #splash .sp-star{transform-box:fill-box;transform-origin:center;animation:sp-star .5s cubic-bezier(.3,1.6,.5,1) both}
-      #splash .sp-shine{animation:sp-shine .9s ease-in-out 1.35s both}
-      #splash .sp-word{text-align:center;animation:sp-word .55s cubic-bezier(.22,1,.36,1) 1.45s both}
-      #splash .sp-word b{display:block;font-size:1.55rem;font-weight:600;letter-spacing:-.02em}
-      #splash .sp-word span{display:block;margin-top:4px;font-size:.95rem;opacity:.7;font-family:"Public Sans",system-ui,sans-serif}
-      @keyframes sp-glow{0%{opacity:0;transform:scale(.6)}60%{opacity:1}100%{opacity:.85;transform:scale(1)}}
-      @keyframes sp-disc{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
-      @keyframes sp-ring{to{stroke-dashoffset:0}}
-      @keyframes sp-tail{from{transform:translateY(115px)}to{transform:translateY(0)}}
-      @keyframes sp-moon{from{transform:translate(80px,-60px)}to{transform:translate(0,0)}}
-      @keyframes sp-star{0%{opacity:0;transform:scale(0) rotate(-45deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
-      @keyframes sp-shine{from{transform:translateX(-120px)}to{transform:translateX(160px)}}
-      @keyframes sp-word{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-      @media (prefers-reduced-motion:reduce){#splash *{animation:none!important;stroke-dashoffset:0!important}}
+      #splash .sp-box{position:relative;width:min(92vw,62vh,460px);aspect-ratio:1;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+      #splash.out .sp-box{transform:scale(1.05)}
+      #splash video,#splash img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-mask-image:radial-gradient(closest-side,#000 84%,transparent 100%);mask-image:radial-gradient(closest-side,#000 84%,transparent 100%)}
+      #splash img{opacity:0;transition:opacity .4s}
+      #splash.static img{opacity:1}#splash.static video{opacity:0}
     </style>
     <div id="splash" role="img" aria-label="Aliada Digital">
-      <div class="sp-glow"></div>
-      <div class="sp-in">
-        <svg viewBox="0 0 200 200" aria-hidden="true">
-          <defs>
-            <radialGradient id="spD" cx="38%" cy="34%" r="80%"><stop offset="0" stop-color="#14403a"/><stop offset="1" stop-color="#061d19"/></radialGradient>
-            <linearGradient id="spT" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#86a8f7"/><stop offset=".45" stop-color="#5580e0"/><stop offset="1" stop-color="#3b5fc6"/></linearGradient>
-            <linearGradient id="spM" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe9ec"/></linearGradient>
-            <linearGradient id="spS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fd3a5"/><stop offset="1" stop-color="#14896a"/></linearGradient>
-            <linearGradient id="spW" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-            <clipPath id="spC"><circle cx="100" cy="100" r="91.5"/></clipPath>
-            <clipPath id="spK"><circle cx="101.8" cy="34.8" r="112"/></clipPath>
-            <path id="spTailP" d="M23 70C30 65 41 71 57 77 77 84 94 88 104 96 116 83 139 75 177 67 172 85 150 100 127 108 118 112 114 121 114 131 116 157 124 179 132 201H72C80 177 84 153 84 133 82 119 74 110 60 104 42 96 28 86 23 70Z"/>
-            <clipPath id="spTC"><use href="#spTailP"/></clipPath>
-          </defs>
-          <circle class="sp-disc" cx="100" cy="100" r="92" fill="url(#spD)"/>
-          <g clip-path="url(#spC)">
-            <g clip-path="url(#spK)"><circle class="sp-moon" cx="205" cy="86" r="106.8" fill="url(#spM)"/></g>
-            <g class="sp-tail">
-              <use href="#spTailP" fill="url(#spT)"/>
-              <path d="M26 70.5C34 68 44 73 58 78.5 76 85 92 89 102.5 95.5 90 92 74 89 58 83 44 78 33 73 26 70.5Z" fill="#b4caff" opacity=".6"/>
-              <path d="M106 95C118 84 140 77 173 69.5 146 78 124 86 106 95Z" fill="#b4caff" opacity=".45"/>
-              <path d="M104 96C108 112 112 124 114 131 116 157 124 179 132 201H112C110 170 106 140 104 96Z" fill="#2c4fb4" opacity=".35"/>
-              <g clip-path="url(#spTC)"><rect class="sp-shine" x="40" y="60" width="34" height="150" fill="url(#spW)" transform="skewX(-18)"/></g>
-            </g>
-          </g>
-          <g fill="url(#spS)">
-            <g transform="translate(121 31) scale(7.2)"><path class="sp-star" style="animation-delay:1.2s" d="M0-1Q.16-.16 1 0 .16.16 0 1-.16.16-1 0-.16-.16 0-1Z"/></g>
-            <g transform="translate(138.5 44) scale(13.5)"><path class="sp-star" style="animation-delay:1.3s" d="M0-1Q.16-.16 1 0 .16.16 0 1-.16.16-1 0-.16-.16 0-1Z"/></g>
-            <g transform="translate(121 68) scale(7.6)"><path class="sp-star" style="animation-delay:1.42s" d="M0-1Q.16-.16 1 0 .16.16 0 1-.16.16-1 0-.16-.16 0-1Z"/></g>
-            <g transform="translate(156 66) scale(7.6)"><path class="sp-star" style="animation-delay:1.52s" d="M0-1Q.16-.16 1 0 .16.16 0 1-.16.16-1 0-.16-.16 0-1Z"/></g>
-          </g>
-          <circle class="sp-ring" cx="100" cy="100" r="94" fill="none" stroke="#5079de" stroke-width="5.5" stroke-linecap="round" pathLength="1" transform="rotate(-90 100 100)"/>
-        </svg>
-        <div class="sp-word"><b>Aliada Digital</b><span>A tu ritmo, con calma</span></div>
+      <div class="sp-box">
+        <video id="sp-v" muted playsinline autoplay preload="auto" disablepictureinpicture poster="intro/logo-poster.webp">
+          <source src="intro/logo.webm" type="video/webm" />
+          <source src="intro/logo.mp4" type="video/mp4" />
+        </video>
+        <img src="intro/logo-final.webp" alt="" />
       </div>
     </div>
+    <script>
+      (function () {
+        var el = document.getElementById('splash'), v = document.getElementById('sp-v'), done = false, ready = false, ended = false, t0 = Date.now();
+        var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function hide() { if (done || !el) return; done = true; el.classList.add('out'); setTimeout(function () { el.parentNode && el.parentNode.removeChild(el); }, 500); }
+        function check() { if (ready && ended) setTimeout(hide, 150); }
+        function fin() { if (!ended) { ended = true; check(); } }
+        window.__splash = { ready: function () { ready = true; check(); }, until: function () { return done ? 0 : Math.max(0, 3000 - (Date.now() - t0)); } };
+        el.addEventListener('click', function () { ready = true; fin(); hide(); });
+        if (reduce) { el.classList.add('static'); try { v.pause(); } catch (e) {} setTimeout(fin, 700); return; }
+        v.muted = true; v.defaultMuted = true;
+        v.addEventListener('ended', fin);
+        var p = v.play && v.play(); if (p && p.catch) p.catch(function () { el.classList.add('static'); setTimeout(fin, 900); });
+        setTimeout(function () { if (v.paused || v.currentTime === 0) { el.classList.add('static'); setTimeout(fin, 900); } }, 900);
+        setTimeout(fin, 3300);
+        setTimeout(function () { ready = true; fin(); }, 9000);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
