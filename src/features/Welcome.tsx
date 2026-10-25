@@ -30,9 +30,9 @@ export default function Welcome() {
     });
   };
   return (
-    <div className="min-h-screen hero-glow text-onbrand relative overflow-hidden">
+    <div className="min-h-dvh hero-glow text-onbrand relative overflow-hidden">
       <Topo className="absolute -right-40 -top-24 w-[640px] text-white/25" draw />
-      <div className="relative max-w-[34rem] mx-auto px-5 py-8 sm:py-14 min-h-screen flex flex-col">
+      <div className="relative max-w-[34rem] mx-auto px-5 py-8 sm:py-14 min-h-dvh flex flex-col">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="a" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.5, ease }} className="flex flex-col gap-7 flex-1">

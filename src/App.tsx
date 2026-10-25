@@ -27,6 +27,9 @@ import InvHub from './features/inversiones/Hub';
 import Calculadora from './features/inversiones/Calculadora';
 import Glosario from './features/inversiones/Glosario';
 import Libro from './features/libro/Libro';
+import Salud from './features/Salud';
+import Vencimientos from './features/finanzas/vencimientos';
+import Cuotas from './features/finanzas/cuotas';
 import Simulador from './features/escudo/Simulador';
 import Analizador from './features/escudo/Analizador';
 
@@ -36,13 +39,18 @@ function useThemeSync() {
     const r = document.documentElement;
     r.dataset.fs = aj.fs;
     if (aj.tema === 'auto') r.removeAttribute('data-theme'); else r.dataset.theme = aj.tema;
+    /* la barra del celular acompaña el tema elegido en Ajustes */
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+      const isDark = (m.getAttribute('media') || '').includes('dark');
+      m.setAttribute('content', aj.tema === 'auto' ? (isDark ? '#0B1310' : '#F4F6F1') : aj.tema === 'dark' ? '#0B1310' : '#F4F6F1');
+    });
   }, [aj.fs, aj.tema]);
 }
 
 function Page({ children }: { children: React.ReactNode }) {
   const [wait] = useState(veilDelay);
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease, delay: wait }}>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease, delay: wait }}>
       {children}
     </motion.div>
   );
@@ -64,6 +72,9 @@ export default function App() {
           <Route path="/ajustes" element={R(<Settings />)} />
           <Route path="/resumen" element={R(<Resumen />)} />
           <Route path="/finanzas" element={R(<FinanzasHub />)} />
+          <Route path="/salud" element={R(<Salud />)} />
+          <Route path="/finanzas/vencimientos" element={R(<Vencimientos />)} />
+          <Route path="/finanzas/cuotas" element={R(<Cuotas />)} />
           <Route path="/finanzas/plata" element={R(<Plata.PlataHub />)} />
           <Route path="/finanzas/plata/numeros/:i" element={R(<Plata.Numeros />)} />
           <Route path="/finanzas/plata/resultado" element={R(<Plata.Resultado />)} />

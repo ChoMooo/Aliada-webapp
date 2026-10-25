@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { PhoneScreen, type Frame } from './Screen';
-import { demoKey, entry, urlOf, stopAll, claim } from '../../lib/audio';
+import { demoKey, entry, urlOf, stopAll, claim, rate, nextRate, rateLabel } from '../../lib/audio';
+import { useD } from '../../store';
 import { cx } from '../../ui';
 
 /* Mini video: pantallas animadas con narración y subtítulos sincronizados */
@@ -15,6 +16,7 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
   const [muted, setMuted] = useState(false);
   const [noAudio, setNoAudio] = useState(false);
   const [t, setT] = useState(0);
+  const vel = useD((d) => d.aj.vel); const r = Number(vel) || 1;
   const [pw] = useState(() => (typeof window !== 'undefined' && window.innerWidth < 520 ? 214 : 250));
   const audio = useRef<HTMLAudioElement | null>(null);
   const timer = useRef<any>(null);
@@ -34,11 +36,11 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
   useEffect(() => {
     clearInterval(timer.current);
     if (!playing || (e && !noAudio)) return;
-    timer.current = setInterval(() => setT((x) => { const n = x + 0.1; if (n >= total) { setPlaying(false); return total; } let k = 0; for (let j = 0; j < caps.length; j++) if (n >= startOf(j)) k = j; setI(k); return n; }), 100);
+    timer.current = setInterval(() => setT((x) => { const n = x + 0.1 * rate(); if (n >= total) { setPlaying(false); return total; } let k = 0; for (let j = 0; j < caps.length; j++) if (n >= startOf(j)) k = j; setI(k); return n; }), 100);
     return () => clearInterval(timer.current);
   }, [playing, noAudio]);
 
-  const play = () => { stopAll(); claim(() => { audio.current?.pause(); setPlaying(false); }); setStarted(true); if (t >= total - 0.05) seek(0); if (audio.current && !noAudio) audio.current.play().catch(() => setNoAudio(true)); setPlaying(true); };
+  const play = () => { stopAll(); claim(() => { audio.current?.pause(); setPlaying(false); }); setStarted(true); if (t >= total - 0.05) seek(0); if (audio.current && !noAudio) { audio.current.playbackRate = rate(); } if (audio.current && !noAudio) audio.current.play().catch(() => setNoAudio(true)); setPlaying(true); };
   const pause = () => { audio.current?.pause(); setPlaying(false); };
   const seek = (k: number) => { const s = startOf(k); setI(k); setT(s); if (audio.current) audio.current.currentTime = s; };
   const go = (k: number) => { seek(Math.max(0, Math.min(frames.length - 1, k))); setStarted(true); };
@@ -50,7 +52,7 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
         <AnimatePresence>{!started && (
           <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={play}
             className="absolute inset-0 grid place-items-center rounded-[34px] bg-[#0f1714]/55 backdrop-blur-[1px] text-white">
-            <span className="flex flex-col items-center gap-2"><span className="grid place-items-center size-16 rounded-full bg-white text-ink"><Play className="size-7 ml-1" /></span><b className="text-[1rem]">Ver el video</b><span className="text-[.85rem] opacity-85">{Math.round(total)} segundos{e ? ' · con voz' : ''}</span></span>
+            <span className="flex flex-col items-center gap-2"><span className="grid place-items-center size-16 rounded-full bg-white text-ink"><Play className="size-7 ml-1" /></span><b className="text-[1rem]">Ver el video</b><span className="text-[.85rem] opacity-85">{Math.round(total / r)} segundos{e ? ' · con voz' : ''}</span></span>
           </motion.button>)}
         </AnimatePresence>
       </div>
@@ -70,6 +72,8 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
           {playing ? <IconBtn big label="Pausar" onClick={pause}><Pause /></IconBtn> : <IconBtn big label={ended ? 'Ver de nuevo' : 'Reproducir'} onClick={play}>{ended ? <RotateCcw /> : <Play className="ml-0.5" />}</IconBtn>}
           <IconBtn label="Paso siguiente" onClick={() => go(i + 1)} disabled={i === frames.length - 1}><SkipForward /></IconBtn>
           {e && <IconBtn label={muted ? 'Activar sonido' : 'Silenciar'} onClick={() => setMuted(!muted)}>{muted ? <VolumeX /> : <Volume2 />}</IconBtn>}
+          <button type="button" onClick={() => { const n = nextRate(); if (audio.current) audio.current.playbackRate = n; }} aria-label={'Velocidad de la voz: ' + rateLabel(r) + '. Tocá para cambiarla'} title="Velocidad de la voz"
+            className="press min-w-[3.4rem] h-12 px-2.5 rounded-full border border-line bg-surface font-bold num text-[.95rem]">{rateLabel(r)}</button>
         </div>
       </div>
     </div>

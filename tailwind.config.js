@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 const v = (n) => `rgb(var(--${n}) / <alpha-value>)`;
 export default {
+  future: { hoverOnlyWhenSupported: true },
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {

@@ -8,6 +8,7 @@ import { fmt, money, pn } from '../../lib/format';
 import { wa } from '../../lib/share';
 import { calc, simInf } from './calc';
 import { RowEditor } from './shared';
+import { AhorrosPaso } from './ahorros';
 import { PLATA_STEPS } from '../../content/finanzas';
 import { N } from '../../lib/narration';
 import { resumenTexto } from '../Resumen';
@@ -22,17 +23,17 @@ export function PlataHub() {
       <Item>
         <Hero>
           {!c.has ? (<>
-            <div className="text-glow font-bold text-[.85rem]">Para empezar</div>
+            <div className="text-onbrand/80 text-[.98rem]">Para empezar</div>
             <h2 className="text-[1.7rem] text-onbrand mt-1">Cargá tus números en 4 pasos</h2>
             <p className="opacity-85 mt-1">Ingresos, gastos, ahorros y deudas. Tarda unos 5 minutos.</p>
             <div className="mt-5"><Button variant="glow" to="/finanzas/plata/numeros/0" iconRight={<ArrowRight />}>Empezar</Button></div>
           </>) : c.anios != null ? (<>
-            <div className="text-glow font-bold text-[.85rem]">Tus ahorros alcanzan</div>
+            <div className="text-onbrand/80 text-[.98rem]">Tus ahorros alcanzan</div>
             <div className="font-head font-semibold text-[3.6rem] leading-none text-glow mt-2"><CountUp value={Math.min(c.anios, 99.9)} format={(n) => fmt(n, 1)} /><span className="font-body text-[1.1rem] text-onbrand ml-2">años</span></div>
             <p className="opacity-85 mt-2">Cada mes gastás {money(c.gastoNeto)} más de lo que ingresa. Con tus ahorros netos de {money(c.neto)}, te alcanza este tiempo si nada cambia.</p>
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
           </>) : (<>
-            <div className="text-glow font-bold text-[.85rem]">Cada mes</div>
+            <div className="text-onbrand/80 text-[.98rem]">Cada mes</div>
             <div className="font-head font-semibold text-[2.6rem] leading-none text-glow mt-2">Te sobran <CountUp value={c.brecha} format={money} /></div>
             <p className="opacity-85 mt-2">Tus ingresos cubren tus gastos. Ese margen puede ir a tu meta de ahorro.</p>
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
@@ -63,17 +64,13 @@ export function Numeros() {
       <PageHeader back={{ to: i ? `/finanzas/plata/numeros/${i - 1}` : '/finanzas/plata', label: i ? 'Atrás' : 'Mi plata' }} title="" />
       <div className="flex gap-1.5">{STEPS.map((_, k) => <motion.span key={k} className={cx('h-2 flex-1 rounded-full', k <= i ? 'bg-accent' : 'bg-line')} layout />)}</div>
       <AnimatePresence mode="wait">
-        <motion.div key={i} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.35, ease }} className="flex flex-col gap-5">
+        <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.22, ease }} className="flex flex-col gap-5">
           <div><div className="text-accent font-bold text-[.85rem]">Paso {i + 1} de 4</div><h1 className="text-[1.9rem] mt-1">{st.t}</h1><p className="text-muted mt-1">{st.h}</p></div>
           <ListenButton text={N.ask(st.t, st.h)} />
-          <Card><RowEditor path={'plata.' + st.k} rows={(d.plata as any)[st.k]} currency={'cur' in st} addLabel={st.add} /></Card>
-          {'cur' in st && (
-            <Field label="Cotización del dólar que usás" htmlFor="cot" hint="El valor al que podrías vender hoy. Si no tenés dólares, dejalo vacío.">
-              <MoneyInput id="cot" value={d.plata.cot} onChange={(v) => mut((x) => { x.plata.cot = v; })} />
-            </Field>
-          )}
-          {'cur' in st && c.usdSinCot && <Note tone="warn">Cargaste dólares pero falta la cotización: sin ella no se suman a tus ahorros.</Note>}
-          <Card tone="sunk" className="flex items-center justify-between gap-3"><span>{st.label}</span><b className="font-head font-semibold text-[1.6rem]"><CountUp value={tot} format={money} /></b></Card>
+          {st.k === 'aho' ? <AhorrosPaso /> : (<>
+            <Card><RowEditor path={'plata.' + st.k} rows={(d.plata as any)[st.k]} addLabel={st.add} /></Card>
+            <Card tone="sunk" className="flex items-center justify-between gap-3"><span>{st.label}</span><b className="font-head font-semibold text-[1.6rem]"><CountUp value={tot} format={money} /></b></Card>
+          </>)}
         </motion.div>
       </AnimatePresence>
       <div className="flex gap-3">

@@ -22,7 +22,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const mujer = useD((d) => d.perfil.sexo === 'mujer');
   const NAV = NAV_ALL.filter((n) => !n.women || mujer);
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[17rem_1fr]">
+    <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
       {h.veil?.kind === 'section' && <SectionVeil key={h.veilKey} id={h.veil.id} />}
       {/* Barra superior */}
       <header className="no-print sticky top-0 z-30 lg:col-span-2 safe-t bg-bg/85 backdrop-blur-md border-b border-line">

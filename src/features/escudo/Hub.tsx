@@ -14,7 +14,7 @@ export default function EscudoHub() {
       <Item><Hero>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <div className="text-glow font-bold text-[.85rem]">Entrenamiento</div>
+            <div className="text-onbrand/80 text-[.98rem]">Entrenamiento</div>
             <h2 className="text-[1.6rem] text-onbrand mt-1">¿Lo detectarías a tiempo?</h2>
             <p className="opacity-85 mt-1">{ESCENARIOS.length} situaciones reales: mensajes, llamadas y ofertas. Elegí qué harías.</p>
           </div>

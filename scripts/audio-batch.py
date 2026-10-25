@@ -12,7 +12,7 @@ PAUSE_SENT, PAUSE_STEP, LEAD, TAIL = 0.45, 1.0, 0.2, 0.35
 
 cfg = sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(
     kokoro=sherpa_onnx.OfflineTtsKokoroModelConfig(model=D + '/model.onnx', voices=D + '/voices.bin', tokens=D + '/tokens.txt',
-        data_dir=D + '/espeak-ng-data', dict_dir=D + '/dict', lexicon=D + '/lexicon-us-en.txt', lang='es'),
+        data_dir=D + '/espeak-ng-data', dict_dir=D + '/dict', lexicon=D + '/lexicon-us-en.txt', lang=os.environ.get('VOICE_LANG', 'es-419')),   # es-419: pronunciación latinoamericana (sin la z española)
     num_threads=int(os.environ.get('THREADS', '2'))), max_num_sentences=1)
 tts = sherpa_onnx.OfflineTts(cfg)
 SR = None
@@ -33,7 +33,8 @@ def gen(text):
 
 src = json.load(open(sys.argv[1])); outdir = sys.argv[2]; manp = sys.argv[3]
 man = json.load(open(manp)) if os.path.exists(manp) else {}
-man = {k: v for k, v in man.items() if k in src}          # quita audios de textos que ya no existen
+VTAG = 'kokoro:' + str(SID) + ':' + os.environ.get('VOICE_LANG', 'es-419')
+man = {k: v for k, v in man.items() if k in src and v.get('v') == VTAG}   # rehace los que cambiaron de texto o de voz
 os.makedirs(outdir, exist_ok=True)
 keys = [k for k in src if k not in man]
 print('pendientes', len(keys), flush=True); t0 = time.time()
@@ -53,7 +54,7 @@ for n, k in enumerate(keys):
     peak = float(np.max(np.abs(audio))) or 1.0; audio = audio * (0.9 / peak)
     wav = '/tmp/_aliada.wav'; sf.write(wav, audio, SR)
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', wav, '-af', 'highpass=f=70,loudnorm=I=-17:TP=-1.5', '-ac', '1', '-ar', '24000', '-c:a', 'libmp3lame', '-b:a', '48k', f'{outdir}/{k}.mp3'], check=True)
-    ent = {'f': k + '.mp3', 'd': round(len(audio) / SR, 2)}
+    ent = {'f': k + '.mp3', 'd': round(len(audio) / SR, 2), 'v': VTAG}
     if marks: ent['m'] = marks
     man[k] = ent
     if n % 5 == 0 or n == len(keys) - 1:

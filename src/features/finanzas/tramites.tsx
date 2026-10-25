@@ -31,7 +31,7 @@ export function TramHub() {
         <Button size="sm" variant="ghost" to="/finanzas/tramites/situacion">Cambiar</Button>
       </Card></Item>
       <Item><Hero>
-        <div className="text-glow font-bold text-[.85rem]">Tu próxima acción</div>
+        <div className="text-onbrand/80 text-[.98rem]">Tu próxima acción</div>
         <h2 className="text-[1.5rem] text-onbrand mt-1 leading-snug">{nx ? nx.txt : 'Todo al día por ahora'}</h2>
         <p className="opacity-85 mt-1">{nx ? `En la guía “${nx.g.t}”.` : 'Podés revisar otras guías o preparar una consulta.'}</p>
         <div className="mt-5 flex flex-wrap gap-3">

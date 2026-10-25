@@ -574,6 +574,6 @@ export const OP=(id:string)=>OPS.find(o=>o.id===id);
 export const PLATA_STEPS = [
   { k: 'ing', t: '¿Cuánto entra por mes?', h: 'Sueldo o haberes, alquileres, trabajos o ayuda de la familia. Montos mensuales.', add: 'Agregar otro ingreso', label: 'Total de ingresos' },
   { k: 'gas', t: '¿En qué gastás por mes?', h: 'Revisá cada rubro. Si un gasto es anual, dividilo por 12.', add: 'Agregar otro gasto', label: 'Total de gastos' },
-  { k: 'aho', t: '¿Qué ahorros tenés?', h: 'Lo que tenés guardado hoy: cuentas, efectivo, plazos fijos, dólares.', add: 'Agregar otro ahorro', label: 'Total de ahorros (en pesos)', cur: true },
+  { k: 'aho', t: '¿Qué ahorros tenés?', h: 'Anotá cuánto tenés hoy en cada lugar. Si algo no tenés, dejalo vacío: la app suma todo y pasa los dólares a pesos.', add: 'Agregar otro ahorro', label: 'Total de ahorros (en pesos)' },
   { k: 'deu', t: '¿Tenés deudas?', h: 'Tarjetas, préstamos, cuotas pendientes. Si no tenés, seguí adelante.', add: 'Agregar una deuda', label: 'Total de deudas' }
 ] as const;

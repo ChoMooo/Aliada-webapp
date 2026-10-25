@@ -10,7 +10,7 @@ export const DEF = () => ({
   v: 2,
   lastBackup: 0,
   perfil: { nombre: '', etapa: '' as '' | 'falta' | 'tramitando' | 'jubilado', sexo: '' as '' | 'mujer' | 'hombre' | 'nd', onb: false },
-  aj: { fs: '1', tema: 'auto' as 'auto' | 'light' | 'dark', voz: true },
+  aj: { fs: '1', tema: 'auto' as 'auto' | 'light' | 'dark', voz: true, vel: '1' as '0.85' | '1' | '1.2' },
   acceso: { ok: false },
   plata: {
     ing: [{ id: uid(), n: 'Ingreso principal', m: '' }] as Row[],
@@ -19,7 +19,9 @@ export const DEF = () => ({
       { id: uid(), n: 'Salud y medicamentos', m: '' }, { id: uid(), n: 'Servicios (luz, gas, internet)', m: '' },
       { id: uid(), n: 'Transporte', m: '' }, { id: uid(), n: 'Otros gastos', m: '' }
     ] as Row[],
-    aho: [{ id: uid(), n: 'Cuentas y efectivo en pesos', m: '', mon: 'ARS' }, { id: uid(), n: 'Dólares', m: '', mon: 'USD' }] as Row[],
+    /* Ahorros por lugar: plazo fijo, cuentas y billeteras, efectivo y dólares (con la cotización que carga la persona) */
+    ah: { pf: '', cu: '', ef: '', usd: '' },
+    aho: [] as Row[], // otros ahorros (fondos, cripto, plata prestada…), en pesos o dólares
     deu: [] as Row[],
     cot: '',
     meta: { n: '', m: '' },
@@ -48,6 +50,14 @@ export const DEF = () => ({
     lec: {} as Record<string, { done?: boolean; score?: number; steps?: Record<string, 1> }>
   },
   escudo: { vistos: {} as Record<string, 'ok' | 'mal'>, analisis: 0 },
+  /* Vencimientos del mes: qué se paga, qué día y cuánto; "pagos" guarda lo marcado como pagado por mes (AAAA-MM) */
+  venc: { items: [] as { id: string; n: string; dia: string; m: string }[], pagos: {} as Record<string, Record<string, 1>> },
+  /* Ficha de salud y emergencias (solo en este dispositivo; sin números de documento ni de afiliado) */
+  salud: {
+    sangre: '', obra: '', medico: '', medTel: '', cond: '', alergias: '', notas: '',
+    meds: [] as { id: string; n: string; dosis: string; cuando: string }[],
+    contactos: [] as { id: string; n: string; rel: string; tel: string }[]
+  },
   libro: { dias: {} as Record<string, 1>, desc: 0 },
   ui: { seen: {} as Record<string, 1> }
 });
@@ -61,7 +71,20 @@ function merge(a: any, b: any): any {
   }
   return a;
 }
-export const mergeData = (o: any): Data => merge(DEF(), o);
+export function mergeData(o: any): Data {
+  const d = merge(DEF(), o) as Data;
+  /* Datos anteriores a la calculadora de ahorros: pasan las filas conocidas a sus casilleros */
+  if (o?.plata && !o.plata.ah && Array.isArray(d.plata.aho)) {
+    const rest: Row[] = [];
+    for (const r of d.plata.aho) {
+      if (r.n === 'Cuentas y efectivo en pesos' && r.mon !== 'USD') { if (!d.plata.ah.cu) d.plata.ah.cu = r.m; }
+      else if (r.n === 'Dólares' && r.mon === 'USD') { if (!d.plata.ah.usd) d.plata.ah.usd = r.m; }
+      else if (r.n || r.m) rest.push(r);
+    }
+    d.plata.aho = rest;
+  }
+  return d;
+}
 
 /* Migra los datos de la versión anterior (aliada.v1), si existen */
 function migrateV1(): Data | null {

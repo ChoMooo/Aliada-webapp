@@ -14,16 +14,15 @@ export { MOD_ICON, TONE };
 export function ModCard({ m, tag, base = '/digital/m/' }: { m: Module; tag?: string; base?: string }) {
   const d = useStore((s) => s.d), p = modProg(d, m), nav = useNavigate();
   return (
-    <motion.button whileHover={{ y: -3 }} whileTap={{ scale: 0.985 }} onClick={() => nav(base + m.id)}
-      className="text-left rounded-xl2 border p-5 flex flex-col gap-3 w-full bg-surface border-line shadow-card">
-      <div className="flex items-start justify-between gap-3">
-        <span className={cx('grid place-items-center size-12 rounded-xl [&_svg]:size-6', TONE[m.tone])}>{MOD_ICON[m.id]}</span>
-        {tag ? <Tag tone="ok">{tag}</Tag> : p.n === p.t ? <Tag tone="ok">Completo</Tag> : <Tag>{m.lessons.length} lecciones</Tag>}
-      </div>
-      <div><h3 className="text-[1.22rem]">{m.n}</h3><p className="text-[.85rem] text-muted">{m.apps}</p></div>
-      <p className="text-[.92rem]">{m.desc}</p>
-      <Progress size="sm" value={p.n} max={p.t} label={<span className="text-[.85rem] font-normal text-muted">{p.n} de {p.t} lecciones</span>} />
-    </motion.button>
+    <button type="button" onClick={() => nav(base + m.id)}
+      className="press text-left rounded-xl2 border p-4 flex gap-3.5 w-full bg-surface border-line shadow-card">
+      <span className={cx('grid place-items-center size-12 rounded-xl [&_svg]:size-6 shrink-0', TONE[m.tone])}>{MOD_ICON[m.id]}</span>
+      <span className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <span className="flex items-start justify-between gap-2"><b className="font-head font-semibold text-[1.15rem] leading-tight">{m.n}</b>{tag ? <Tag tone="ok">{tag}</Tag> : p.n === p.t ? <Tag tone="ok">Completo</Tag> : null}</span>
+        <span className="text-[.9rem] text-muted line-clamp-2">{m.desc}</span>
+        <Progress size="sm" value={p.n} max={p.t} label={<span className="text-[.82rem] font-normal text-muted">{p.n} de {p.t} lecciones</span>} />
+      </span>
+    </button>
   );
 }
 
@@ -53,14 +52,14 @@ export default function DigitalHub() {
       <Item><PageHeader kicker="Sección" title="Mundo digital" lead="Las apps que usa todo el mundo, explicadas a tu ritmo, con videos cortos y práctica real. Para sacarles el máximo provecho, no solo lo básico." /></Item>
       <Item><Hero>
         {!done ? (<>
-          <div className="text-glow font-semibold text-[.85rem] tracking-wide uppercase">Para empezar · 3 minutos</div>
+          <div className="text-onbrand/80 text-[.98rem]">Para empezar · 3 minutos</div>
           <h2 className="text-[1.65rem] text-onbrand mt-1">Armemos tu ruta de aprendizaje</h2>
           <p className="opacity-85 mt-1">Unas preguntas cortas sobre tu celular, lo que ya sabés y lo que querés lograr. Así no perdés tiempo con lo que ya dominás.</p>
           <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/digital/diagnostico" iconRight={<ArrowRight />}>Empezar la encuesta</Button></div>
         </>) : nx ? (<>
           <div className="flex items-center justify-between gap-4">
             <div className="min-w-0">
-              <div className="text-glow font-semibold text-[.85rem] tracking-wide uppercase">Tu próxima lección · {nx.m.n}</div>
+              <div className="text-onbrand/80 text-[.98rem]">Tu próxima lección · {nx.m.n}</div>
               <h2 className="text-[1.6rem] text-onbrand mt-1 leading-tight">{nx.l.t}</h2>
               <p className="opacity-85 mt-1">{nx.l.min} minutos · {nx.l.nivel === 'basico' ? 'Básico' : 'Intermedio'} · con video</p>
             </div>

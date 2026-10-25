@@ -1,3 +1,4 @@
+import { isExtra } from '../../content/learn';
 import type { Data } from '../../store';
 import { MODULES, FIN_MODULES, RETOS, SETUP, type Module } from '../../content/learn';
 import { detectOS } from '../../lib/device';
@@ -58,7 +59,8 @@ export function ruta(d: Data) {
 export function nextLesson(d: Data) {
   for (const r of ruta(d)) {
     const ls = r.m.lessons;
-    const pick = ls.find((l) => !isDone(d, l.id) && (r.start === 'basico' || l.nivel === 'intermedio')) || ls.find((l) => !isDone(d, l.id));
+    const core = ls.filter((l) => !isExtra(l.id));
+    const pick = core.find((l) => !isDone(d, l.id) && (r.start === 'basico' || l.nivel === 'intermedio')) || core.find((l) => !isDone(d, l.id));
     if (pick) return { m: r.m, l: pick };
   }
   return null;

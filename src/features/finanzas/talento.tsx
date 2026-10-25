@@ -27,12 +27,12 @@ export function TalHub() {
       <Item><PageHeader back={{ to: '/finanzas', label: 'Finanzas' }} kicker="Finanzas" title="Mi talento, mi ingreso" lead="Descubrí una oportunidad realista, definí tu oferta y salí con un plan de 30 días." /></Item>
       <Item><Hero>
         {!d.ta.done ? (<>
-          <div className="text-glow font-bold text-[.85rem]">Para empezar</div>
+          <div className="text-onbrand/80 text-[.98rem]">Para empezar</div>
           <h2 className="text-[1.6rem] text-onbrand mt-1">Contanos lo que sabés y lo que tenés</h2>
           <p className="opacity-85 mt-1">Un perfil corto —podés saltear lo que quieras— y te mostramos oportunidades concretas, con sus motivos y sus riesgos.</p>
           <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/talento/perfil" iconRight={<ArrowRight />}>Completar mi perfil</Button><Button variant="onbrand" to="/finanzas/talento/ideas">Ver todas</Button></div>
         </>) : (<>
-          <div className="text-glow font-bold text-[.85rem]">{o ? 'Tu oportunidad elegida' : 'Tu próximo paso'}</div>
+          <div className="text-onbrand/80 text-[.98rem]">{o ? 'Tu oportunidad elegida' : 'Tu próximo paso'}</div>
           {o && <h2 className="text-[1.5rem] text-onbrand mt-1 leading-snug">{o.n}</h2>}
           <p className="opacity-90 mt-2">{o && <b>Siguiente: </b>}{nx?.txt ?? 'Todo al día'}</p>
           {o && pp.t > 0 && <div className="mt-4 max-w-sm"><Progress tone="glow" value={pp.n} max={pp.t} label={<span className="text-onbrand">Plan de 30 días</span>} right={<span className="text-onbrand/80">{pp.n} de {pp.t}</span>} /></div>}

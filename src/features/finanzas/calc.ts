@@ -6,11 +6,18 @@ import { GUIA, DOCS, OP, OPS, SK_N, EX_N, GU_N, REC_N, HRS } from '../../content
 export function calc(d: Data) {
   const P = d.plata, sum = (a: any[]) => a.reduce((t, x) => t + pn(x.m), 0);
   const ing = sum(P.ing), gas = sum(P.gas), cot = pn(P.cot);
-  const ahoARS = P.aho.reduce((t, x) => t + (x.mon === 'USD' ? pn(x.m) * cot : pn(x.m)), 0);
+  const A = P.ah || { pf: '', cu: '', ef: '', usd: '' };
+  const usdOtros = P.aho.filter((x) => x.mon === 'USD').reduce((t, x) => t + pn(x.m), 0);
+  const ahoParts = {
+    pf: Math.max(pn(A.pf), 0), cu: Math.max(pn(A.cu), 0), ef: Math.max(pn(A.ef), 0),
+    usd: Math.max(pn(A.usd), 0), usdARS: Math.max(pn(A.usd), 0) * cot,
+    otros: P.aho.reduce((t, x) => t + (x.mon === 'USD' ? pn(x.m) * cot : pn(x.m)), 0)
+  };
+  const ahoARS = ahoParts.pf + ahoParts.cu + ahoParts.ef + ahoParts.usdARS + ahoParts.otros;
   const deu = sum(P.deu), neto = ahoARS - deu, brecha = ing - gas, gastoNeto = Math.max(gas - ing, 0);
   const anios = gastoNeto > 0 ? Math.max(neto, 0) / (gastoNeto * 12) : null;
-  return { ing, gas, cot, ahoARS, deu, neto, brecha, gastoNeto, anios, has: ing > 0 || gas > 0,
-    usdSinCot: P.aho.some((x) => x.mon === 'USD' && pn(x.m) > 0) && cot <= 0 };
+  return { ing, gas, cot, ahoARS, ahoParts, deu, neto, brecha, gastoNeto, anios, has: ing > 0 || gas > 0,
+    usdSinCot: (ahoParts.usd > 0 || usdOtros > 0) && cot <= 0 };
 }
 export type Calc = ReturnType<typeof calc>;
 

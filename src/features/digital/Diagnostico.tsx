@@ -116,7 +116,7 @@ function Resultado({ onGo }: { onGo: (p: string) => void }) {
     <Stagger className="flex flex-col gap-5">
       <Item><Hero className="relative">
         <Celebrate show />
-        <div className="flex items-center gap-2 text-glow font-bold text-[.85rem]"><Sparkles className="size-4" />Listo</div>
+        <div className="flex items-center gap-2 text-onbrand/80 text-[.98rem]"><Sparkles className="size-4" />Listo</div>
         <h1 className="text-[2rem] text-onbrand mt-1">Tu ruta está armada</h1>
         <p className="opacity-85 mt-1">La ordenamos según lo que querés lograr, lo que te preocupa y lo que ya sabés. Podés cambiar el orden cuando quieras.</p>
       </Hero></Item>

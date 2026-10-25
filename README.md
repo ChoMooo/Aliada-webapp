@@ -34,12 +34,31 @@ npm run build:preview  # versión de un solo archivo para vista previa
 - `src/config.ts` — textos legales y acceso con código (desactivado por defecto).
 
 ## Audios (narración)
-Las narraciones se generan gratis, en la computadora, con la voz masculina «em_alex» de Kokoro v1.0 (licencia Apache 2.0) usando sherpa-onnx, a velocidad lenta y con pausas entre frases.
-Si cambiás un texto, su audio deja de coincidir y la app usa la voz del dispositivo hasta regenerarlo:
+Las narraciones vienen pregrabadas (carpeta `public/audio/`). En Ajustes hay 3 velocidades (más despacio, normal, más rápido) y también se cambian mientras suena.
+
+**Voz gratuita actual:** «em_alex» de Kokoro v1.0 (Apache 2.0) con pronunciación latinoamericana (`es-419`), generada en la computadora con sherpa-onnx:
 ```bash
 npx tsx scripts/audio-texts.ts > textos.json      # lista de textos
-VOICE_DIR=ruta/kokoro-multi-lang-v1_0 python3 scripts/audio-batch.py textos.json public/audio src/generated/audio.json   # solo genera los que faltan y borra los que sobran
+VOICE_DIR=ruta/kokoro-multi-lang-v1_0 python3 scripts/audio-batch.py textos.json public/audio src/generated/audio.json   # solo genera lo que falta o cambió
 ```
+
+**Voz argentina de calidad (recomendado antes de vender):** `scripts/audio-nube.py` genera todo una sola vez con un servicio en la nube y deja los mp3 en la app (después no hay costos):
+- Azure, voces `es-AR-TomasNeural` o `es-AR-ElenaNeural`: el plan gratuito incluye 500.000 caracteres por mes y la app usa unos 65.000.
+- ElevenLabs: el plan gratis no permite uso comercial; con un mes de un plan pago alcanza.
+```bash
+AZURE_KEY=… AZURE_REGION=eastus PROVIDER=azure VOICE=es-AR-TomasNeural python3 scripts/audio-nube.py textos.json public/audio src/generated/audio.json
+```
+
+## Herramientas que resuelven cosas
+- **Mis vencimientos** (`src/features/finanzas/vencimientos.tsx`): pagos del mes, qué vence primero, marcar pagado, recordatorios para el calendario (.ics) y resumen por WhatsApp. Aparece en el Inicio cuando algo vence en 7 días.
+- **¿Cuánto tengo ahorrado?** (`ahorros.tsx`, paso 3 de Mis números): plazo fijo, cuentas, efectivo y dólares con la cotización que carga la persona.
+- **¿Cuotas o contado?** (`cuotas.tsx`): pasa las cuotas a plata de hoy con la inflación mensual que estima la persona.
+- **¿Dónde rinde más mi plata?** (`inversiones/Calculadora.tsx`, pestaña Comparar): plazo fijo vs cuenta remunerada vs dejarla quieta, contra la inflación.
+- **Mi ficha de salud** (`src/features/Salud.tsx`): medicamentos, alergias, médico y contactos de emergencia, para mostrar, imprimir o mandar.
+- **Práctica tocando** (`src/features/learn/Practice.tsx`): cada lección convierte sus pantallas en práctica; la persona toca y la app la guía.
+
+## Skills de diseño
+`.claude/skills/` tiene las guías de Emil Kowalski y de Impeccable (solo texto; ver `.claude/skills/README.md`). `PRODUCT.md` y `DESIGN.md` describen el producto y el sistema visual para que esas guías se apliquen con criterio.
 
 ## Animaciones
 - **Pantalla de carga** (`index.html`, bloque `#splash`): el video del logo (`public/intro/logo.webm` y `.mp4`, 2,8 s, sin sonido, recortado y acelerado del original). Se va cuando el video termina y la app ya cargó; tocarla la saltea. Si el celular no reproduce video o pidió "reducir movimiento", muestra el logo fijo.

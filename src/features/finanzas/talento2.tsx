@@ -62,7 +62,7 @@ export function Oferta() {
         <Field label="Tu nombre" htmlFor="f11"><TextInput id="f11" value={f.nombre} onChange={set('nombre')} /></Field>
       </Card>
       <Hero>
-        <div className="text-glow font-bold text-[.85rem]">Tu oferta en una frase</div>
+        <div className="text-onbrand/80 text-[.98rem]">Tu oferta en una frase</div>
         <p className="text-[1.15rem] mt-2 leading-relaxed">{ofertaFrase(w)}</p>
         <div className="mt-4"><Progress tone="glow" value={pct} label={<span className="text-onbrand">Tu oferta está al {pct}%</span>} /></div>
       </Hero>
@@ -108,7 +108,7 @@ export function Precio() {
       <Card className="flex flex-col gap-3"><h2 className="text-[1.25rem]">Precios de referencia</h2><p className="text-[.88rem] text-muted">Cuánto cobran otras personas por algo parecido en tu zona. Cargalos para comparar.</p><RowEditor path={base + 'ref'} rows={P.ref} addLabel="Agregar referencia" namePh="Quién o dónde" /></Card>
       {!r.ok ? <Note tone="warn">{warn.map((x) => <div key={x}>{x}</div>)}</Note> : (<>
         <Hero>
-          <div className="text-glow font-bold text-[.85rem]">Precio inicial orientativo por servicio</div>
+          <div className="text-onbrand/80 text-[.98rem]">Precio inicial orientativo por servicio</div>
           <div className="font-head font-semibold text-[3.2rem] leading-none text-glow mt-2"><CountUp value={r.redo} format={money} /></div>
           <p className="opacity-85 mt-2">Cálculo exacto: {money(r.precio)}, redondeado hacia arriba a múltiplos de $ 50. Es un punto de partida para probar, no un precio “correcto”.</p>
         </Hero>

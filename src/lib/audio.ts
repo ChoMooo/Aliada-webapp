@@ -1,6 +1,7 @@
 /* Audio de la app: primero usa las grabaciones generadas con voz argentina (carpeta audio/),
    y si un texto no tiene grabación, usa la voz del dispositivo como respaldo. */
 import manifest from '../generated/audio.json';
+import { getD, mut } from '../store';
 type Entry = { f: string; d: number; m?: number[] };
 const M = manifest as Record<string, Entry>;
 
@@ -34,6 +35,13 @@ export const demoKey = (caps: string[]) => hash(caps.map(norm).join(' || '));
 export const entry = (key: string): Entry | undefined => M[key];
 export const urlOf = (e: Entry) => 'audio/' + e.f;
 
+/* Velocidad de las narraciones (Ajustes → Velocidad de la voz) */
+export const VELOCIDADES: [string, string][] = [['0.85', 'Más despacio'], ['1', 'Normal'], ['1.2', 'Más rápido']];
+export function rate() { const v = Number(getD().aj.vel); return v > 0.5 && v < 2 ? v : 1; }
+export function nextRate() { const i = VELOCIDADES.findIndex((x) => Number(x[0]) === rate()); const n = VELOCIDADES[(i + 1) % VELOCIDADES.length][0]; mut((d) => { d.aj.vel = n as any; }); if (current) current.playbackRate = Number(n); return Number(n); }
+export const PROBAR_VOZ = 'Hola. Así suena la voz de Aliada a esta velocidad. Si te parece rápida o lenta, cambiala acá arriba.';
+export const rateLabel = (r = rate()) => (r === 1 ? '1x' : String(r).replace('.', ',') + 'x');
+
 let current: HTMLAudioElement | null = null;
 let onStop: (() => void) | null = null;
 let ext: (() => void) | null = null;
@@ -59,7 +67,7 @@ function speakFallback(t: string, done: () => void) {
     const parts = norm(t).match(/[^.!?¿¡]+[.!?]*/g) || [t];
     const v = pickVoice();
     parts.forEach((p, i) => {
-      const u = new SpeechSynthesisUtterance(speechify(p)); u.lang = v?.lang || 'es-AR'; u.rate = 0.9; u.pitch = 1; if (v) u.voice = v;
+      const u = new SpeechSynthesisUtterance(speechify(p)); u.lang = v?.lang || 'es-AR'; u.rate = 0.9 * rate(); u.pitch = 1; if (v) u.voice = v;
       if (i === parts.length - 1) u.onend = done;
       s.speak(u);
     });
@@ -72,7 +80,7 @@ export function playText(t: string, done: () => void) {
   const e = M[hash(t)];
   onStop = done;
   if (e) {
-    const a = new Audio(urlOf(e)); current = a;
+    const a = new Audio(urlOf(e)); current = a; a.playbackRate = rate();
     a.onended = () => { if (current === a) { current = null; const f = onStop; onStop = null; f?.(); } };
     a.play().catch(() => speakFallback(t, () => { const f = onStop; onStop = null; f?.(); }));
     return true;

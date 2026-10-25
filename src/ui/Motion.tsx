@@ -115,7 +115,7 @@ function ArtInversiones() {
       {[36, 60, 84].map((y) => <path key={y} d={`M12 ${y}H110`} stroke="currentColor" strokeOpacity={0.18} strokeWidth={2} strokeDasharray="3 5" />)}
       <motion.path d={d + ' L110 104 L12 104 Z'} fill="currentColor" fillOpacity={0.12} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55, duration: 0.4 }} />
       <motion.path d={d} {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, ease: ez }} />
-      <motion.circle cx="110" cy="30" r="7" fill="currentColor" initial={{ scale: 0 }} animate={{ scale: [0, 1.4, 1] }} transition={{ delay: 0.75, duration: 0.4 }} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
+      <motion.circle cx="110" cy="30" r="7" fill="currentColor" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: [0.6, 1.25, 1], opacity: 1 }} transition={{ delay: 0.75, duration: 0.4 }} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
     </svg>
   );
 }
@@ -125,7 +125,7 @@ function ArtDigital() {
     <svg viewBox="0 0 120 120" className="size-full">
       <motion.rect x="38" y="22" width="44" height="78" rx="10" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, ease: ez }} />
       <motion.rect x="45" y="32" width="30" height="50" rx="4" fill="currentColor" initial={{ opacity: 0 }} animate={{ opacity: [0, 0.5, 0.25] }} transition={{ delay: 0.45, duration: 0.5 }} />
-      <motion.circle cx="60" cy="90" r="3" fill="currentColor" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 }} />
+      <motion.circle cx="60" cy="90" r="3" fill="currentColor" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.5 }} />
       {[0, 1, 2].map((i) => (
         <motion.path key={i} d={`M${88 + i * 8} ${46 - i * 6} q${7 + i * 3} ${15 + i * 6} 0 ${30 + i * 12}`} {...S} strokeWidth={4}
           initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: [0, 1, 1 - i * 0.25] }} transition={{ delay: 0.55 + i * 0.12, duration: 0.4 }} />

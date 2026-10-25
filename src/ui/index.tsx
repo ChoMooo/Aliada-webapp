@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Check, ChevronLeft, ChevronRight, Volume2, Square, Info, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { cx } from './cx';
 import { useToasts } from './toast';
-import { playText, stopAll } from '../lib/audio';
+import { playText, stopAll, nextRate, rateLabel } from '../lib/audio';
 import { useD } from '../store';
+import { pn } from '../lib/format';
 import logo from '../logo.png';
 import { veilDelay } from '../lib/navhist';
 
@@ -105,7 +106,6 @@ export function PageHeader({ kicker, title, lead, back, right }: { kicker?: stri
   return (
     <header className="flex flex-col gap-2">
       {back && <div className="flex items-center justify-between"><BackLink to={back.to} label={back.label} /><SavedMark /></div>}
-      {kicker && <Kicker>{kicker}</Kicker>}
       {(title || right) && <div className="flex items-start justify-between gap-3">
         {title && <h1 className="text-[1.85rem] sm:text-[2.1rem]">{title}</h1>}{right}
       </div>}
@@ -142,11 +142,18 @@ export function TextInput({ value, onChange, placeholder, id, numeric, decimal, 
   return <input id={id} type="text" aria-label={label} inputMode={numeric ? 'numeric' : decimal ? 'decimal' : undefined} autoComplete="off" value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className={className} />;
 }
 export function MoneyInput({ value, onChange, id, cur = '$', placeholder = '0', label }: { value: string; onChange: (v: string) => void; id?: string; cur?: string; placeholder?: string; label?: string }) {
+  /* Al salir del casillero se ordena el número con puntos de miles (1500000 → 1.500.000) para leerlo mejor */
+  const tidy = () => {
+    if (!value || !/\d/.test(value)) return;
+    const n = pn(value); if (!isFinite(n)) return;
+    const f = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 2 }).format(n);
+    if (f !== value) onChange(f);
+  };
   return (
     <div className="relative min-w-0">
       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-muted pointer-events-none">{cur}</span>
-      <input id={id} type="text" aria-label={label} inputMode="decimal" autoComplete="off" value={value} placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)} className={cx('num font-bold', cur.length > 1 ? '!pl-14' : '!pl-9')} />
+      <input id={id} type="text" aria-label={label} inputMode="decimal" autoComplete="off" enterKeyHint="next" value={value} placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)} onBlur={tidy} className={cx('num font-bold', cur.length > 1 ? '!pl-14' : '!pl-9')} />
     </div>
   );
 }
@@ -244,10 +251,10 @@ export function Tag({ children, tone = 'neutral' }: { children: React.ReactNode;
   return <span className={cx('inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[.76rem] font-semibold', t)}>{children}</span>;
 }
 export function Note({ children, tone = 'info', title }: { children: React.ReactNode; tone?: 'info' | 'warn' | 'good' | 'bad'; title?: React.ReactNode }) {
-  const t = { info: ['bg-skysoft border-sky', <Info key="i" />], warn: ['bg-warn border-amber text-warnink', <AlertTriangle key="w" />], good: ['bg-mint border-accent', <CheckCircle2 key="g" />], bad: ['bg-badsoft border-bad', <AlertTriangle key="b" />] }[tone] as [string, React.ReactNode];
+  const t = { info: ['bg-skysoft border-sky/25', 'text-sky', <Info key="i" />], warn: ['bg-warn border-amber/30 text-warnink', '', <AlertTriangle key="w" />], good: ['bg-mint border-accent/25', 'text-accent', <CheckCircle2 key="g" />], bad: ['bg-badsoft border-bad/30', 'text-bad', <AlertTriangle key="b" />] }[tone] as [string, string, React.ReactNode];
   return (
-    <div className={cx('flex gap-3 rounded-lg border-l-[3px] px-4 py-3.5 text-[.95rem]', t[0])}>
-      <span className="mt-0.5 [&_svg]:size-5 shrink-0 opacity-80">{t[1]}</span>
+    <div className={cx('flex gap-3 rounded-xl border px-4 py-3.5 text-[.95rem]', t[0])}>
+      <span className={cx('mt-0.5 [&_svg]:size-5 shrink-0', t[1])}>{t[2]}</span>
       <div className="min-w-0 flex-1">{title && <b className="block mb-0.5">{title}</b>}{children}</div>
     </div>
   );
@@ -337,16 +344,23 @@ export function Disclosure({ title, children, defaultOpen = false, icon }: { tit
 /* ---------- Voz ---------- */
 export function ListenButton({ text, getText, label = 'Escuchar' }: { text?: string; getText?: () => string; label?: string }) {
   const voz = useD((d) => d.aj.voz);
+  const vel = useD((d) => d.aj.vel);
   const [on, setOn] = useState(false);
   const onRef = useRef(false); onRef.current = on;
   useEffect(() => () => { if (onRef.current) stopAll(); }, []);
   if (!voz) return null;
   return (
-    <button type="button" aria-pressed={on} onClick={() => { if (on) { stopAll(); setOn(false); return; } playText(getText ? getText() : text || '', () => setOn(false)); setOn(true); }}
-      className="no-print inline-flex items-center gap-2 self-start rounded-full border border-line bg-surface px-4 min-h-[2.75rem] font-semibold text-[.9rem] hover:border-ink/30">
-      {on ? <span className="flex items-end gap-[3px] h-4" aria-hidden>{[0, 1, 2].map((i) => <motion.span key={i} className="w-[3px] rounded-full bg-accent" animate={{ height: ['30%', '100%', '45%'] }} transition={{ duration: 0.7, repeat: Infinity, repeatType: 'mirror', delay: i * 0.15 }} />)}</span> : <Volume2 className="size-4 text-accent" />}
-      {on ? 'Detener' : label}
-    </button>
+    <span className="no-print inline-flex items-center gap-2 self-start">
+      <button type="button" aria-pressed={on} onClick={() => { if (on) { stopAll(); setOn(false); return; } playText(getText ? getText() : text || '', () => setOn(false)); setOn(true); }}
+        className="press inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 min-h-[2.75rem] font-semibold text-[.9rem] hover:border-ink/30">
+        {on ? <span className="flex items-end gap-[3px] h-4" aria-hidden>{[0, 1, 2].map((i) => <motion.span key={i} className="w-[3px] rounded-full bg-accent" animate={{ height: ['30%', '100%', '45%'] }} transition={{ duration: 0.7, repeat: Infinity, repeatType: 'mirror', delay: i * 0.15 }} />)}</span> : <Volume2 className="size-4 text-accent" />}
+        {on ? 'Detener' : label}
+      </button>
+      {on && (
+        <button type="button" onClick={() => nextRate()} title="Velocidad de la voz" aria-label={'Velocidad de la voz: ' + rateLabel(Number(vel) || 1) + '. Tocá para cambiarla'}
+          className="press min-w-[3.2rem] min-h-[2.75rem] px-2.5 rounded-full border border-line bg-surface font-bold num text-[.9rem]">{rateLabel(Number(vel) || 1)}</button>
+      )}
+    </span>
   );
 }
 

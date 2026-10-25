@@ -20,6 +20,9 @@ export const MODULES: Module[] = ALL_MODULES.filter((m) => m.section === 'digita
 export const FIN_MODULES: Module[] = ALL_MODULES.filter((m) => m.section === 'finanzas');
 export { INV_MODULES };
 export const MOD = (id: string) => ALL_MODULES.find((m) => m.id === id);
+/* Lecciones "para más adelante": útiles pero menos urgentes. El módulo las muestra plegadas, después de lo esencial. */
+export const EXTRA = new Set(['wa-estados', 'wa-web', 'ia-imagenes', 'g-lens', 'g-traductor', 'r-tiktok', 'r-yt-tv', 'r-ig-publicar', 'c-auto', 'c-collage', 'c-invitacion', 'pay-ml-envio']);
+export const isExtra = (id: string) => EXTRA.has(id);
 export const SECTION_BASE: Record<string, string> = { finanzas: '/finanzas/m/', digital: '/digital/m/', inversiones: '/inversiones/m/' };
 export const modPath = (m: Module) => SECTION_BASE[m.section] + m.id;
 export const SOON = { id: 'aliada-ia', n: 'IA de Aliada Digital', desc: 'Una asistente propia de la app, que te responde con tu ritmo y tu forma de aprender.' };

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Wallet, Smartphone, TrendingUp, BookHeart, ArrowRight, ChevronRight, FileText, Settings } from 'lucide-react';
+import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, CalendarClock, PiggyBank, Scale, HeartPulse } from 'lucide-react';
 import { useStore, useD } from '../store';
-import { Button, Stagger, Item, Note, cx, Kicker, Mascot, LivingSea } from '../ui';
+import { Button, Stagger, Item, Note, cx, Mascot, LivingSea, RowLink } from '../ui';
+import { urgentes } from './finanzas/vencimientos';
+import { money } from '../lib/format';
 import { calc, tramSiguiente, taSiguiente } from './finanzas/calc';
 import { nextLesson } from './digital/logic';
 import { INV_MODULES, modPath } from '../content/learn';
@@ -31,18 +33,14 @@ export default function Home() {
   const main = useNextStep();
   const greet = (() => { const h = new Date().getHours(); return h < 13 ? 'Buen día' : h < 20 ? 'Buenas tardes' : 'Buenas noches'; })();
   const [firstVisit] = useState(() => { try { const f = !sessionStorage.getItem('aliada.hola'); sessionStorage.setItem('aliada.hola', '1'); return f; } catch { return false; } });
-  const tiles = [
-    { to: '/finanzas', icon: <Wallet />, t: 'Finanzas', s: 'Tu plata, trámites y pagos', tone: 'bg-mint text-accent' },
-    { to: '/inversiones', icon: <TrendingUp />, t: 'Inversiones', s: 'Cómo invertir, paso a paso', tone: 'bg-skysoft text-sky' },
-    { to: '/digital', icon: <Smartphone />, t: 'Mundo digital', s: 'Apps explicadas con videos', tone: 'bg-violetsoft text-violet' },
-    ...(mujer ? [{ to: '/libro', icon: <BookHeart />, t: 'Mi nueva versión', s: 'Tu libro y cuaderno', tone: 'bg-ambersoft text-amber' }] : [])
-  ];
+  const urg = urgentes(d), venc = d.venc.items.length > 0;
+
   return (
     <Stagger className="flex flex-col gap-6">
       <Item className="flex items-end justify-between gap-3">
         <div className="min-w-0 pb-2">
-          <Kicker className="first-letter:uppercase">{new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</Kicker>
-          <h1 className="text-[2rem] sm:text-[2.3rem] mt-1 leading-tight">{greet}{nombre ? ', ' + nombre : ''}</h1>
+          <h1 className="text-[2rem] sm:text-[2.3rem] leading-tight">{greet}{nombre ? ', ' + nombre : ''}</h1>
+          <p className="text-muted mt-1 first-letter:uppercase">{new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
         </div>
         <Mascot pose="wave" gesture={firstVisit ? 'wave' : 'none'} size={92} label="La mascota de Aliada te saluda" />
       </Item>
@@ -53,8 +51,27 @@ export default function Home() {
         </Item>
       )}
 
-      <Item className={cx('grid gap-3', tiles.length === 4 ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-3')}>
-        {tiles.map((x) => <Tile key={x.to} {...x} row={tiles.length !== 4} />)}
+      {urg.length > 0 && (
+        <Item><Link to="/finanzas/vencimientos" className="press block rounded-xl2 bg-surface border border-line shadow-card p-4">
+          <span className="flex items-center justify-between gap-3"><b className="text-[1.1rem]">Pagos para tener en cuenta</b><ChevronRight className="size-5 text-muted" /></span>
+          <ul className="mt-2 flex flex-col gap-1.5">
+            {urg.slice(0, 3).map((e) => (
+              <li key={e.id} className="flex items-center justify-between gap-3">
+                <span className="min-w-0 truncate">{e.n}{e.m > 0 && <span className="text-muted num"> · {money(e.m)}</span>}</span>
+                <span className={cx('shrink-0 rounded-full px-2.5 py-0.5 text-[.8rem] font-semibold', e.diff < 0 ? 'bg-badsoft text-bad' : e.diff === 0 ? 'bg-warn text-warnink' : 'bg-ambersoft text-amber')}>{e.txt}</span>
+              </li>
+            ))}
+          </ul>
+        </Link></Item>
+      )}
+
+      <Item className="flex flex-col gap-3">
+        <h2 className="text-[1.25rem]">Resolvé algo hoy</h2>
+        <RowLink to="/finanzas/vencimientos" icon={<CalendarClock />} tone="amber" title="Mis vencimientos" sub={venc ? 'Qué pagaste y qué falta este mes' : 'Anotá luz, gas, tarjeta… y no se te pase ninguno'} />
+        <RowLink to="/finanzas/plata/numeros/2" icon={<PiggyBank />} tone="mint" title="¿Cuánto tengo ahorrado?" sub="Plazo fijo, cuentas, efectivo y dólares, sumado en pesos" />
+        <RowLink to="/finanzas/cuotas" icon={<Scale />} tone="sky" title="¿Cuotas o contado?" sub="La cuenta hecha antes de comprar" />
+        <RowLink to="/inversiones/calculadora" icon={<TrendingUp />} tone="sky" title="¿Dónde rinde más mi plata?" sub="Plazo fijo o billetera, con las tasas de hoy" />
+        <RowLink to="/salud" icon={<HeartPulse />} tone="violet" title="Mi ficha de salud" sub="Medicamentos, alergias y a quién avisar" />
       </Item>
 
       {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este dispositivo. Hacé una copia desde Ajustes para no perderlos si cambiás de celular.</Note></Item>}
@@ -67,19 +84,6 @@ export default function Home() {
     </Stagger>
   );
 }
-
-function Tile({ to, icon, t, s, tone, row }: { to: string; icon: React.ReactNode; t: string; s: string; tone: string; row?: boolean }) {
-  const nav = useNavigate();
-  return (
-    <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }} onClick={() => nav(to)}
-      className={cx('text-left rounded-xl2 bg-surface border border-line shadow-card p-4 flex gap-3', row ? 'items-center sm:flex-col sm:items-start' : 'flex-col')}>
-      <span className={cx('grid place-items-center size-11 rounded-xl [&_svg]:size-6 shrink-0', tone)}>{icon}</span>
-      <span className="flex-1 min-w-0"><b className="block font-head font-semibold text-[1.12rem] leading-tight">{t}</b><span className="block text-[.86rem] text-muted mt-0.5">{s}</span></span>
-      {row && <ChevronRight className="size-5 text-muted sm:hidden" />}
-    </motion.button>
-  );
-}
-
 /* "Tu próximo paso" sobre la foto del escritorio en el mar, con la marea en movimiento.
    El escritorio queda siempre a la derecha y el texto nunca lo pisa:
    - celular: la foto arriba (entera, un poco acercada al escritorio) y el texto debajo;
@@ -94,10 +98,12 @@ function NextStepHero({ tag, title, sub, go }: { tag: string; title: string; sub
         <div className="hidden sm:block absolute inset-0 hero-sea-veil" />
       </div>
       <div className="relative px-5 pt-4 pb-6 sm:p-8 sm:pr-[50%] sm:min-h-[20rem] flex flex-col sm:justify-center">
-        <div className="text-accent sm:text-[#0a6e57] font-semibold text-[.78rem] tracking-wide uppercase">Tu próximo paso · {tag}</div>
-        <h2 className="text-[1.5rem] sm:text-[1.8rem] text-ink sm:text-[#0b2236] mt-1.5 sm:mt-2 leading-tight">{title}</h2>
+        <h2 className="text-[1.5rem] sm:text-[1.8rem] text-ink sm:text-[#0b2236] leading-tight">{title}</h2>
         <p className="text-muted sm:text-[#23455a] mt-1.5">{sub}</p>
-        <div className="mt-5"><Button to={go} iconRight={<ArrowRight />} className="sm:!bg-[#0a6e57] sm:!border-[#0a6e57] sm:!text-white">Continuar</Button></div>
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Button to={go} iconRight={<ArrowRight />} className="sm:!bg-[#0a6e57] sm:!border-[#0a6e57] sm:!text-white">Continuar</Button>
+          <span className="text-[.9rem] text-muted sm:text-[#23455a]">Tu próximo paso en {tag}</span>
+        </div>
       </div>
     </section>
   );

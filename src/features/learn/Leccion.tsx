@@ -7,15 +7,17 @@ import { BackLink, Card, Button, Chips, Note, CheckRow, ListenButton, Bullets, C
 import { MOD, modPath } from '../../content/learn';
 import { N } from '../../lib/narration';
 import { DemoPlayer, VisualGuide } from './Demo';
+import { TapPractice } from './Practice';
 import { copyText, wa } from '../../lib/share';
 import { userOS } from '../digital/logic';
 import { SIMS } from '../digital/sims';
 import { TONE, MOD_ICON, sectionOf } from './meta';
 
-type Sec = 'intro' | 'video' | 'practica' | 'pasos' | 'sino' | 'quiz' | 'fin';
+/* Cinco partes: mirar, practicar tocando, hacerlo en el celular de verdad, un desafío corto y la ficha final */
+type Sec = 'ver' | 'practica' | 'hacer' | 'quiz' | 'fin';
 const META: Record<Sec, [string, React.ReactNode]> = {
-  intro: ['La idea', <Lightbulb key="i" />], video: ['Mirá cómo se hace', <PlayCircle key="v" />], practica: ['Practicá sin riesgo', <Hand key="p" />], pasos: ['Hacelo en tu celular', <ListChecks key="s" />],
-  sino: ['Si algo no sale', <Wrench key="w" />], quiz: ['Mini desafío', <HelpCircle key="q" />], fin: ['¡Terminaste!', <Flag key="f" />]
+  ver: ['Mirá cómo se hace', <PlayCircle key="v" />], practica: ['Ahora probalo vos', <Hand key="p" />], hacer: ['Hacelo en tu celular', <ListChecks key="s" />],
+  quiz: ['Desafío corto', <HelpCircle key="q" />], fin: ['¡Terminaste!', <Flag key="f" />]
 };
 
 export default function Leccion() {
@@ -28,7 +30,7 @@ export default function Leccion() {
   const [ans, setAns] = useState<(number | null)[]>([]);
   const [simDone, setSimDone] = useState(false);
   React.useEffect(() => { setK(0); setQi(0); setAns([]); setSimDone(false); }, [lec]);
-  const secs = useMemo<Sec[]>(() => (l ? (['intro', l.demo.length ? 'video' : null, l.sim ? 'practica' : null, 'pasos', 'sino', 'quiz', 'fin'].filter(Boolean) as Sec[]) : []), [l]);
+  const secs = useMemo<Sec[]>(() => (l ? (['ver', l.sim || l.demo.length ? 'practica' : null, 'hacer', l.quiz.length ? 'quiz' : null, 'fin'].filter(Boolean) as Sec[]) : []), [l]);
   if (!m || !l) return <div className="flex flex-col gap-4"><BackLink to="/" label="Inicio" /><Note tone="warn">No encontramos esta lección.</Note></div>;
   const sec = secs[k], st = d.md.lec[l.id] || {}, Sim = l.sim ? SIMS[l.sim] : null;
   const base = modPath(m), sc = sectionOf(m);
@@ -51,30 +53,25 @@ export default function Leccion() {
       <div className="flex items-center gap-2 text-accent font-bold text-[.9rem] [&_svg]:size-5">{META[sec][1]}{META[sec][0]}</div>
 
       <AnimatePresence mode="wait" custom={dir}>
-        <motion.div key={sec + qi} custom={dir} initial={{ opacity: 0, x: 40 * dir }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 * dir }} transition={{ duration: 0.35, ease }} className="flex flex-col gap-4">
-          {sec === 'intro' && (<>
-            <p className="text-[1.15rem] leading-relaxed"><b>Para qué te sirve:</b> {l.para}</p>
-            <ListenButton text={N.lessonIntro(l)} />
-            {l.idea.map((t, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.1 }}>
-                <Card className="flex gap-4 items-start"><span className="font-head font-semibold text-[1.6rem] text-accent leading-none">{i + 1}</span><p className="text-[1.02rem]">{t}</p></Card>
-              </motion.div>
-            ))}
+        <motion.div key={sec + qi} custom={dir} initial={{ opacity: 0, x: 24 * dir }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 * dir }} transition={{ duration: 0.24, ease }} className="flex flex-col gap-4">
+          {sec === 'ver' && (<>
+            <p className="text-[1.12rem] leading-relaxed max-w-[40rem]">{l.para}</p>
+            {l.demo.length > 0 && <DemoPlayer key={l.id} frames={l.demo} title={l.t} />}
+            {l.demo.length > 0 && (
+              <details className="group rounded-xl2 border border-line bg-surface">
+                <summary className="press flex items-center justify-between gap-3 cursor-pointer px-4 min-h-[3.4rem] font-semibold">Ver los pasos en imágenes<ArrowRight className="size-5 text-muted transition-transform duration-200 group-open:rotate-90" /></summary>
+                <div className="px-4 pb-4 flex flex-col gap-3"><VisualGuide frames={l.demo} /><p className="text-[.82rem] text-muted">Pantallas ilustrativas: en tu celular los colores y la ubicación de algunos botones pueden variar.</p></div>
+              </details>
+            )}
           </>)}
-          {sec === 'video' && (<>
-            <p className="text-[1.05rem] text-muted">Un video corto con voz: mirá dónde se toca en cada pantalla. Podés pausar y avanzar paso por paso.</p>
-            <DemoPlayer key={l.id} frames={l.demo} title={l.t} />
-            <h3 className="text-[1.2rem] mt-3">La guía en imágenes</h3>
-            <VisualGuide frames={l.demo} />
-            <p className="text-[.82rem] text-muted">Pantallas ilustrativas: en tu celular los colores y la ubicación de algunos botones pueden variar.</p>
+          {sec === 'practica' && (<>
+            {Sim ? (<>{l.simIntro && <p className="text-[1.05rem]">{l.simIntro}</p>}<Sim done={simDone || !!st.done} onDone={() => setSimDone(true)} /></>)
+              : <TapPractice key={l.id} frames={l.demo} done={!!st.done} onDone={() => setSimDone(true)} />}
+            <p className="text-[.85rem] text-muted">Es una práctica: nada de lo que toques acá se envía ni se paga de verdad.</p>
           </>)}
-          {sec === 'practica' && Sim && (<>
-            {l.simIntro && <p className="text-[1.05rem]">{l.simIntro}</p>}
-            <Sim done={simDone || !!st.done} onDone={() => setSimDone(true)} />
-            <p className="text-[.85rem] text-muted text-center">Es un simulador: nada de lo que hagas acá se envía de verdad.</p>
-          </>)}
-          {sec === 'pasos' && (<>
-            <div className="flex flex-wrap items-center gap-3"><span className="text-[.9rem] text-muted">Pasos para:</span><Chips options={[['android', 'Android'], ['ios', 'iPhone']]} value={os} onChange={(v) => v && setOs(v)} /></div>
+          {sec === 'hacer' && (<>
+            <p className="text-[1.02rem]">Agarrá tu celular y seguí estos pasos. Marcá cada uno cuando lo hagas.</p>
+            <div className="flex flex-wrap items-center gap-3"><span className="text-[.9rem] text-muted">Mi celular es:</span><Chips options={[['android', 'Android'], ['ios', 'iPhone']]} value={os} onChange={(v) => v && setOs(v)} /></div>
             <Card>
               {pasos.map((p, i) => {
                 const key = os + i, dn = !!st.steps?.[key];
@@ -82,11 +79,13 @@ export default function Leccion() {
               })}
             </Card>
             <ListenButton text={N.steps(pasos)} label="Escuchar los pasos" />
-            <Note tone="info">Pasos generales: los menús pueden cambiar un poco según tu modelo y la versión de la app. Si no ves algo, buscá la palabra con la lupa.</Note>
-          </>)}
-          {sec === 'sino' && (<>
-            {l.siNo.map((t, i) => <Card key={i} className="flex gap-3 items-start"><Wrench className="size-5 text-amber shrink-0 mt-0.5" /><p>{t}</p></Card>)}
-            <Card tone="sunk"><p><b>Regla de oro:</b> si algo no aparece donde esperabas, abrí los Ajustes de la app o del celular y usá la <b>lupa</b> para buscar la palabra.</p></Card>
+            <details className="group rounded-xl2 border border-line bg-surface">
+              <summary className="press flex items-center justify-between gap-3 cursor-pointer px-4 min-h-[3.4rem] font-semibold"><span className="flex items-center gap-2"><Wrench className="size-5 text-amber" />Si algo no sale</span><ArrowRight className="size-5 text-muted transition-transform duration-200 group-open:rotate-90" /></summary>
+              <ul className="px-4 pb-4 flex flex-col gap-2.5">
+                {l.siNo.map((t, i) => <li key={i} className="flex gap-2.5"><span className="mt-2 size-1.5 rounded-full bg-amber shrink-0" />{t}</li>)}
+                <li className="flex gap-2.5"><span className="mt-2 size-1.5 rounded-full bg-amber shrink-0" /><span><b>Regla de oro:</b> si algo no aparece donde esperabas, abrí los Ajustes y usá la <b>lupa</b> para buscar la palabra. Los menús cambian un poco según el modelo.</span></li>
+              </ul>
+            </details>
           </>)}
           {sec === 'quiz' && (() => {
             const q = l.quiz[qi], a = ans[qi];
@@ -139,7 +138,7 @@ export default function Leccion() {
       </AnimatePresence>
 
       {sec !== 'fin' && (
-        <div className={cx('z-20 flex gap-3 -mx-4 px-4 pt-6 pb-3', sec === 'video' ? 'relative' : 'sticky bottom-[5.2rem] lg:bottom-0 bg-gradient-to-t from-bg via-bg/95 to-transparent')}>
+        <div className={cx('z-20 flex gap-3 -mx-4 px-4 pt-6 pb-3', sec === 'ver' || sec === 'practica' ? 'relative' : 'sticky bottom-[5.2rem] lg:bottom-0 bg-gradient-to-t from-bg via-bg/95 to-transparent')}>
           {k > 0 && <Button variant="ghost" icon={<ArrowLeft />} onClick={() => { if (sec === 'quiz' && qi > 0) setQi(qi - 1); else go(k - 1); }}>Atrás</Button>}
           <Button className="flex-1 shadow-lift" disabled={!canNext} iconRight={<ArrowRight />} onClick={() => go(k + 1)}>
             {sec === 'quiz' ? 'Terminar' : sec === 'practica' && !simDone && !st.done ? 'Seguir sin practicar' : 'Siguiente'}

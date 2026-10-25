@@ -25,7 +25,9 @@ function Body({ s }: { s: Screen }) {
   return s.dialog ? <Dialog s={s} base={inner} {...s.dialog} /> : inner;
 }
 
-export function PhoneScreen({ frame, width = 280, animateFinger = true, className }: { frame: Frame; width?: number; animateFinger?: boolean; className?: string }) {
+export function PhoneScreen({ frame, width = 280, animateFinger = true, className, practice, hint, onPick }: { frame: Frame; width?: number; animateFinger?: boolean; className?: string;
+  /** modo práctica: la marca verde y el dedo se esconden hasta pedir una pista; los toques se informan con onPick */
+  practice?: boolean; hint?: boolean; onPick?: (ok: boolean) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const [pt, setPt] = useState<{ x: number; y: number } | null>(null);
   const reduce = useReducedMotion();
@@ -43,11 +45,20 @@ export function PhoneScreen({ frame, width = 280, animateFinger = true, classNam
     <div className={cx('relative shrink-0', className)} style={{ width, height: 580 * scale }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: 280, height: 580, transform: `scale(${scale})` }}>
         <div className="w-[280px] h-[580px] rounded-[36px] bg-[#101113] p-[8px] shadow-[0_22px_44px_-16px_rgba(0,0,0,.5),inset_0_0_0_1.5px_#2a2c30]">
-          <div ref={ref} className="relative w-full h-full rounded-[29px] overflow-hidden bg-white text-[#1f1f1f] [color-scheme:light] flex flex-col antialiased" style={{ fontFamily: "Roboto, 'Public Sans', system-ui, sans-serif" }}>
+          <div ref={ref} className={cx('relative w-full h-full rounded-[29px] overflow-hidden bg-white text-[#1f1f1f] [color-scheme:light] flex flex-col antialiased', practice && 'cursor-pointer select-none', practice && !hint && '[&_[data-hl="1"]]:!outline-0')}
+            style={{ fontFamily: "Roboto, 'Public Sans', system-ui, sans-serif" }}
+            onClick={practice && onPick ? (e) => {
+              const root = ref.current, el = root?.querySelector('[data-hl="1"]') as HTMLElement | null;
+              if (!root || !el) return onPick(true);
+              /* se acepta el toque cerca del lugar correcto: los dedos no son precisos */
+              const r = el.getBoundingClientRect(), pad = 14 * scale;
+              const inside = e.clientX >= r.left - pad && e.clientX <= r.right + pad && e.clientY >= r.top - pad && e.clientY <= r.bottom + pad;
+              onPick(inside || !!(e.target as Element).closest('[data-hl="1"]'));
+            } : undefined}>
             <StatusBar dark={dark} light={['broker', 'crypto', 'phone'].includes(s.app) && !s.v?.match(/store/)} bg={dark ? '#000' : BAR_BG[s.app === 'ai' && s.name === 'Claude' ? 'claude' : s.app]} />
             <div className="flex-1 flex flex-col min-h-0">{Body({ s })}</div>
             <div className={cx('h-4 shrink-0 grid place-items-center', dark ? 'bg-black' : 'bg-white')}><span className={cx('w-20 h-1 rounded-full', dark ? 'bg-white/70' : 'bg-black/70')} /></div>
-            {pt && (
+            {pt && (!practice || hint) && (
               <motion.div className="absolute z-30 pointer-events-none" initial={animateFinger && !reduce ? { x: pt.x + 40, y: pt.y + 70, opacity: 0 } : { x: pt.x, y: pt.y, opacity: 1 }}
                 animate={{ x: act === 'left' ? [pt.x, pt.x - 60] : pt.x, y: act === 'up' ? [pt.y, pt.y - 50] : pt.y, opacity: 1 }}
                 transition={{ duration: act === 'left' || act === 'up' ? 1.2 : 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }} key={JSON.stringify(pt) + act}>

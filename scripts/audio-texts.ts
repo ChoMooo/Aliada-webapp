@@ -4,14 +4,14 @@ import { ALL_MODULES, SETUP, DIAG_Q, RETOS } from '../src/content/learn';
 import { ESCUDO_DEMO } from '../src/content/learn/escudo';
 import { PLATA_STEPS, GUIAS } from '../src/content/finanzas';
 import { N } from '../src/lib/narration';
-import { hash, demoKey, speechify, norm } from '../src/lib/audio';
+import { hash, demoKey, speechify, norm, PROBAR_VOZ } from '../src/lib/audio';
 
 const out: Record<string, { kind: 'text' | 'demo'; speak?: string; parts?: string[] }> = {};
 const text = (t: string) => { if (t && norm(t)) out[hash(t)] = { kind: 'text', speak: speechify(t) }; };
 const demo = (caps: string[]) => { if (caps.length) out[demoKey(caps)] = { kind: 'demo', parts: caps.map(speechify) }; };
 
 ALL_MODULES.forEach((m) => m.lessons.forEach((l) => {
-  text(N.lessonIntro(l)); text(N.steps(l.pasos.android)); text(N.steps(l.pasos.ios)); demo(l.demo.map((f) => f.cap));
+  text(N.steps(l.pasos.android)); text(N.steps(l.pasos.ios)); demo(l.demo.map((f) => f.cap));
 }));
 SETUP.forEach((s) => { text(N.setup(s, 'android')); text(N.setup(s, 'ios')); demo(s.demo.map((f) => f.cap)); });
 demo(ESCUDO_DEMO.map((f) => f.cap));
@@ -19,4 +19,5 @@ demo(ESCUDO_DEMO.map((f) => f.cap));
 PLATA_STEPS.forEach((s) => text(N.ask(s.t, s.h)));
 GUIAS.forEach((g: any) => text(N.guia(g)));
 text(N.tramSit);
+text(PROBAR_VOZ);
 process.stdout.write(JSON.stringify(out, null, 1));

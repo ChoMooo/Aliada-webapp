@@ -9,15 +9,22 @@ import { MODULES, FIN_MODULES, INV_MODULES } from '../content/learn';
 import { modProg, setupProg } from './digital/logic';
 import { copyText, wa } from '../lib/share';
 import { toast } from '../ui/toast';
+import { estados } from './finanzas/vencimientos';
 
 export function resumenTexto(d: Data) {
   const c = calc(d), pt = progresoTram(d);
   const L = ['ALIADA DIGITAL · Mi resumen' + (d.perfil.nombre ? ' · ' + d.perfil.nombre : ''), new Date().toLocaleDateString('es-AR'), '', 'MI PLATA'];
   if (c.has) {
-    L.push('Ingresos por mes: ' + money(c.ing), 'Gastos por mes: ' + money(c.gas), (c.brecha >= 0 ? 'Me sobra por mes: ' : 'Me falta por mes: ') + money(Math.abs(c.brecha)), 'Ahorros netos: ' + money(c.neto));
+    L.push('Ingresos por mes: ' + money(c.ing), 'Gastos por mes: ' + money(c.gas), (c.brecha >= 0 ? 'Me sobra por mes: ' : 'Me falta por mes: ') + money(Math.abs(c.brecha)));
+    const P = c.ahoParts;
+    [['Plazo fijo', P.pf], ['Cuentas y billeteras', P.cu], ['Efectivo', P.ef], ['Otros ahorros', P.otros]].forEach(([k, v]) => { if ((v as number) > 0) L.push('  ' + k + ': ' + money(v as number)); });
+    if (P.usd > 0) L.push('  Dólares: US$ ' + fmt(P.usd) + (c.cot > 0 ? ' a $ ' + fmt(c.cot, c.cot % 1 ? 2 : 0) + ' = ' + money(P.usdARS) : ' (sin cotización)'));
+    L.push('Ahorros en pesos: ' + money(c.ahoARS), 'Ahorros netos (menos deudas): ' + money(c.neto));
     L.push(c.anios == null ? 'Mis ingresos cubren mis gastos.' : 'Mis ahorros alcanzan unos ' + fmt(c.anios, 1) + ' años.');
     if (pn(d.plata.meta.m) > 0) L.push('Meta' + (d.plata.meta.n ? ' (' + d.plata.meta.n + ')' : '') + ': ' + money(pn(d.plata.meta.m)) + ' · llegué al ' + Math.round(Math.min(Math.max(c.neto, 0) / pn(d.plata.meta.m), 1) * 100) + '%');
   } else L.push('Todavía sin cargar.');
+  const E = estados(d);
+  if (E.length) { L.push('', 'MIS VENCIMIENTOS DEL MES'); E.forEach((e) => L.push((e.pagado ? '[x] ' : '[ ] ') + e.n + ' · día ' + e.dia + (e.m > 0 ? ' · ' + money(e.m) : ''))); }
   L.push('', 'MIS TRÁMITES');
   if (d.tr.sit.sit) {
     L.push('Situación: ' + SIT_N[d.tr.sit.sit], 'Avance: ' + pt.n + ' de ' + pt.t + ' tareas');
