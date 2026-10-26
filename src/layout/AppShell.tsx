@@ -25,11 +25,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
       {h.veil?.kind === 'section' && <SectionVeil key={h.veilKey} id={h.veil.id} />}
       {/* Barra superior */}
-      <header className="no-print sticky top-0 z-30 lg:col-span-2 safe-t bg-bg/85 backdrop-blur-md border-b border-line">
+      <header className="no-print sticky top-0 z-30 lg:col-span-2 safe-t bg-bg/90 backdrop-blur-md border-b border-line">
         <div className="flex items-center gap-3 px-4 sm:px-6 h-16">
           <button onClick={() => nav('/')} className="flex items-center gap-3 text-left" aria-label="Ir al inicio">
-            <motion.img src={LOGO} alt="" className="size-10 rounded-full" whileHover={{ rotate: -8 }} />
-            <span><b className="block font-head font-semibold text-[1.1rem] leading-none">Aliada Digital</b><span className="text-[.74rem] text-muted">A tu ritmo, con calma</span></span>
+            <img src={LOGO} alt="" className="size-10 rounded-full" />
+            <span><b className="block font-head font-bold text-[1.1rem] leading-none">Aliada Digital</b><span className="text-[.74rem] text-muted">A tu ritmo, con calma</span></span>
           </button>
           <span className="flex-1" />
           <IconButton label="Ajustes" onClick={() => nav('/ajustes')}><Settings /></IconButton>
@@ -43,7 +43,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           return (
             <button key={n.to} onClick={() => nav(n.to)} aria-current={on ? 'page' : undefined}
               className={cx('relative flex items-center gap-3 min-h-[3.3rem] px-4 rounded-xl font-bold text-left [&_svg]:size-5', on ? 'text-accent' : 'text-muted hover:text-ink')}>
-              {on && <motion.span layoutId="side-pill" className="absolute inset-0 rounded-xl bg-mint" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+              {on && <motion.span layoutId="side-pill" className="absolute inset-0 rounded-xl bg-accent/10" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
               <span className="relative">{n.icon}</span><span className="relative">{n.label}</span>
             </button>
           );
@@ -59,8 +59,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             const on = n.match(pathname);
             return (
               <button key={n.to} onClick={() => nav(n.to)} aria-current={on ? 'page' : undefined}
-                className={cx('relative flex flex-col items-center gap-0.5 min-h-[3.7rem] justify-center rounded-xl text-[.72rem] font-semibold [&_svg]:size-6', on ? 'text-accent' : 'text-muted')}>
-                {on && <motion.span layoutId="bottom-pill" className="absolute inset-x-1.5 inset-y-0.5 rounded-xl bg-mint" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+                className={cx('press relative flex flex-col items-center gap-0.5 min-h-[3.7rem] justify-center rounded-xl text-[.74rem] font-bold [&_svg]:size-6', on ? 'text-accent' : 'text-muted')}>
+                {on && <motion.span layoutId="bottom-pill" className="absolute inset-x-1.5 inset-y-0.5 rounded-xl bg-accent/10" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
                 <span className="relative">{n.icon}</span><span className="relative">{n.short ?? n.label}</span>
               </button>
             );

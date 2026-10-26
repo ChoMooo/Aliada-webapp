@@ -44,7 +44,7 @@ export function Mascot({ pose = 'neutral', gesture = 'none', size = 120, classNa
   return (
     <motion.button type="button" aria-label={label || 'Mascota de Aliada Digital'} onPointerDown={tap} onClick={(e) => { if (e.detail === 0) tap(); }}
       className={cx('relative shrink-0 select-none cursor-pointer [-webkit-tap-highlight-color:transparent]', className)} style={{ width: size, height: h }}
-      initial={reduce ? false : { opacity: 0, y: 18, scale: 0.92 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 16 }}>
+      initial={reduce ? false : { opacity: 0, transform: 'translate(0px, 18px) scale(0.92)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px) scale(1)' }} transition={{ type: 'spring', stiffness: 160, damping: 16 }}>
       <motion.div className="absolute inset-0" animate={boing} style={{ transformOrigin: '50% 100%' }}>
       <motion.div className="absolute inset-0"
         animate={reduce || !idle ? {} : gesture === 'hop' ? { y: [0, -14, 0, -6, 0], scaleY: [1, 1.04, 0.96, 1.02, 1] } : gesture === 'nod' ? { rotate: [0, -4, 3, 0] } : { y: [0, -4, 0] }}

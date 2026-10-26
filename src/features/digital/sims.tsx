@@ -7,7 +7,7 @@ import { money, pn } from '../../lib/format';
 
 type SimProps = { onDone: () => void; done: boolean };
 const Done = ({ children }: { children: React.ReactNode }) => (
-  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-2 rounded-2xl bg-mint text-accent font-bold px-4 py-3"><CheckCircle2 className="size-5" />{children}</motion.div>
+  <motion.div initial={{ opacity: 0, transform: 'scale(0.95)' }} animate={{ opacity: 1, transform: 'scale(1)' }} className="flex items-center gap-2 rounded-2xl bg-mint text-teal font-bold px-4 py-3"><CheckCircle2 className="size-5" />{children}</motion.div>
 );
 const Bubble = ({ me, children, time = '10:24' }: { me?: boolean; children: React.ReactNode; time?: string }) => (
   <div className={cx('max-w-[80%] rounded-2xl px-3 py-2 text-[.92rem] shadow-sm', me ? 'self-end bg-mint rounded-br-md' : 'self-start bg-surface rounded-bl-md')}>
@@ -38,7 +38,7 @@ function WaAudio({ onDone, done }: SimProps) {
           <Bubble time="10:20">¿Cómo te fue en el médico?</Bubble>
           <Bubble time="10:21">Contame con un audio si querés 😊</Bubble>
           {audios.map((s, k) => (
-            <motion.div key={k} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="self-end bg-mint rounded-2xl rounded-br-md px-3 py-2 flex items-center gap-2 shadow-sm">
+            <motion.div key={k} initial={{ opacity: 0, transform: 'translate(0px, 10px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} className="self-end bg-mint rounded-2xl rounded-br-md px-3 py-2 flex items-center gap-2 shadow-sm">
               <Play className="size-4" /><span className="h-1 w-24 rounded-full bg-accent/40" /><span className="text-[.75rem] num">0:0{s}</span>
             </motion.div>
           ))}
@@ -56,7 +56,7 @@ function WaAudio({ onDone, done }: SimProps) {
               onPointerUp={() => { if (rec === 'rec') stop(true); }}
               className="grid place-items-center size-12 rounded-full bg-accent text-onaccent"><Mic className="size-5" /></motion.button>
           )}
-          <AnimatePresence>{rec === 'rec' && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute right-3 -top-14 grid place-items-center size-10 rounded-full bg-surface shadow-lift"><Lock className="size-4" /></motion.div>}</AnimatePresence>
+          <AnimatePresence>{rec === 'rec' && <motion.div initial={{ opacity: 0, transform: 'translate(0px, 10px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="absolute right-3 -top-14 grid place-items-center size-10 rounded-full bg-surface shadow-lift"><Lock className="size-4" /></motion.div>}</AnimatePresence>
         </div>
       </PhoneFrame>
       <p className="text-center text-[.95rem] font-bold" aria-live="polite">{msg}</p>
@@ -126,7 +126,7 @@ function WaPin({ onDone, done }: SimProps) {
         <div className="flex items-center gap-3 px-4 py-3 bg-surface border-b border-line min-h-[3.4rem]">
           {sel ? (<>
             <button aria-label="Cancelar" onClick={() => setSel(null)}><ArrowLeft className="size-5" /></button><span className="flex-1 font-bold">1 seleccionado</span>
-            <motion.button whileTap={{ scale: 0.85 }} aria-label="Fijar" onClick={() => { setChats((cs) => cs.map((c) => c.id === sel ? { ...c, pin: !c.pin } : c)); if (sel === 'h') onDone(); setSel(null); }} className="p-2 rounded-full bg-mint text-accent"><Pin className="size-5" /></motion.button>
+            <motion.button whileTap={{ scale: 0.85 }} aria-label="Fijar" onClick={() => { setChats((cs) => cs.map((c) => c.id === sel ? { ...c, pin: !c.pin } : c)); if (sel === 'h') onDone(); setSel(null); }} className="p-2 rounded-full bg-mint text-teal"><Pin className="size-5" /></motion.button>
             <button aria-label="Archivar" onClick={() => { setArch((a) => [...a, sel]); setSel(null); }} className="p-2"><Archive className="size-5" /></button>
           </>) : (<><b className="flex-1 text-[1.1rem]">Chats</b><Search className="size-5 text-muted" /></>)}
         </div>
@@ -173,14 +173,14 @@ function PayQr({ onDone, done }: SimProps) {
               </div>
               <span className="text-[.9rem] text-muted">Apuntá al código…</span>
             </motion.div>}
-            {st === 'confirm' && <motion.div key="c" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-3">
+            {st === 'confirm' && <motion.div key="c" initial={{ opacity: 0, transform: 'translate(0px, 10px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="flex flex-col gap-3">
               <span className="text-[.85rem] text-muted">Vas a pagar a</span><b className="text-[1.2rem]">Kiosco Don Pepe</b>
               <div className="font-head font-semibold text-[2.4rem]">$ 2.350</div>
               <p className="text-[.85rem] text-muted">Revisá el comercio y el monto antes de confirmar.</p>
               <Button block onClick={() => { setSt('ok'); onDone(); }}>Pagar</Button>
               <Button block variant="ghost" onClick={() => setSt('cancel')}>Cancelar</Button>
             </motion.div>}
-            {st === 'ok' && <motion.div key="o" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-2 py-8 text-center"><CheckCircle2 className="size-16 text-accent" /><b className="text-[1.2rem]">¡Pago realizado!</b><span className="text-muted text-[.9rem]">Kiosco Don Pepe · $ 2.350</span></motion.div>}
+            {st === 'ok' && <motion.div key="o" initial={{ opacity: 0, transform: 'scale(0.8)' }} animate={{ opacity: 1, transform: 'scale(1)' }} className="flex flex-col items-center gap-2 py-8 text-center"><CheckCircle2 className="size-16 text-accent" /><b className="text-[1.2rem]">¡Pago realizado!</b><span className="text-muted text-[.9rem]">Kiosco Don Pepe · $ 2.350</span></motion.div>}
             {st === 'cancel' && <motion.div key="x" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3 py-6 text-center"><p>Cancelaste. Si el monto coincidía con lo que te dijeron, podés pagar tranquilo.</p><Button size="sm" onClick={() => setSt('confirm')}>Volver</Button></motion.div>}
           </AnimatePresence>
         </div>
@@ -207,14 +207,14 @@ function PayTransfer({ onDone, done }: SimProps) {
               <Field label="Monto" htmlFor="mo"><TextInput id="mo" decimal value={monto} onChange={setMonto} placeholder="0" /></Field>
               <Button block disabled={!alias.trim() || !pn(monto)} onClick={() => setSt('confirm')}>Continuar</Button>
             </motion.div>}
-            {st === 'confirm' && <motion.div key="c" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-3">
+            {st === 'confirm' && <motion.div key="c" initial={{ opacity: 0, transform: 'translate(0px, 10px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="flex flex-col gap-3">
               <span className="text-[.85rem] text-muted">Vas a transferir a</span>
               <b className="text-[1.25rem]">{titular}</b><span className="text-[.82rem] text-muted">Alias: {alias}</span>
               <div className="font-head font-semibold text-[2.2rem]">{money(pn(monto))}</div>
               <Button block onClick={() => { if (ok && pn(monto) === 15000) { setSt('ok'); onDone(); } else setSt('bad'); }}>Confirmar transferencia</Button>
               <Button block variant="ghost" onClick={() => setSt('form')}>Cancelar y revisar</Button>
             </motion.div>}
-            {st === 'ok' && <motion.div key="o" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-2 py-8 text-center"><CheckCircle2 className="size-16 text-accent" /><b className="text-[1.2rem]">¡Transferencia enviada!</b><span className="text-muted text-[.9rem]">Lucía Fernández · $ 15.000</span></motion.div>}
+            {st === 'ok' && <motion.div key="o" initial={{ opacity: 0, transform: 'scale(0.8)' }} animate={{ opacity: 1, transform: 'scale(1)' }} className="flex flex-col items-center gap-2 py-8 text-center"><CheckCircle2 className="size-16 text-accent" /><b className="text-[1.2rem]">¡Transferencia enviada!</b><span className="text-muted text-[.9rem]">Lucía Fernández · $ 15.000</span></motion.div>}
             {st === 'bad' && <motion.div key="b" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3 py-4 text-center">
               <XCircle className="size-14 text-bad" />
               <p>{!ok ? <>¡Ojo! El titular era <b>{titular}</b>, no tu sobrina. En la vida real, esa plata se iría a otra persona.</> : <>El monto no era el pedido: eran <b>$ 15.000</b>.</>}</p>
@@ -249,7 +249,7 @@ function MlSeller({ onDone, done }: SimProps) {
           <span className="text-[.88rem]">{s.note}</span>
         </motion.button>
       ))}
-      <AnimatePresence>{sel && <motion.div key={sel.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}><Note tone={sel.ok ? 'good' : 'bad'}>{sel.fb}</Note></motion.div>}</AnimatePresence>
+      <AnimatePresence>{sel && <motion.div key={sel.id} initial={{ opacity: 0, transform: 'translate(0px, 6px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }}><Note tone={sel.ok ? 'good' : 'bad'}>{sel.fb}</Note></motion.div>}</AnimatePresence>
       {done && <Done>Elegiste el vendedor seguro.</Done>}
     </div>
   );
@@ -296,7 +296,7 @@ function IaDoc({ onDone, done }: SimProps) {
       </Card>
       <Card tone="violet" className="flex flex-col gap-2"><b>Pedido para tu IA</b><p>{pedido}</p><div><Button size="sm" icon={<Copy />} onClick={() => copyText(pedido)}>Copiar pedido</Button></div></Card>
       {!show ? <Button variant="secondary" onClick={() => setShow(true)}>Ver una respuesta de ejemplo</Button> : (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        <motion.div initial={{ opacity: 0, transform: 'translate(0px, 8px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }}>
           <Card className="flex flex-col gap-2">
             <b className="flex items-center gap-2"><ShieldCheck className="size-5 text-violet" />Respuesta de ejemplo</b>
             <ul className="list-disc pl-5 flex flex-col gap-1 text-[.95rem]">

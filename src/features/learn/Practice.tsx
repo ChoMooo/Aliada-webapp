@@ -37,7 +37,7 @@ export function TapPractice({ frames, onDone, done }: { frames: Frame[]; onDone:
 
   if (fin) return (
     <div className="flex flex-col items-center text-center gap-3 py-4">
-      <span className="grid place-items-center size-16 rounded-full bg-mint text-accent"><Check className="size-8" /></span>
+      <span className="grid place-items-center size-16 rounded-full bg-mint text-teal"><Check className="size-8" /></span>
       <h3 className="text-[1.35rem]">¡Lo hiciste!</h3>
       <p className="text-muted max-w-[26rem]">Recorriste los {frames.length} pasos tocando vos. Ahora ya sabés dónde está cada cosa en la app de verdad.</p>
       <Button variant="ghost" size="sm" icon={<RotateCcw />} onClick={again}>Practicar de nuevo</Button>
@@ -56,7 +56,7 @@ export function TapPractice({ frames, onDone, done }: { frames: Frame[]; onDone:
         </div>
         <AnimatePresence initial={false}>
           {hint && (
-            <motion.p key="h" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}
+            <motion.p key="h" initial={{ opacity: 0, transform: 'translate(0px, 4px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}
               className="flex gap-2 text-[.95rem] rounded-lg bg-warn text-warnink px-3.5 py-2.5">
               <Lightbulb className="size-5 shrink-0" />{miss > 0 ? 'Casi. Tocá donde aparece la marca verde.' : 'Tocá donde aparece la marca verde.'}
             </motion.p>
@@ -71,7 +71,7 @@ export function TapPractice({ frames, onDone, done }: { frames: Frame[]; onDone:
           {ok && (
             <motion.div className="absolute inset-0 grid place-items-center pointer-events-none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
               <motion.span className="grid place-items-center size-20 rounded-full bg-accent text-onaccent shadow-lift"
-                initial={{ scale: reduce ? 1 : 0.7 }} animate={{ scale: 1 }} transition={{ type: 'spring', duration: 0.35, bounce: 0.3 }}><Check className="size-10" /></motion.span>
+                initial={{ scale: reduce ? 1 : 0.7 }} animate={{ transform: 'scale(1)' }} transition={{ type: 'spring', duration: 0.35, bounce: 0.3 }}><Check className="size-10" /></motion.span>
             </motion.div>
           )}
         </AnimatePresence>

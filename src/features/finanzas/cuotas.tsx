@@ -52,7 +52,7 @@ export default function Cuotas() {
           {!listo ? (
             <motion.p key="x" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-muted">Completá el precio de contado, las cuotas y el valor de cada cuota para ver el resultado.</motion.p>
           ) : (
-            <motion.section key={r.conviene + igual} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
+            <motion.section key={r.conviene + igual} initial={{ opacity: 0, transform: 'translate(0px, 6px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
               className={cx('rounded-xl2 p-5 flex flex-col gap-3', igual ? 'bg-sunk' : r.conviene === 'cuotas' ? 'bg-mint' : 'bg-skysoft')} aria-live="polite">
               <h2 className="text-[1.5rem] leading-tight">{igual ? 'Da casi lo mismo' : r.conviene === 'cuotas' ? 'Te conviene en cuotas' : 'Te conviene de contado'}</h2>
               <p className="text-[1.02rem]">

@@ -30,7 +30,7 @@ export function estados(d: Data, now = new Date()): Estado[] {
 /** Lo urgente para el inicio: vencidos o que vencen en los próximos 7 días */
 export const urgentes = (d: Data) => estados(d).filter((e) => !e.pagado && e.diff <= 7);
 
-const TONE: Record<Estado['tone'], string> = { ok: 'bg-mint text-accent', hoy: 'bg-warn text-warnink', pronto: 'bg-ambersoft text-amber', vencido: 'bg-badsoft text-bad', luego: 'bg-sunk text-muted' };
+const TONE: Record<Estado['tone'], string> = { ok: 'bg-mint text-teal', hoy: 'bg-warn text-warnink', pronto: 'bg-ambersoft text-amber', vencido: 'bg-badsoft text-bad', luego: 'bg-sunk text-muted' };
 
 /* Archivo de calendario: un recordatorio mensual por cada pago, con aviso el día anterior a las 9 */
 function ics(d: Data) {
@@ -126,7 +126,7 @@ function Nuevo({ onDone, first }: { onDone: () => void; first: boolean }) {
   const ok = n.trim() && pn(dia) >= 1 && pn(dia) <= 31;
   const save = () => { if (!ok) return; mut((x) => { x.venc.items.push({ id: uid(), n: n.trim(), dia: String(Math.round(pn(dia))), m }); }); setN(''); setDia(''); setM(''); toast('Pago agregado'); if (!first) onDone(); };
   return (
-    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
+    <motion.div initial={{ opacity: 0, transform: 'translate(0px, 6px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
       className="rounded-xl2 bg-surface border border-line p-4 flex flex-col gap-4">
       <b className="text-[1.1rem]">{first ? 'Empecemos con tu primer pago' : 'Nuevo pago'}</b>
       <div className="flex flex-col gap-2">

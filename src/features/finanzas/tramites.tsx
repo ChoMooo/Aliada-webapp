@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ClipboardList, FolderCheck, LifeBuoy, BookOpen, ExternalLink, Copy, Share2, Printer, Plus, Trash2 } from 'lucide-react';
 import { useStore, mut } from '../../store';
 import { N } from '../../lib/narration';
-import { PageHeader, Card, Hero, Button, Field, TextInput, TextArea, Progress, Note, RowLink, Stagger, Item, Tag, Tabs, CheckRow, Disclosure, Chips, Choices, Legal, Bullets, ListenButton, ease } from '../../ui';
+import { PageHeader, Card, Hero, Button, Field, TextInput, TextArea, Progress, Note, RowLink, RowList, Stagger, Item, Tag, Tabs, CheckRow, Disclosure, Chips, Choices, Legal, Bullets, ListenButton, ease } from '../../ui';
 import { fdate, uid } from '../../lib/format';
 import { copyText, wa } from '../../lib/share';
 import { toast } from '../../ui/toast';
@@ -61,10 +61,12 @@ export function TramHub() {
         })}
       </Item>
       <Item className="flex flex-col gap-3">
-        <RowLink to="/finanzas/tramites/preparar" icon={<ClipboardList />} tone="sky" title="Preparar mi consulta" sub="Datos, documentos y preguntas antes de ir a ANSES o PAMI" />
-        <RowLink to="/finanzas/tramites/docs" icon={<FolderCheck />} tone="sky" title="Mis documentos" sub="Qué tenés y qué te falta, en un solo lugar" />
-        <RowLink to="/finanzas/tramites/ayuda" icon={<LifeBuoy />} tone="sky" title="Me trabé con algo" sub="Faltan papeles, datos incorrectos, sin turno…" />
-        <RowLink to="/finanzas/tramites/guias" icon={<BookOpen />} tone="sky" title="Todas las guías" sub={GUIAS.length + ' guías con fuente y fecha'} />
+        <RowList>
+          <RowLink to="/finanzas/tramites/preparar" icon={<ClipboardList />} tone="sky" title="Preparar mi consulta" sub="Datos, documentos y preguntas antes de ir a ANSES o PAMI" />
+          <RowLink to="/finanzas/tramites/docs" icon={<FolderCheck />} tone="sky" title="Mis documentos" sub="Qué tenés y qué te falta, en un solo lugar" />
+          <RowLink to="/finanzas/tramites/ayuda" icon={<LifeBuoy />} tone="sky" title="Me trabé con algo" sub="Faltan papeles, datos incorrectos, sin turno…" />
+          <RowLink to="/finanzas/tramites/guias" icon={<BookOpen />} tone="sky" title="Todas las guías" sub={GUIAS.length + ' guías con fuente y fecha'} />
+        </RowList>
       </Item>
       <Item><Note tone="info" title="Esta aplicación orienta y te ayuda a organizarte">No determina si tenés derecho a jubilarte ni a ningún beneficio: eso lo define el organismo correspondiente. Contenido verificado el {tfecha()}.</Note></Item>
       <Item><Legal>{LEGAL}</Legal></Item>
@@ -135,7 +137,7 @@ export function Guia() {
       </Card>
       <Tabs id="guia" value={tab} onChange={setTab} tabs={[['res', 'Resumen'], ['check', 'Checklist'], ['ayuda', 'Si algo falla'], ['fuentes', 'Fuentes']]} />
       <AnimatePresence mode="wait">
-        <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease }} className="flex flex-col gap-4">
+        <motion.div key={tab} initial={{ opacity: 0, transform: 'translate(0px, 10px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease }} className="flex flex-col gap-4">
           {tab === 'res' && (<>
             <Card className="flex flex-col gap-3">
               <div><h3 className="text-[1.1rem]">Qué resuelve</h3><p>{g.resuelve}</p></div>

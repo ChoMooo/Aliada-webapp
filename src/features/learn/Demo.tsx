@@ -65,7 +65,7 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
         </div>
         <div className="min-h-[4.5rem] rounded-lg bg-surface border border-line px-4 py-3" aria-live="polite">
           <span className="text-[.78rem] font-semibold text-muted">Paso {i + 1} de {frames.length}{title ? ' · ' + title : ''}</span>
-          <AnimatePresence mode="wait"><motion.p key={i} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-[1.05rem] font-medium leading-snug mt-0.5">{caps[i]}</motion.p></AnimatePresence>
+          <AnimatePresence mode="wait"><motion.p key={i} initial={{ opacity: 0, transform: 'translate(0px, 4px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="text-[1.05rem] font-medium leading-snug mt-0.5">{caps[i]}</motion.p></AnimatePresence>
         </div>
         <div className="flex items-center justify-center gap-2">
           <IconBtn label="Paso anterior" onClick={() => go(i - 1)} disabled={i === 0}><SkipBack /></IconBtn>

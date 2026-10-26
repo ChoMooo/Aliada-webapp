@@ -24,12 +24,12 @@ export default function Analizador() {
       </Card>
       <AnimatePresence mode="wait">
         {res && (
-          <motion.div key={t} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-4">
-            <motion.div initial={{ scale: 0.96 }} animate={{ scale: 1 }} className={cx('flex items-center gap-3 rounded-xl border-2 px-4 py-4 font-bold text-[1.15rem] [&_svg]:size-8', head[1] as string)}>{head[2]}{head[0]}</motion.div>
+          <motion.div key={t} initial={{ opacity: 0, transform: 'translate(0px, 12px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="flex flex-col gap-4">
+            <motion.div initial={{ transform: 'scale(0.96)' }} animate={{ transform: 'scale(1)' }} className={cx('flex items-center gap-3 rounded-xl border-2 px-4 py-4 font-bold text-[1.15rem] [&_svg]:size-8', head[1] as string)}>{head[2]}{head[0]}</motion.div>
             {res.found.length > 0 ? (<>
               <div className="flex flex-col gap-3">
                 {res.found.map((s, k) => (
-                  <motion.div key={s.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: k * 0.07 }}>
+                  <motion.div key={s.id} initial={{ opacity: 0, transform: 'translate(-10px, 0px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} transition={{ delay: k * 0.07 }}>
                     <Card className="flex flex-col gap-1"><div className="flex items-center justify-between gap-2"><b>{s.t}</b><Tag tone={s.peso >= 3 ? 'bad' : 'warn'}>{s.peso >= 3 ? 'Grave' : 'Atención'}</Tag></div><p className="text-[.94rem] text-muted">{s.e}</p></Card>
                   </motion.div>
                 ))}

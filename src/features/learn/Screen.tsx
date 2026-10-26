@@ -46,7 +46,7 @@ export function PhoneScreen({ frame, width = 280, animateFinger = true, classNam
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: 280, height: 580, transform: `scale(${scale})` }}>
         <div className="w-[280px] h-[580px] rounded-[36px] bg-[#101113] p-[8px] shadow-[0_22px_44px_-16px_rgba(0,0,0,.5),inset_0_0_0_1.5px_#2a2c30]">
           <div ref={ref} className={cx('relative w-full h-full rounded-[29px] overflow-hidden bg-white text-[#1f1f1f] [color-scheme:light] flex flex-col antialiased', practice && 'cursor-pointer select-none', practice && !hint && '[&_[data-hl="1"]]:!outline-0')}
-            style={{ fontFamily: "Roboto, 'Public Sans', system-ui, sans-serif" }}
+            style={{ fontFamily: "Roboto, system-ui, sans-serif" }}
             onClick={practice && onPick ? (e) => {
               const root = ref.current, el = root?.querySelector('[data-hl="1"]') as HTMLElement | null;
               if (!root || !el) return onPick(true);

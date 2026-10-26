@@ -6,7 +6,7 @@ import { PageHeader, Card, Button, Note, Bullets, Celebrate, Ring, ease, cx } fr
 import { ESCENARIOS, type Canal } from '../../content/escudo';
 
 const CANAL: Record<Canal, [string, React.ReactNode, string]> = {
-  whatsapp: ['Mensaje', <MessageCircle key="w" />, 'bg-mint text-accent'], sms: ['SMS', <MessageSquare key="s" />, 'bg-skysoft text-sky'],
+  whatsapp: ['Mensaje', <MessageCircle key="w" />, 'bg-mint text-teal'], sms: ['SMS', <MessageSquare key="s" />, 'bg-skysoft text-sky'],
   llamada: ['Llamada', <PhoneIncoming key="l" />, 'bg-badsoft text-bad'], correo: ['Correo', <Mail key="c" />, 'bg-violetsoft text-violet'], oferta: ['Publicidad', <Megaphone key="o" />, 'bg-ambersoft text-amber']
 };
 
@@ -42,13 +42,13 @@ export default function Simulador() {
         <div className="flex gap-1">{ESCENARIOS.map((x, k) => <span key={x.id} className={cx('h-2 flex-1 rounded-full', d.escudo.vistos[x.id] === 'ok' ? 'bg-accent' : d.escudo.vistos[x.id] === 'mal' ? 'bg-bad' : k === i ? 'bg-ink/40' : 'bg-line')} />)}</div>
       </div>
       <AnimatePresence mode="wait">
-        <motion.div key={e.id} initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease }} className="flex flex-col gap-4">
+        <motion.div key={e.id} initial={{ opacity: 0, transform: 'translate(0px, 20px) scale(0.98)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px) scale(1)' }} exit={{ opacity: 0, transform: 'translate(0px, -10px)' }} transition={{ duration: 0.4, ease }} className="flex flex-col gap-4">
           <Card className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <span className={cx('grid place-items-center size-11 rounded-xl [&_svg]:size-5', c[2])}>{c[1]}</span>
               <div><b className="block text-[.95rem]">{c[0]}</b><span className="text-[.82rem] text-muted">{e.de}</span></div>
             </div>
-            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className={cx('rounded-xl px-4 py-3 text-[1.04rem] leading-relaxed', e.canal === 'llamada' ? 'bg-sunk italic' : 'bg-sunk rounded-tl-md')}>{e.msg}</motion.div>
+            <motion.div initial={{ opacity: 0, transform: 'translate(-10px, 0px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} transition={{ delay: 0.2 }} className={cx('rounded-xl px-4 py-3 text-[1.04rem] leading-relaxed', e.canal === 'llamada' ? 'bg-sunk italic' : 'bg-sunk rounded-tl-md')}>{e.msg}</motion.div>
           </Card>
           <h2 className="text-[1.3rem]">¿Qué hacés?</h2>
           <div className="flex flex-col gap-2.5">
@@ -66,7 +66,7 @@ export default function Simulador() {
             })}
           </div>
           {pick != null && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3">
+            <motion.div initial={{ opacity: 0, transform: 'translate(0px, 8px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} className="flex flex-col gap-3">
               <Note tone={e.op[pick].ok ? 'good' : 'bad'} title={e.op[pick].ok ? '¡Bien detectado!' : 'Era una estafa'}>{e.op[pick].fb}</Note>
               <Card tone="sunk"><b className="block mb-1.5">Señales de alerta</b><Bullets items={e.senales} /></Card>
               <Card tone="mint"><b>Regla:</b> {e.regla}</Card>

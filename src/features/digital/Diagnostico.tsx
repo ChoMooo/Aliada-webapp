@@ -38,12 +38,11 @@ export default function Diagnostico() {
   if (fin) return <Resultado onGo={(p) => nav(p)} />;
   if (intro) return (
     <div className="relative -mx-4 sm:-mx-6 -mt-5 px-4 sm:px-6 pt-10 pb-8 min-h-[78vh] flex flex-col items-center justify-center text-center overflow-hidden">
-      <Topo className="absolute w-[min(150vw,760px)] text-accent/60" draw />
-      <motion.div className="relative flex flex-col items-center gap-5" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.7, ease }}>
+      <Topo className="absolute w-[min(150vw,760px)] text-accent/25" draw />
+      <motion.div className="relative flex flex-col items-center gap-5" initial={{ opacity: 0, transform: 'translateY(10px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ delay: 0.1, duration: 0.3, ease }}>
         <Mascot size={110} gesture="nod" />
         <div className="flex flex-col gap-2 max-w-[26rem]">
-          <span className="text-[.8rem] font-semibold tracking-wide uppercase text-accent">Tu ruta en Mundo digital</span>
-          <h1 className="text-[2rem] leading-tight">Empecemos por donde estás</h1>
+          <h1 className="text-[2rem] leading-tight text-balance">Armemos tu ruta en Mundo digital</h1>
           <p className="text-muted text-[1.05rem]">Unas preguntas cortas sobre tu celular y lo que te gustaría lograr. Te lleva unos 3 minutos y podés saltear lo que quieras.</p>
         </div>
         <Button size="lg" onClick={() => setIntro(false)} iconRight={<ArrowRight />}>Empezar</Button>
@@ -57,10 +56,10 @@ export default function Diagnostico() {
       <PageHeader back={{ to: '/digital', label: 'Mundo digital' }} title="" />
       <div className="flex flex-col gap-2">
         <div className="flex justify-between text-[.85rem] text-muted"><span>Pregunta {i + 1} de {vis.length}</span>{st.skip && <button onClick={next} className="font-bold underline underline-offset-4">Saltear</button>}</div>
-        <div className="h-2 rounded-full bg-sunk overflow-hidden"><motion.div className="h-full bg-accent rounded-full" animate={{ width: ((i + 1) / vis.length) * 100 + '%' }} transition={{ duration: 0.5, ease }} /></div>
+        <div className="h-2 rounded-full bg-sunk overflow-hidden"><motion.div className="h-full w-full bg-accent rounded-full origin-left" animate={{ transform: `scaleX(${(i + 1) / vis.length})` }} transition={{ duration: 0.25, ease }} /></div>
       </div>
       <AnimatePresence mode="wait">
-        <motion.div key={st.id} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.35, ease }} className="flex flex-col gap-5">
+        <motion.div key={st.id} initial={{ opacity: 0, transform: 'translate(30px, 0px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0, transform: 'translate(-30px, 0px)' }} transition={{ duration: 0.35, ease }} className="flex flex-col gap-5">
           <div><h1 className="text-[1.85rem]">{st.t}</h1>{st.h && <p className={cx('mt-1.5', reto ? 'text-[1.1rem] text-ink bg-surface border border-line rounded-xl p-4 shadow-card' : 'text-muted')}>{st.h}</p>}</div>
           <ListenButton text={N.ask(st.t, st.h)} />
           {st.id === 'os' && <Choices value={g.os} onChange={set('os')} options={[{ k: 'android', t: 'Android', s: 'Samsung, Motorola, Xiaomi y otros', icon: <Smartphone /> }, { k: 'ios', t: 'iPhone', s: 'De Apple', icon: <Apple /> }]} />}

@@ -53,7 +53,7 @@ export default function Leccion() {
       <div className="flex items-center gap-2 text-accent font-bold text-[.9rem] [&_svg]:size-5">{META[sec][1]}{META[sec][0]}</div>
 
       <AnimatePresence mode="wait" custom={dir}>
-        <motion.div key={sec + qi} custom={dir} initial={{ opacity: 0, x: 24 * dir }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 * dir }} transition={{ duration: 0.24, ease }} className="flex flex-col gap-4">
+        <motion.div key={sec + qi} custom={dir} initial={{ opacity: 0, x: 24 * dir }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0, x: -24 * dir }} transition={{ duration: 0.24, ease }} className="flex flex-col gap-4">
           {sec === 'ver' && (<>
             <p className="text-[1.12rem] leading-relaxed max-w-[40rem]">{l.para}</p>
             {l.demo.length > 0 && <DemoPlayer key={l.id} frames={l.demo} title={l.t} />}
@@ -105,7 +105,7 @@ export default function Leccion() {
                   );
                 })}
               </div>
-              {a != null && <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}><Note tone={a === q.c ? 'good' : 'warn'} title={a === q.c ? '¡Correcto!' : 'Casi'}>{q.e}</Note></motion.div>}
+              {a != null && <motion.div initial={{ opacity: 0, transform: 'translate(0px, 6px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }}><Note tone={a === q.c ? 'good' : 'warn'} title={a === q.c ? '¡Correcto!' : 'Casi'}>{q.e}</Note></motion.div>}
               {a != null && qi < l.quiz.length - 1 && <div><Button onClick={() => setQi(qi + 1)} iconRight={<ArrowRight />}>Siguiente pregunta</Button></div>}
             </>);
           })()}
@@ -114,7 +114,7 @@ export default function Leccion() {
               <Celebrate show />
               <div className="flex items-end gap-4">
                 <Mascot pose="wave" gesture="hop" size={84} />
-                <motion.div initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 14 }}>
+                <motion.div initial={{ transform: 'scale(0.6)' }} animate={{ transform: 'scale(1)' }} transition={{ type: 'spring', stiffness: 220, damping: 14 }}>
                   <Ring value={score} max={l.quiz.length || 1} size={84} stroke={8}><Trophy className="size-7 text-accent" /></Ring>
                 </motion.div>
               </div>

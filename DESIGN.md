@@ -1,44 +1,66 @@
-# Design
+# Design · "Mar de noche"
 
-Sistema visual actual de Aliada Digital (documentado desde el código, octubre 2026). Las guías de `.claude/skills/impeccable` y `.claude/skills/emil-design-eng` se aplican sobre esta base.
+Sistema visual de Aliada Digital (octubre 2026). Reemplaza al sistema verde anterior. Se apoya en las guías de `impeccable`, `emil-design-eng`, `animate`, `review-animations`, `mobile-native`, `apple-design` y `break-ui`.
 
 ## Modo
 
-App de uso (Operate): la persona viene a resolver algo. Familiaridad antes que sorpresa; los controles son los estándar de la web.
+App de uso (Operate): la persona viene a resolver algo concreto. Familiaridad antes que sorpresa, controles estándar de la web, y la marca vive en los detalles: el color, el horizonte, la tipografía.
+
+## Idea
+
+Arena de día y mar de noche. Fondo cálido de arena, títulos en azul noche, acción en azul ballena, detalles en turquesa (las estrellas sobre el agua). El modo oscuro es el mar de noche en sí, no una inversión del claro.
+
+**Firma:** el `Horizon` (estrella de cuatro puntas turquesa + línea que se desvanece) cierra cada `PageHeader`. Es el único ornamento que se repite en toda la app.
 
 ## Color (tokens en `src/styles.css`, tripletas RGB para Tailwind)
 
 | Rol | Claro | Oscuro | Uso |
 |---|---|---|---|
-| `bg` | 244 246 241 | 11 19 16 | Fondo, con un degradado muy leve del mismo verde (`body::before`) |
-| `surface` | 255 255 255 | 20 31 27 | Tarjetas y listas |
-| `sunk` | 233 239 233 | 27 40 35 | Resúmenes y totales |
-| `ink` / `muted` | 19 32 27 / 77 93 86 | 234 243 238 / 165 182 173 | Texto |
-| `accent` | 10 125 88 | 0 224 145 | Acción principal, selección, progreso |
-| `brand` | 24 39 34 | 18 33 27 | Tarjetas verde profundo (`hero-glow`) |
-| `sky` / `amber` / `violet` (+ `*soft`) | | | Color por sección: inversiones, talento y pagos, mundo digital |
-| `warn` / `bad` | | | Avisos y vencidos |
+| `bg` | 246 243 236 (arena) | 7 15 28 (noche) | Fondo, con un velo de degradado muy leve (`body::before`) |
+| `surface` | 255 254 251 | 14 26 46 | Listas, tarjetas, casilleros |
+| `sunk` | 237 232 222 | 20 34 57 | Resúmenes, totales, fondo al tocar una fila |
+| `ink` / `muted` | 14 27 46 / 76 88 106 | 233 239 248 / 160 174 196 | Texto |
+| `line` | 219 211 196 | 35 51 78 | Bordes y divisores |
+| `accent` | 38 80 196 (ballena) | 128 162 255 | Acción principal, selección, progreso |
+| `brand` | 12 25 45 | 10 21 39 | Tarjetas de noche (`Hero`, `.hero-glow`) con estrellas fijas (`.night-stars`) |
+| `glow` | 52 212 166 | 70 224 182 | Botón principal dentro de una tarjeta de noche y cifras destacadas sobre ella |
+| `teal` | 9 118 93 | 92 220 182 | Íconos sobre `mint`, estrella del horizonte, avisos buenos |
+| `sky` / `amber` / `violet` (+ `*soft`) | | | Color por sección: inversiones y trámites, pagos y talento, Mundo digital y Mi libro |
+| `warn` / `bad` (+ `badsoft`) | | | Avisos y vencidos |
 
-Los avisos (`Note`) usan fondo tintado y borde fino; nunca una franja gruesa a la izquierda.
+`theme-color`: `#F6F3EC` claro, `#070F1C` oscuro (se sincroniza con el tema elegido en Ajustes).
 
 ## Tipografía
 
-- Instrument Sans (títulos), Public Sans (texto). Base 18 px (`html{font-size:112.5%}`), con tamaños Grande y Muy grande en Ajustes.
-- Números con `tabular-nums` (`.num`). Nada de rótulos en mayúsculas sobre los títulos: el título habla solo.
+- **Atkinson Hyperlegible Next** (variable, autoalojada con `@fontsource-variable`, funciona sin internet). Diseñada para baja visión: letras que no se confunden (I/l/1, O/0).
+- Base 18 px (`html{font-size:112.5%}`), con tamaños Grande y Muy grande en Ajustes.
+- Títulos en negrita con `letter-spacing: -.018em`; texto corrido con `text-wrap: pretty`.
+- Números con `tabular-nums` (`.num`). La plata usa espacio duro entre `$` y la cifra: el signo nunca queda solo al final de un renglón.
+- Nada de rótulos chicos en mayúsculas sobre los títulos: el título habla solo.
 
 ## Componentes
 
-- Listas en una sola superficie con divisores (módulos, vencimientos, ahorros) antes que tarjetas sueltas.
-- `RowLink` para herramientas: ícono con color de sección, título, una línea de ayuda y flecha.
-- Botones de 48 px o más; `press` da respuesta al tocar (escala 0,97 en 140 ms).
-- Casilleros de plata (`MoneyInput`) ordenan el número con puntos de miles al salir del casillero.
+- **`RowList` + `RowLink`**: las herramientas de cada sección van en una sola superficie con divisores a la altura del texto (como una lista nativa), no en tarjetas sueltas. Al tocar, la fila cambia de fondo; no escala.
+- **`SectionTile`** (Inicio): un acceso grande por sección con su estado real (próximo pago, lecciones hechas, día del programa).
+- **`Hero`**: tarjeta de noche para el próximo paso de cada sección. Una sola por pantalla.
+- **`Note`**: fondo tintado y borde de 1 px. Nunca una franja gruesa a la izquierda.
+- **Botones** de 48 px o más; zonas táctiles de 44 px mínimo (la casilla de `CheckRow` mide 28 px pero se toca en 44).
+- **`MoneyInput`** ordena el número con puntos de miles al salir del casillero.
+- **Mi resumen** se arma una vez como datos: de ahí salen la hoja que se ve (secciones con filas etiqueta/valor) y el texto plano para copiar o mandar por WhatsApp.
 
 ## Movimiento
 
-- Curvas: `--ease-out: cubic-bezier(.23,1,.32,1)` para entrar/salir; transiciones de UI entre 140 y 250 ms.
-- Entrada de las 5 secciones (pedido del dueño); Inicio repite el video del logo. Los módulos no tienen.
+- Curva única: `--ease-out: cubic-bezier(.23,1,.32,1)` (en JS, `ease` de `src/ui`).
+- Respuesta al tocar con CSS (`.press` escala 0,97 en 140 ms; `.press-soft` 0,985 para superficies grandes; filas con cambio de fondo).
+- Entrada de contenido: 280 ms, 8 px, escalonado de 40 ms.
+- Siempre `transform` y `opacity` con el string completo (`transform: 'translateY(8px)'`), nunca `x`/`y`/`width`. Las barras de progreso usan `scaleX`.
+- Entrada de las 5 secciones: 620 ms en total. Inicio: el logo aparece y se va en menos de medio segundo.
 - "Reducir movimiento" apaga desplazamientos y deja solo cambios de opacidad.
 
 ## Celular
 
-`viewport-fit=cover`, `interactive-widget=resizes-content`, `theme-color` por tema, `100dvh`, `touch-action: manipulation`, hover solo en dispositivos con mouse (`hoverOnlyWhenSupported`).
+`viewport-fit=cover`, `interactive-widget=resizes-content`, `theme-color` por tema, `100dvh`, `touch-action: manipulation`, sin resaltado gris al tocar, hover solo en dispositivos con mouse (`hoverOnlyWhenSupported`), `overscroll-behavior` contenido en modo instalado.
+
+## Casos extremos probados
+
+Nombre largo (el saludo usa solo el primer nombre), montos de 11 dígitos (la cifra del `Hero` achica su tamaño), nombres de pagos largos, pantalla de 320 px, modo oscuro.

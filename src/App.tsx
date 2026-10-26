@@ -42,7 +42,7 @@ function useThemeSync() {
     /* la barra del celular acompaña el tema elegido en Ajustes */
     document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
       const isDark = (m.getAttribute('media') || '').includes('dark');
-      m.setAttribute('content', aj.tema === 'auto' ? (isDark ? '#0B1310' : '#F4F6F1') : aj.tema === 'dark' ? '#0B1310' : '#F4F6F1');
+      m.setAttribute('content', aj.tema === 'auto' ? (isDark ? '#070F1C' : '#F6F3EC') : aj.tema === 'dark' ? '#070F1C' : '#F6F3EC');
     });
   }, [aj.fs, aj.tema]);
 }
@@ -50,7 +50,7 @@ function useThemeSync() {
 function Page({ children }: { children: React.ReactNode }) {
   const [wait] = useState(veilDelay);
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease, delay: wait }}>
+    <motion.div initial={{ opacity: 0, transform: 'translate(0px, 12px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} transition={{ duration: 0.25, ease, delay: wait }}>
       {children}
     </motion.div>
   );

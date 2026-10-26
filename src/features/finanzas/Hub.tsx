@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Wallet, FileCheck2, Lightbulb, CreditCard, CalendarClock, Scale } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, RowLink, Stagger, Item, cx } from '../../ui';
+import { PageHeader, RowLink, RowList, Stagger, Item, cx } from '../../ui';
 import { fmt, money } from '../../lib/format';
 import { estados } from './vencimientos';
 import { calc, progresoTram } from './calc';
@@ -23,11 +23,13 @@ export default function FinanzasHub() {
       )}
       <Item className="flex flex-col gap-3">
         <h2 className="text-[1.25rem]">Herramientas</h2>
-        <RowLink to="/finanzas/vencimientos" icon={<CalendarClock />} tone="amber" title="Mis vencimientos" sub={E.length ? (pend.length ? `${pend.length} por pagar este mes` : 'Todo pagado este mes') : 'Luz, gas, tarjeta… qué vence y cuándo'} />
-        <RowLink to="/finanzas/plata" icon={<Wallet />} tone="mint" title="Mi plata" sub={c.has ? (c.anios == null ? 'Tus ingresos cubren tus gastos' : `Tus ahorros alcanzan unos ${fmt(c.anios, 1)} años`) : 'Ingresos, gastos y ahorros: tu mes en claro'} />
-        <RowLink to="/finanzas/cuotas" icon={<Scale />} tone="sky" title="¿Cuotas o contado?" sub="La cuenta hecha antes de comprar" />
-        <RowLink to="/finanzas/tramites" icon={<FileCheck2 />} tone="sky" title="Mis trámites" sub={d.tr.sit.sit ? `${pt.n} de ${pt.t} tareas de tu plan` : 'ANSES, PAMI y más, con lo que tenés que llevar'} />
-        <RowLink to="/finanzas/talento" icon={<Lightbulb />} tone="amber" title="Mi talento, mi ingreso" sub={d.ta.sel ? 'Tu oportunidad: ' + OP(d.ta.sel).n : 'Precio, oferta y plan para vender lo que sabés'} />
+        <RowList>
+          <RowLink to="/finanzas/vencimientos" icon={<CalendarClock />} tone="amber" title="Mis vencimientos" sub={E.length ? (pend.length ? `${pend.length} por pagar este mes` : 'Todo pagado este mes') : 'Luz, gas, tarjeta… qué vence y cuándo'} />
+          <RowLink to="/finanzas/plata" icon={<Wallet />} tone="mint" title="Mi plata" sub={c.has ? (c.anios == null ? 'Tus ingresos cubren tus gastos' : `Tus ahorros alcanzan unos ${fmt(c.anios, 1)} años`) : 'Ingresos, gastos y ahorros: tu mes en claro'} />
+          <RowLink to="/finanzas/cuotas" icon={<Scale />} tone="sky" title="¿Cuotas o contado?" sub="La cuenta hecha antes de comprar" />
+          <RowLink to="/finanzas/tramites" icon={<FileCheck2 />} tone="sky" title="Mis trámites" sub={d.tr.sit.sit ? `${pt.n} de ${pt.t} tareas de tu plan` : 'ANSES, PAMI y más, con lo que tenés que llevar'} />
+          <RowLink to="/finanzas/talento" icon={<Lightbulb />} tone="amber" title="Mi talento, mi ingreso" sub={d.ta.sel ? 'Tu oportunidad: ' + OP(d.ta.sel).n : 'Precio, oferta y plan para vender lo que sabés'} />
+        </RowList>
       </Item>
       <Item className="flex flex-col gap-3">
         <h2 className="text-[1.25rem]">Aprendé con video</h2>

@@ -14,12 +14,13 @@ export { cx };
 export const LOGO = logo;
 
 /* ---------- Animación base ---------- */
-export const ease = [0.22, 1, 0.36, 1] as const;
-export const fadeUp = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease } } };
+export const ease = [0.23, 1, 0.32, 1] as const; // = --ease-out de styles.css
+/* Entrada de contenido: corta y con transform completo (acelerado por GPU) */
+export const fadeUp = { hidden: { opacity: 0, transform: 'translateY(8px)' }, show: { opacity: 1, transform: 'translateY(0px)', transition: { duration: 0.28, ease } } };
 export function Stagger({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const [wait] = useState(veilDelay); // si hay una animación de entrada, el contenido aparece cuando termina
   return (
-    <motion.div className={className} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: delay + wait } } }}>
+    <motion.div className={className} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04, delayChildren: delay + wait } } }}>
       {children}
     </motion.div>
   );
@@ -38,7 +39,7 @@ const VAR: Record<string, string> = {
   primary: 'bg-accent text-onaccent border-2 border-accent hover:brightness-110',
   secondary: 'bg-transparent text-accent border-2 border-accent hover:bg-accent/5',
   ghost: 'bg-surface text-ink border border-line hover:border-ink/30',
-  glow: 'bg-glow text-[#032216] border-2 border-glow hover:brightness-105',
+  glow: 'bg-glow text-[#06142a] border-2 border-glow hover:brightness-105',
   onbrand: 'bg-white/5 text-onbrand border border-onbrand/30 hover:bg-white/10',
   danger: 'bg-transparent text-bad border-2 border-bad hover:bg-bad/5',
   quiet: 'bg-sunk text-ink border border-transparent hover:bg-line/60'
@@ -46,23 +47,22 @@ const VAR: Record<string, string> = {
 const SIZE: Record<string, string> = { md: 'min-h-[3.3rem] px-5 text-[1rem] rounded-lg', sm: 'min-h-[2.75rem] px-4 text-[.92rem] rounded-lg', lg: 'min-h-[3.6rem] px-6 text-[1.04rem] rounded-lg' };
 export function Button({ children, onClick, to, href, icon, iconRight, variant = 'primary', size = 'md', block, className, disabled, type = 'button', label, pressed }: BtnProps) {
   const nav = useNavigate();
-  const cls = cx('inline-flex items-center justify-center gap-2 font-semibold tracking-[-.005em] text-center select-none transition-[filter,background-color,border-color] duration-200 disabled:opacity-40 disabled:pointer-events-none [&_svg]:size-[1.2em] [&_svg]:shrink-0', VAR[variant], SIZE[size], block && 'w-full', className);
-  if (href) return (
-    <motion.a whileTap={{ scale: 0.97 }} className={cls} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>{icon}{children}{iconRight}</motion.a>
-  );
+  /* respuesta al tocar con CSS (press): corre fuera del hilo principal y se puede interrumpir */
+  const cls = cx('press inline-flex items-center justify-center gap-2 font-bold text-center select-none transition-[filter,background-color,border-color,transform] duration-150 disabled:opacity-40 disabled:pointer-events-none [&_svg]:size-[1.2em] [&_svg]:shrink-0', VAR[variant], SIZE[size], block && 'w-full', className);
+  if (href) return <a className={cls} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>{icon}{children}{iconRight}</a>;
   return (
-    <motion.button whileTap={{ scale: 0.97 }} type={type} disabled={disabled} aria-label={label} aria-pressed={pressed} className={cls}
+    <button type={type} disabled={disabled} aria-label={label} aria-pressed={pressed} className={cls}
       onClick={() => { if (onClick) onClick(); if (to) nav(to); }}>
       {icon}{children}{iconRight}
-    </motion.button>
+    </button>
   );
 }
 export function IconButton({ children, onClick, label, className }: { children: React.ReactNode; onClick?: () => void; label: string; className?: string }) {
   return (
-    <motion.button whileTap={{ scale: 0.92 }} onClick={onClick} aria-label={label} title={label}
-      className={cx('grid place-items-center size-12 rounded-full border border-line bg-surface text-ink hover:border-ink/30 [&_svg]:size-5', className)}>
+    <button type="button" onClick={onClick} aria-label={label} title={label}
+      className={cx('press grid place-items-center size-12 rounded-full border border-line bg-surface text-ink hover:border-ink/30 [&_svg]:size-5', className)}>
       {children}
-    </motion.button>
+    </button>
   );
 }
 
@@ -74,17 +74,16 @@ export function Card({ children, className, onClick, to, tone = 'surface', pad =
   const cls = cx('rounded-xl2 text-left', toneCls, pad && 'p-5', interactive && 'cursor-pointer w-full block', tone === 'surface' && 'shadow-card', className);
   if (!interactive) return <div className={cls}>{children}</div>;
   return (
-    <motion.button type="button" className={cls} whileTap={{ scale: 0.99 }}
+    <button type="button" className={cx(cls, 'press')}
       onClick={() => { onClick?.(); if (to) nav(to); }}>
       {children}
-    </motion.button>
+    </button>
   );
 }
 export function Hero({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={cx('relative overflow-hidden rounded-xl3 hero-glow text-onbrand p-6 sm:p-8', className)}>
-      <div className="absolute inset-0 grain opacity-60 pointer-events-none" />
-      <img src={LOGO} alt="" aria-hidden className="absolute -right-12 -bottom-14 w-52 opacity-[.07] pointer-events-none grayscale" />
+      <div className="absolute inset-0 night-stars pointer-events-none" aria-hidden />
       <div className="relative">{children}</div>
     </div>
   );
@@ -110,7 +109,17 @@ export function PageHeader({ kicker, title, lead, back, right }: { kicker?: stri
         {title && <h1 className="text-[1.85rem] sm:text-[2.1rem]">{title}</h1>}{right}
       </div>}
       {lead && <p className="text-[1.05rem] text-muted max-w-[38rem]">{lead}</p>}
+      <Horizon className="mt-2" />
     </header>
+  );
+}
+/** Firma visual: la línea del horizonte con la estrella del logo */
+export function Horizon({ className }: { className?: string }) {
+  return (
+    <div className={cx('flex items-center gap-2 text-teal', className)} aria-hidden>
+      <svg viewBox="-1 -1 2 2" className="size-3 shrink-0"><path d="M0-1Q.16-.16 1 0 .16.16 0 1-.16.16-1 0-.16-.16 0-1Z" fill="currentColor" /></svg>
+      <span className="h-px flex-1 bg-gradient-to-r from-teal/60 via-line to-transparent" />
+    </div>
   );
 }
 export function SavedMark() {
@@ -119,7 +128,7 @@ export function SavedMark() {
   useEffect(() => { if (!savedAt) return; setShow(true); const t = setTimeout(() => setShow(false), 1600); return () => clearTimeout(t); }, [savedAt]);
   return (
     <AnimatePresence>{show && (
-      <motion.span initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-[.8rem] text-muted inline-flex items-center gap-1.5 whitespace-nowrap">
+      <motion.span initial={{ opacity: 0, transform: 'translate(0px, -4px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="text-[.8rem] text-muted inline-flex items-center gap-1.5 whitespace-nowrap">
         <span className="size-2 rounded-full bg-accent" />Guardado
       </motion.span>)}
     </AnimatePresence>
@@ -168,15 +177,15 @@ export function Chips({ options, value, onChange, multi }: { options: ReadonlyAr
   return (
     <div className="flex flex-wrap gap-2">
       {options.map(([k, l]) => (
-        <motion.button key={k} type="button" whileTap={{ scale: 0.95 }} aria-pressed={sel(k)}
+        <button key={k} type="button" aria-pressed={sel(k)}
           onClick={() => {
             if (multi) { const a = value as T[]; onChange(a.includes(k) ? a.filter((x) => x !== k) : [...a, k]); }
             else onChange(value === k ? '' : k);
           }}
-          className={cx('min-h-[2.75rem] px-3.5 rounded-lg border-[1.5px] font-semibold text-[.92rem] transition-colors',
+          className={cx('press min-h-[2.75rem] px-3.5 rounded-lg border-[1.5px] font-semibold text-[.92rem] transition-[transform,background-color,border-color,color] duration-150',
             sel(k) ? 'bg-ink text-bg border-ink' : 'bg-surface border-line hover:border-ink/30')}>
           {sel(k) && <Check className="inline size-4 -ml-1 mr-1 align-[-2px]" />}{l}
-        </motion.button>
+        </button>
       ))}
     </div>
   );
@@ -186,19 +195,19 @@ export function Choices({ options, value, onChange, multi }: { options: { k: str
   return (
     <div className="flex flex-col gap-2.5">
       {options.map((o) => (
-        <motion.button key={o.k} type="button" whileTap={{ scale: 0.985 }} aria-pressed={sel(o.k)}
+        <button key={o.k} type="button" aria-pressed={sel(o.k)}
           onClick={() => {
             if (multi) { const a = value as string[]; onChange(a.includes(o.k) ? a.filter((x) => x !== o.k) : [...a, o.k]); }
             else onChange(o.k);
           }}
-          className={cx('flex items-center gap-4 w-full text-left min-h-[4rem] px-4 py-3 rounded-xl border-[1.5px] transition-colors',
+          className={cx('press-soft flex items-center gap-4 w-full text-left min-h-[4rem] px-4 py-3 rounded-xl border-[1.5px] transition-[transform,background-color,border-color] duration-150',
             sel(o.k) ? 'border-accent bg-accent/[.06]' : 'border-line bg-surface hover:border-ink/25')}>
           {o.icon && <span className="grid place-items-center size-11 rounded-lg bg-sunk shrink-0 [&_svg]:size-6">{o.icon}</span>}
           <span className="flex-1 min-w-0"><span className="block font-bold text-[1.02rem]">{o.t}</span>{o.s && <span className="block text-[.88rem] text-muted">{o.s}</span>}</span>
           <span className={cx('grid place-items-center size-7 rounded-full border-2 shrink-0 transition-colors', sel(o.k) ? 'bg-accent border-accent text-onaccent' : 'border-line text-transparent')}>
             <Check className="size-4" strokeWidth={3} />
           </span>
-        </motion.button>
+        </button>
       ))}
     </div>
   );
@@ -212,7 +221,7 @@ export function Progress({ value, max = 100, label, right, tone = 'accent', size
     <div className="flex flex-col gap-1.5">
       {(label || right) && <div className="flex justify-between gap-3 text-[.95rem]"><b>{label}</b><span className="num text-muted">{right}</span></div>}
       <div className={cx('rounded-full bg-sunk overflow-hidden', size === 'sm' ? 'h-1.5' : 'h-2.5')} role="progressbar" aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100}>
-        <motion.div className={cx('h-full rounded-full', col)} initial={{ width: 0 }} animate={{ width: pct * 100 + '%' }} transition={{ duration: 0.8, ease }} />
+        <motion.div className={cx('h-full w-full rounded-full origin-left', col)} initial={{ transform: 'scaleX(0)' }} animate={{ transform: `scaleX(${pct})` }} transition={{ duration: 0.5, ease }} />
       </div>
     </div>
   );
@@ -225,7 +234,7 @@ export function Ring({ value, max = 100, size = 64, stroke = 7, children, tone =
       <svg width={size} height={size} className="-rotate-90">
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeOpacity={0.15} strokeWidth={stroke} />
         <motion.circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={col} strokeWidth={stroke} strokeLinecap="round"
-          strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - pct) }} transition={{ duration: 1.1, ease }} />
+          strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - pct) }} transition={{ duration: 0.6, ease }} />
       </svg>
       <div className="absolute inset-0 grid place-items-center text-[.85rem] font-bold num">{children}</div>
     </div>
@@ -238,7 +247,7 @@ export function CountUp({ value, format = (n: number) => String(Math.round(n)), 
   useEffect(() => {
     const el = ref.current; if (!el) return;
     if (reduce) { el.textContent = format(value); prev.current = value; return; }
-    const c = animate(prev.current, value, { duration: 0.9, ease, onUpdate: (v) => { el.textContent = format(v); } });
+    const c = animate(prev.current, value, { duration: 0.6, ease, onUpdate: (v) => { el.textContent = format(v); } });
     prev.current = value;
     return () => c.stop();
   }, [value]);
@@ -247,11 +256,11 @@ export function CountUp({ value, format = (n: number) => String(Math.round(n)), 
 
 /* ---------- Etiquetas y avisos ---------- */
 export function Tag({ children, tone = 'neutral' }: { children: React.ReactNode; tone?: 'neutral' | 'ok' | 'warn' | 'sky' | 'amber' | 'violet' | 'bad' }) {
-  const t = { neutral: 'bg-sunk text-muted', ok: 'bg-mint text-accent', warn: 'bg-warn text-warnink', sky: 'bg-skysoft text-sky', amber: 'bg-ambersoft text-amber', violet: 'bg-violetsoft text-violet', bad: 'bg-badsoft text-bad' }[tone];
+  const t = { neutral: 'bg-sunk text-muted', ok: 'bg-mint text-teal', warn: 'bg-warn text-warnink', sky: 'bg-skysoft text-sky', amber: 'bg-ambersoft text-amber', violet: 'bg-violetsoft text-violet', bad: 'bg-badsoft text-bad' }[tone];
   return <span className={cx('inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[.76rem] font-semibold', t)}>{children}</span>;
 }
 export function Note({ children, tone = 'info', title }: { children: React.ReactNode; tone?: 'info' | 'warn' | 'good' | 'bad'; title?: React.ReactNode }) {
-  const t = { info: ['bg-skysoft border-sky/25', 'text-sky', <Info key="i" />], warn: ['bg-warn border-amber/30 text-warnink', '', <AlertTriangle key="w" />], good: ['bg-mint border-accent/25', 'text-accent', <CheckCircle2 key="g" />], bad: ['bg-badsoft border-bad/30', 'text-bad', <AlertTriangle key="b" />] }[tone] as [string, string, React.ReactNode];
+  const t = { info: ['bg-skysoft border-sky/25', 'text-sky', <Info key="i" />], warn: ['bg-warn border-amber/30 text-warnink', '', <AlertTriangle key="w" />], good: ['bg-mint border-teal/25', 'text-teal', <CheckCircle2 key="g" />], bad: ['bg-badsoft border-bad/30', 'text-bad', <AlertTriangle key="b" />] }[tone] as [string, string, React.ReactNode];
   return (
     <div className={cx('flex gap-3 rounded-xl border px-4 py-3.5 text-[.95rem]', t[0])}>
       <span className={cx('mt-0.5 [&_svg]:size-5 shrink-0', t[1])}>{t[2]}</span>
@@ -279,28 +288,35 @@ export function Bullets({ items, ordered, className }: { items: React.ReactNode[
 /* ---------- Filas de navegación y checklists ---------- */
 export function RowLink({ to, onClick, icon, tone = 'mint', title, sub, right }: { to?: string; onClick?: () => void; icon: React.ReactNode; tone?: 'mint' | 'sky' | 'amber' | 'violet' | 'sunk'; title: React.ReactNode; sub?: React.ReactNode; right?: React.ReactNode }) {
   const nav = useNavigate();
-  const t = { mint: 'bg-mint text-accent', sky: 'bg-skysoft text-sky', amber: 'bg-ambersoft text-amber', violet: 'bg-violetsoft text-violet', sunk: 'bg-sunk text-ink' }[tone];
+  const t = { mint: 'bg-mint text-teal', sky: 'bg-skysoft text-sky', amber: 'bg-ambersoft text-amber', violet: 'bg-violetsoft text-violet', sunk: 'bg-sunk text-ink' }[tone];
   return (
-    <motion.button type="button" whileTap={{ scale: 0.99 }}
+    <button type="button"
       onClick={() => { onClick?.(); if (to) nav(to); }}
-      className="w-full flex items-center gap-4 text-left p-4 rounded-xl2 bg-surface border border-line hover:border-ink/20 transition-colors">
+      className="rowlink w-full flex items-center gap-4 text-left p-4 rounded-xl2 bg-surface border border-line">
       <span className={cx('grid place-items-center size-11 rounded-lg shrink-0 [&_svg]:size-[1.35rem]', t)}>{icon}</span>
       <span className="flex-1 min-w-0"><span className="block font-head font-semibold text-[1.08rem] leading-tight tracking-[-.01em]">{title}</span>{sub && <span className="block text-[.88rem] text-muted mt-0.5">{sub}</span>}</span>
       {right ?? <ChevronRight className="size-5 text-muted shrink-0" />}
-    </motion.button>
+    </button>
   );
+}
+/** Agrupa varias RowLink en una sola superficie con divisores (lista, no tarjetas sueltas) */
+export function RowList({ children, label }: { children: React.ReactNode; label?: string }) {
+  return <nav className="rows" aria-label={label}>{children}</nav>;
 }
 export function CheckRow({ done, onToggle, children, sub, actions }: { done: boolean; onToggle: () => void; children: React.ReactNode; sub?: React.ReactNode; actions?: React.ReactNode }) {
   return (
     <div className="flex items-start gap-3 py-3 border-b border-line last:border-0">
-      <motion.button type="button" whileTap={{ scale: 0.85 }} onClick={onToggle} aria-pressed={done} aria-label={done ? 'Desmarcar' : 'Marcar como hecho'}
-        className={cx('mt-0.5 grid place-items-center size-7 rounded-md border-[1.5px] shrink-0 transition-colors', done ? 'bg-accent border-accent text-onaccent' : 'border-line bg-surface')}>
-        <AnimatePresence>{done && (
-          <motion.svg key="c" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round">
-            <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} exit={{ pathLength: 0 }} transition={{ duration: 0.3 }} />
-          </motion.svg>)}
-        </AnimatePresence>
-      </motion.button>
+      {/* Zona táctil de 44 px alrededor de una casilla de 28 px */}
+      <button type="button" onClick={onToggle} aria-pressed={done} aria-label={done ? 'Desmarcar' : 'Marcar como hecho'}
+        className="press -m-2 grid place-items-center size-11 shrink-0">
+        <span className={cx('grid place-items-center size-7 rounded-md border-[1.5px] transition-colors duration-150', done ? 'bg-accent border-accent text-onaccent' : 'border-ink/30 bg-surface')}>
+          <AnimatePresence>{done && (
+            <motion.svg key="c" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round">
+              <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} exit={{ pathLength: 0, transition: { duration: 0.1 } }} transition={{ duration: 0.2, ease }} />
+            </motion.svg>)}
+          </AnimatePresence>
+        </span>
+      </button>
       <div className="flex-1 min-w-0">
         <div className={cx('transition-colors', done && 'text-muted line-through decoration-1')}>{children}</div>
         {sub && <div className="text-[.85rem] text-muted mt-0.5">{sub}</div>}
@@ -370,7 +386,7 @@ export function Toaster() {
   return (
     <div className="fixed left-1/2 -translate-x-1/2 bottom-28 lg:bottom-8 z-[60] flex flex-col items-center gap-2 pointer-events-none" aria-live="polite">
       <AnimatePresence>{list.map((t) => (
-        <motion.div key={t.id} initial={{ opacity: 0, y: 16, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8 }}
+        <motion.div key={t.id} initial={{ opacity: 0, transform: 'translate(0px, 16px) scale(0.96)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px) scale(1)' }} exit={{ opacity: 0, transform: 'translate(0px, 8px)' }}
           className="rounded-full bg-ink text-bg px-5 py-3 font-bold text-[.95rem] shadow-lift max-w-[90vw] text-center">{t.msg}</motion.div>
       ))}</AnimatePresence>
     </div>
@@ -385,7 +401,7 @@ export function Celebrate({ show }: { show: boolean }) {
     <div className="pointer-events-none absolute inset-0 grid place-items-center" aria-hidden>
       {[0, 1].map((i) => (
         <motion.span key={i} className="absolute size-24 rounded-full border-2 border-accent"
-          initial={{ scale: 0.6, opacity: 0.5 }} animate={{ scale: 2.4, opacity: 0 }} transition={{ duration: 1.4, delay: i * 0.25, ease: 'easeOut' }} />
+          initial={{ opacity: 0.5, transform: 'scale(0.6)' }} animate={{ opacity: 0, transform: 'scale(2.4)' }} transition={{ duration: 1.4, delay: i * 0.25, ease: 'easeOut' }} />
       ))}
     </div>
   );

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, ListChecks, LineChart, CalendarDays, PiggyBank, Calculator, Share2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useStore, mut } from '../../store';
-import { PageHeader, Card, Hero, Button, Field, MoneyInput, TextInput, Progress, KV, Note, RowLink, Stagger, Item, CountUp, ListenButton, Legal, ease, cx } from '../../ui';
+import { PageHeader, Card, Hero, Button, Field, MoneyInput, TextInput, Progress, KV, Note, RowLink, RowList, Stagger, Item, CountUp, ListenButton, Legal, ease, cx } from '../../ui';
 import { fmt, money, pn } from '../../lib/format';
 import { wa } from '../../lib/share';
 import { calc, simInf } from './calc';
@@ -33,19 +33,21 @@ export function PlataHub() {
             <p className="opacity-85 mt-2">Cada mes gastás {money(c.gastoNeto)} más de lo que ingresa. Con tus ahorros netos de {money(c.neto)}, te alcanza este tiempo si nada cambia.</p>
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
           </>) : (<>
-            <div className="text-onbrand/80 text-[.98rem]">Cada mes</div>
-            <div className="font-head font-semibold text-[2.6rem] leading-none text-glow mt-2">Te sobran <CountUp value={c.brecha} format={money} /></div>
+            <div className="text-onbrand/80 text-[.98rem]">Cada mes te sobran</div>
+            <div className={cx('font-head font-semibold leading-none text-glow mt-2 num', money(c.brecha).length > 11 ? 'text-[clamp(1.7rem,8vw,2.6rem)]' : 'text-[clamp(2.3rem,11vw,3.2rem)]')}><CountUp value={c.brecha} format={money} /></div>
             <p className="opacity-85 mt-2">Tus ingresos cubren tus gastos. Ese margen puede ir a tu meta de ahorro.</p>
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
           </>)}
         </Hero>
       </Item>
       <Item className="flex flex-col gap-3">
-        <RowLink to="/finanzas/plata/numeros/0" icon={<ListChecks />} title="Mis números" sub={c.has ? 'Ingresos, gastos, ahorros y deudas · editar' : 'Empezá acá'} />
-        <RowLink to="/finanzas/plata/resultado" icon={<PiggyBank />} title="Mi resultado y mi meta" sub="Brecha mensual, colchón y meta de ahorro" />
-        <RowLink to="/finanzas/plata/inflacion" icon={<LineChart />} title="Simulador de inflación" sub="¿Qué pasa con tu plata si los precios suben?" />
-        <RowLink to="/finanzas/plata/seguimiento" icon={<CalendarDays />} title="Seguimiento del mes" sub="Lo que planeaste contra lo que gastaste" />
-        <RowLink to="/finanzas/plata/grande" icon={<Calculator />} title="Planificador de un monto grande" sub="Indemnización, herencia o venta: cómo repartirlo" />
+        <RowList>
+          <RowLink to="/finanzas/plata/numeros/0" icon={<ListChecks />} title="Mis números" sub={c.has ? 'Ingresos, gastos, ahorros y deudas · editar' : 'Empezá acá'} />
+          <RowLink to="/finanzas/plata/resultado" icon={<PiggyBank />} title="Mi resultado y mi meta" sub="Brecha mensual, colchón y meta de ahorro" />
+          <RowLink to="/finanzas/plata/inflacion" icon={<LineChart />} title="Simulador de inflación" sub="¿Qué pasa con tu plata si los precios suben?" />
+          <RowLink to="/finanzas/plata/seguimiento" icon={<CalendarDays />} title="Seguimiento del mes" sub="Lo que planeaste contra lo que gastaste" />
+          <RowLink to="/finanzas/plata/grande" icon={<Calculator />} title="Planificador de un monto grande" sub="Indemnización, herencia o venta: cómo repartirlo" />
+        </RowList>
       </Item>
       <Item><Legal>Estas herramientas calculan con los números que cargás vos. Son estimaciones, no predicciones ni asesoramiento financiero.</Legal></Item>
     </Stagger>
@@ -64,7 +66,7 @@ export function Numeros() {
       <PageHeader back={{ to: i ? `/finanzas/plata/numeros/${i - 1}` : '/finanzas/plata', label: i ? 'Atrás' : 'Mi plata' }} title="" />
       <div className="flex gap-1.5">{STEPS.map((_, k) => <motion.span key={k} className={cx('h-2 flex-1 rounded-full', k <= i ? 'bg-accent' : 'bg-line')} layout />)}</div>
       <AnimatePresence mode="wait">
-        <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.22, ease }} className="flex flex-col gap-5">
+        <motion.div key={i} initial={{ opacity: 0, transform: 'translate(20px, 0px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0, transform: 'translate(-20px, 0px)' }} transition={{ duration: 0.22, ease }} className="flex flex-col gap-5">
           <div><div className="text-accent font-bold text-[.85rem]">Paso {i + 1} de 4</div><h1 className="text-[1.9rem] mt-1">{st.t}</h1><p className="text-muted mt-1">{st.h}</p></div>
           <ListenButton text={N.ask(st.t, st.h)} />
           {st.k === 'aho' ? <AhorrosPaso /> : (<>
@@ -140,8 +142,8 @@ function Chart({ rows }: { rows: { y: number; aho: number }[] }) {
       <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="rgb(var(--accent))" stopOpacity=".28" /><stop offset="1" stopColor="rgb(var(--accent))" stopOpacity="0" /></linearGradient></defs>
       {[0, 0.5, 1].map((f) => (<g key={f}><line x1={L} x2={W - R} y1={y(max * f)} y2={y(max * f)} stroke="rgb(var(--line))" /><text x={L - 8} y={y(max * f) + 4} textAnchor="end" fontSize="12" fill="rgb(var(--muted))">{lab(max * f)}</text></g>))}
       {rows.map((r, i) => (i % step === 0 || i === n) && <text key={r.y} x={x(i)} y={H - 8} textAnchor={i === n ? 'end' : i === 0 ? 'start' : 'middle'} fontSize="12" fill="rgb(var(--muted))">{r.y === 0 ? 'Hoy' : 'Año ' + r.y}</text>)}
-      <motion.path d={area} fill="url(#ga)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} />
-      <motion.path d={line} fill="none" stroke="rgb(var(--accent))" strokeWidth="3.5" strokeLinejoin="round" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.2, ease }} key={line} />
+      <motion.path d={area} fill="url(#ga)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} />
+      <motion.path d={line} fill="none" stroke="rgb(var(--accent))" strokeWidth="3.5" strokeLinejoin="round" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.7, ease }} key={line} />
     </svg>
   );
 }
@@ -195,7 +197,7 @@ export function Seguimiento() {
       <PageHeader back={BACK} kicker="Mi plata" title="Seguimiento del mes" lead="Anotá lo que gastaste en cada rubro y comparalo con lo que planeaste." />
       <div className="flex items-center justify-between">
         <button onClick={() => move(-1)} aria-label="Mes anterior" className="grid place-items-center size-12 rounded-full border border-line bg-surface"><ChevronLeft className="size-5" /></button>
-        <AnimatePresence mode="wait"><motion.h2 key={ym} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-[1.4rem] capitalize">{label}</motion.h2></AnimatePresence>
+        <AnimatePresence mode="wait"><motion.h2 key={ym} initial={{ opacity: 0, transform: 'translate(0px, 6px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="text-[1.4rem] capitalize">{label}</motion.h2></AnimatePresence>
         <button onClick={() => move(1)} aria-label="Mes siguiente" className="grid place-items-center size-12 rounded-full border border-line bg-surface"><ChevronRight className="size-5" /></button>
       </div>
       {gas.length ? (<>

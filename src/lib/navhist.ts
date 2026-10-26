@@ -10,8 +10,8 @@ export function sectionOf(p: string): SectionId {
   return 'inicio';
 }
 
-export const SECTION_HOLD = 1000;
-export const INTRO_HOLD = 2900; // Inicio repite la animación del logo (la misma de la pantalla de carga)
+export const SECTION_HOLD = 620; // corto: se ve varias veces por día
+export const INTRO_HOLD = 480;  // Inicio: el logo aparece y se va, lo más breve posible
 
 export const hist = {
   cur: '' as string,
@@ -42,7 +42,7 @@ export function track(pathname: string) {
   /* Solo las 5 secciones tienen animación de entrada (los módulos no, para que sea más ágil) */
   const id = sectionOf(pathname);
   if (id !== sectionOf(hist.prev)) {
-    hist.veil = { kind: 'section', id }; hist.until = Date.now() + (id === 'inicio' ? INTRO_HOLD : SECTION_HOLD) - 120; hist.veilKey++;
+    hist.veil = { kind: 'section', id }; hist.until = Date.now() + (id === 'inicio' ? INTRO_HOLD : SECTION_HOLD) - 60; hist.veilKey++;
   }
   return hist;
 }

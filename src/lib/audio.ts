@@ -36,11 +36,11 @@ export const entry = (key: string): Entry | undefined => M[key];
 export const urlOf = (e: Entry) => 'audio/' + e.f;
 
 /* Velocidad de las narraciones (Ajustes → Velocidad de la voz) */
-export const VELOCIDADES: [string, string][] = [['0.85', 'Más despacio'], ['1', 'Normal'], ['1.2', 'Más rápido']];
-export function rate() { const v = Number(getD().aj.vel); return v > 0.5 && v < 2 ? v : 1; }
+export const VELOCIDADES: [string, string][] = [['0.5', 'Lenta · 0,5x'], ['1', 'Normal · 1x'], ['1.5', 'Rápida · 1,5x']];
+export function rate() { const v = Number(getD().aj.vel); return [0.5, 1, 1.5].includes(v) ? v : 1; }
 export function nextRate() { const i = VELOCIDADES.findIndex((x) => Number(x[0]) === rate()); const n = VELOCIDADES[(i + 1) % VELOCIDADES.length][0]; mut((d) => { d.aj.vel = n as any; }); if (current) current.playbackRate = Number(n); return Number(n); }
 export const PROBAR_VOZ = 'Hola. Así suena la voz de Aliada a esta velocidad. Si te parece rápida o lenta, cambiala acá arriba.';
-export const rateLabel = (r = rate()) => (r === 1 ? '1x' : String(r).replace('.', ',') + 'x');
+export const rateLabel = (r = rate()) => String(r).replace('.', ',') + 'x';
 
 let current: HTMLAudioElement | null = null;
 let onStop: (() => void) | null = null;

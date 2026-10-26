@@ -4,6 +4,7 @@ import { HashRouter } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import App from './App';
 import { ErrorBoundary } from './ui/ErrorBoundary';
+import '@fontsource-variable/atkinson-hyperlegible-next/wght.css'; // tipografía propia, sin pedirla a Google (funciona sin internet)
 import './styles.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

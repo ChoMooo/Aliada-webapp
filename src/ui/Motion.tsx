@@ -37,7 +37,7 @@ export function Topo({ className, rings = 9, color = 'currentColor', draw = fals
 }
 
 const TONE: Record<string, { chip: string; ink: string; wash: string }> = {
-  mint: { chip: 'bg-mint text-accent', ink: 'text-accent', wash: 'rgb(var(--accent) / .10)' },
+  mint: { chip: 'bg-mint text-teal', ink: 'text-accent', wash: 'rgb(var(--accent) / .10)' },
   sky: { chip: 'bg-skysoft text-sky', ink: 'text-sky', wash: 'rgb(var(--sky) / .12)' },
   amber: { chip: 'bg-ambersoft text-amber', ink: 'text-amber', wash: 'rgb(var(--amber) / .12)' },
   violet: { chip: 'bg-violetsoft text-violet', ink: 'text-violet', wash: 'rgb(var(--violet) / .12)' }
@@ -52,12 +52,12 @@ function Veil({ hold, tone, children, onDone }: { hold: number; tone: string; ch
     <AnimatePresence onExitComplete={onDone}>
       {show && (
         <motion.div className="fixed inset-0 z-[70] grid place-items-center bg-bg overflow-hidden" role="presentation"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.35 } }} transition={{ duration: 0.16 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.23, 1, 0.32, 1] } }} transition={{ duration: 0.14 }}
           onClick={() => setShow(false)}
           style={{ backgroundImage: `radial-gradient(90% 60% at 50% 42%, ${T.wash}, transparent 70%)` }}>
           <Topo className={cx('absolute w-[min(140vw,760px)] opacity-60', T.ink)} draw rings={8} speed={2.4} />
           <motion.div className="relative flex flex-col items-center gap-4 text-center px-6"
-            initial={{ opacity: 0, y: 12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ y: -8 }} transition={{ delay: 0.08, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}>
+            initial={{ opacity: 0, transform: 'translateY(8px) scale(0.97)' }} animate={{ opacity: 1, transform: 'translateY(0px) scale(1)' }} exit={{ opacity: 0 }} transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}>
             {children}
           </motion.div>
         </motion.div>
@@ -77,16 +77,16 @@ function ArtInicio() {
     <svg viewBox="0 0 120 120" className="size-full">
       <defs><clipPath id="va-h"><rect x="0" y="0" width="120" height="74" /></clipPath></defs>
       <g clipPath="url(#va-h)">
-        <motion.circle cx="60" cy="74" r="24" fill="currentColor" fillOpacity={0.9} initial={{ y: 30 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: ez }} />
+        <motion.circle cx="60" cy="74" r="24" fill="currentColor" fillOpacity={0.9} initial={{ transform: 'translate(0px, 30px)' }} animate={{ transform: 'translate(0px, 0px)' }} transition={{ duration: 0.495, ease: ez }} />
         {[0, 1, 2, 3, 4].map((i) => {
           const a = Math.PI * (0.12 + i * 0.19);
           return <motion.line key={i} x1={60 - Math.cos(a) * 32} y1={74 - Math.sin(a) * 32} x2={60 - Math.cos(a) * 42} y2={74 - Math.sin(a) * 42} {...S} strokeWidth={4}
-            initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 0.45 + i * 0.06, duration: 0.35 }} />;
+            initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ delay: 0.248 + i * 0.033, duration: 0.193 }} />;
         })}
       </g>
       {[0, 1, 2].map((i) => (
         <motion.path key={i} d={`M${18 + i * 8} ${80 + i * 9}H${102 - i * 8}`} {...S} strokeWidth={4} strokeOpacity={1 - i * 0.28}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.1 + i * 0.1, duration: 0.6, ease: ez }} />
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.055 + i * 0.055, duration: 0.33, ease: ez }} />
       ))}
     </svg>
   );
@@ -97,10 +97,10 @@ function ArtFinanzas() {
     <svg viewBox="0 0 120 120" className="size-full">
       {[[24, 34], [50, 52], [76, 72]].map(([x, h], i) => (
         <motion.rect key={i} x={x} width="18" rx="5" y={98 - h} height={h} fill="currentColor" fillOpacity={0.35 + i * 0.25}
-          style={{ transformBox: 'fill-box', transformOrigin: 'bottom' }} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.1 + i * 0.12, duration: 0.55, ease: ez }} />
+          style={{ transformBox: 'fill-box', transformOrigin: 'bottom' }} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.055 + i * 0.066, duration: 0.303, ease: ez }} />
       ))}
-      <motion.path d="M14 98H106" {...S} strokeWidth={4} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5 }} />
-      <motion.g initial={{ y: -40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5, type: 'spring', stiffness: 300, damping: 12 }}>
+      <motion.path d="M14 98H106" {...S} strokeWidth={4} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.275 }} />
+      <motion.g initial={{ opacity: 0, transform: 'translate(0px, -40px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} transition={{ delay: 0.275, type: 'spring', stiffness: 300, damping: 12 }}>
         <circle cx="85" cy="16" r="11" fill="currentColor" />
         <text x="85" y="20.5" textAnchor="middle" fontSize="14" fontWeight="700" fill="rgb(var(--surface))" fontFamily="system-ui, sans-serif">$</text>
       </motion.g>
@@ -113,9 +113,9 @@ function ArtInversiones() {
   return (
     <svg viewBox="0 0 120 120" className="size-full">
       {[36, 60, 84].map((y) => <path key={y} d={`M12 ${y}H110`} stroke="currentColor" strokeOpacity={0.18} strokeWidth={2} strokeDasharray="3 5" />)}
-      <motion.path d={d + ' L110 104 L12 104 Z'} fill="currentColor" fillOpacity={0.12} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55, duration: 0.4 }} />
-      <motion.path d={d} {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, ease: ez }} />
-      <motion.circle cx="110" cy="30" r="7" fill="currentColor" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: [0.6, 1.25, 1], opacity: 1 }} transition={{ delay: 0.75, duration: 0.4 }} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
+      <motion.path d={d + ' L110 104 L12 104 Z'} fill="currentColor" fillOpacity={0.12} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.303, duration: 0.22 }} />
+      <motion.path d={d} {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.44, ease: ez }} />
+      <motion.circle cx="110" cy="30" r="7" fill="currentColor" initial={{ opacity: 0, transform: 'scale(0.6)' }} animate={{ transform: ['scale(0.6)', 'scale(1.25)', 'scale(1)'], opacity: 1 }} transition={{ delay: 0.413, duration: 0.22 }} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
     </svg>
   );
 }
@@ -123,16 +123,16 @@ function ArtInversiones() {
 function ArtDigital() {
   return (
     <svg viewBox="0 0 120 120" className="size-full">
-      <motion.rect x="38" y="22" width="44" height="78" rx="10" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, ease: ez }} />
-      <motion.rect x="45" y="32" width="30" height="50" rx="4" fill="currentColor" initial={{ opacity: 0 }} animate={{ opacity: [0, 0.5, 0.25] }} transition={{ delay: 0.45, duration: 0.5 }} />
-      <motion.circle cx="60" cy="90" r="3" fill="currentColor" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.5 }} />
+      <motion.rect x="38" y="22" width="44" height="78" rx="10" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.33, ease: ez }} />
+      <motion.rect x="45" y="32" width="30" height="50" rx="4" fill="currentColor" initial={{ opacity: 0 }} animate={{ opacity: [0, 0.5, 0.25] }} transition={{ delay: 0.248, duration: 0.275 }} />
+      <motion.circle cx="60" cy="90" r="3" fill="currentColor" initial={{ opacity: 0, transform: 'scale(0.6)' }} animate={{ opacity: 1, transform: 'scale(1)' }} transition={{ delay: 0.275 }} />
       {[0, 1, 2].map((i) => (
         <motion.path key={i} d={`M${88 + i * 8} ${46 - i * 6} q${7 + i * 3} ${15 + i * 6} 0 ${30 + i * 12}`} {...S} strokeWidth={4}
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: [0, 1, 1 - i * 0.25] }} transition={{ delay: 0.55 + i * 0.12, duration: 0.4 }} />
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: [0, 1, 1 - i * 0.25] }} transition={{ delay: 0.303 + i * 0.066, duration: 0.22 }} />
       ))}
       {[0, 1, 2].map((i) => (
         <motion.path key={'l' + i} d={`M${32 - i * 8} ${46 - i * 6} q${-(7 + i * 3)} ${15 + i * 6} 0 ${30 + i * 12}`} {...S} strokeWidth={4}
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: [0, 1, 1 - i * 0.25] }} transition={{ delay: 0.55 + i * 0.12, duration: 0.4 }} />
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: [0, 1, 1 - i * 0.25] }} transition={{ delay: 0.303 + i * 0.066, duration: 0.22 }} />
       ))}
     </svg>
   );
@@ -141,12 +141,12 @@ function ArtDigital() {
 function ArtLibro() {
   return (
     <svg viewBox="0 0 120 120" className="size-full">
-      <motion.path d="M60 44C48 36 30 34 16 36V94C30 92 48 94 60 102" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, ease: ez }} />
-      <motion.path d="M60 44C72 36 90 34 104 36V94C90 92 72 94 60 102" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, ease: ez }} />
-      <motion.path d="M60 44V102" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.35, duration: 0.35 }} />
-      <motion.path d="M60 44C70 38 84 37 96 39" {...S} strokeWidth={3} strokeOpacity={0.5} initial={{ pathLength: 0, rotate: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.3, duration: 0.5 }} />
+      <motion.path d="M60 44C48 36 30 34 16 36V94C30 92 48 94 60 102" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.33, ease: ez }} />
+      <motion.path d="M60 44C72 36 90 34 104 36V94C90 92 72 94 60 102" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.33, ease: ez }} />
+      <motion.path d="M60 44V102" {...S} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.193, duration: 0.193 }} />
+      <motion.path d="M60 44C70 38 84 37 96 39" {...S} strokeWidth={3} strokeOpacity={0.5} initial={{ pathLength: 0, rotate: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.165, duration: 0.275 }} />
       <motion.path d="M60 30c-3-6-13-6-13 2 0 6 13 13 13 13s13-7 13-13c0-8-10-8-13-2z" fill="currentColor"
-        initial={{ y: 22, scale: 0.4, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} transition={{ delay: 0.55, type: 'spring', stiffness: 220, damping: 11 }}
+        initial={{ opacity: 0, transform: 'translate(0px, 22px) scale(0.4)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px) scale(1)' }} transition={{ delay: 0.303, type: 'spring', stiffness: 220, damping: 11 }}
         style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
     </svg>
   );
@@ -176,28 +176,18 @@ export function SectionVeil({ id }: { id: SectionId }) {
   );
 }
 
-/** Inicio: la misma animación del logo que la pantalla de carga */
+/** Inicio: el logo aparece y se va enseguida (menos de medio segundo). Sin video: se navega a Inicio muchas veces. */
 function IntroVeil() {
   const [show, setShow] = useState(true);
-  const vref = React.useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const t = setTimeout(() => setShow(false), INTRO_HOLD);
-    const v = vref.current;
-    if (v) { v.muted = true; v.play().catch(() => setShow(false)); }
-    return () => clearTimeout(t);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setShow(false), INTRO_HOLD); return () => clearTimeout(t); }, []);
   return createPortal(
     <AnimatePresence>
       {show && (
         <motion.div className="fixed inset-0 z-[70] grid place-items-center intro-bg" role="presentation" onClick={() => setShow(false)}
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.4 } }} transition={{ duration: 0.18 }}>
-          <motion.div className="relative aspect-square w-[min(92vw,62vh,460px)]" exit={{ scale: 1.05 }} transition={{ duration: 0.5 }}>
-            <video ref={vref} className="intro-video absolute inset-0 size-full object-cover" muted playsInline autoPlay preload="auto" poster="intro/logo-poster.webp"
-              onEnded={() => setTimeout(() => setShow(false), 120)}>
-              <source src="intro/logo.webm" type="video/webm" />
-              <source src="intro/logo.mp4" type="video/mp4" />
-            </video>
-          </motion.div>
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.18, ease: [0.23, 1, 0.32, 1] } }} transition={{ duration: 0.12 }}>
+          <motion.img src="intro/logo-final.webp" alt="" className="intro-video w-[min(52vw,240px)] aspect-square object-cover"
+            initial={{ opacity: 0, transform: 'scale(0.94)' }} animate={{ opacity: 1, transform: 'scale(1)' }} exit={{ transform: 'scale(1.03)' }}
+            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }} />
         </motion.div>
       )}
     </AnimatePresence>,

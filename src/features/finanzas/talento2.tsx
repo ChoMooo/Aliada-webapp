@@ -155,7 +155,7 @@ export function Materiales() {
       <Tabs id="mat" value={k} onChange={setK} tabs={MATS} />
       {ofertaPct(w) < 60 && <Note tone="warn">Completá tu oferta para que el texto salga más completo. <button className="font-bold underline" onClick={() => history.back()}>Volver</button></Note>}
       <AnimatePresence mode="wait">
-        <motion.div key={k} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+        <motion.div key={k} initial={{ opacity: 0, transform: 'translate(0px, 8px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
           <TextArea label="Texto" value={t} onChange={(v) => upd((x) => { x.mat[k] = v; })} className="!min-h-[22rem] text-[.98rem]" />
         </motion.div>
       </AnimatePresence>
@@ -179,7 +179,7 @@ export function Plan() {
       {!tiempo && <Note tone="info">No indicaste tu tiempo semanal: usamos unas 10 horas. Podés ajustarlo en tu perfil.</Note>}
       <div className="grid sm:grid-cols-2 gap-3">
         {[['Semana 1', 'Definir la oferta, calcular costos y validar con 5 personas'], ['Semana 2', 'Preparar materiales y verificar obligaciones'], ['Semana 3', 'Contactar personas y conseguir el primer trabajo'], ['Semana 4', 'Evaluar, ajustar y decidir cómo seguir']].map(([a, b], i) => (
-          <motion.div key={a} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}><Card className="h-full"><b className="text-amber">{a}</b><p className="mt-1">{b}</p></Card></motion.div>
+          <motion.div key={a} initial={{ opacity: 0, transform: 'translate(0px, 10px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} transition={{ delay: i * 0.08 }}><Card className="h-full"><b className="text-amber">{a}</b><p className="mt-1">{b}</p></Card></motion.div>
         ))}
       </div>
       <Button size="lg" block iconRight={<ArrowRight />} onClick={() => upd((x, dd) => { x.plan = { on: true, tasks: genPlan(dd.ta.sel, dd.ta.P.tiempo) }; })}>Generar mi plan</Button>

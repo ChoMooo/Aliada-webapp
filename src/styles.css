@@ -3,30 +3,32 @@
 @tailwind utilities;
 
 :root{
-  --bg:244 246 241; --surface:255 255 255; --sunk:233 239 233; --ink:19 32 27; --muted:77 93 86; --line:214 222 216;
-  --brand:24 39 34; --onbrand:230 244 236; --accent:10 125 88; --onaccent:255 255 255; --glow:0 224 145;
-  --sky:63 91 208; --skysoft:227 232 251; --amber:168 95 8; --ambersoft:251 235 208; --mint:218 243 230;
-  --warn:255 240 209; --warnink:110 67 0; --bad:179 38 30; --badsoft:251 227 224; --violet:109 76 196; --violetsoft:236 230 251;
-  --shadow:19 32 27; --tint1:224 238 228; --tint2:236 242 230;
+  /* Mar de noche: arena, azul noche, azul ballena y turquesa de las estrellas del logo */
+  --bg:246 243 236; --surface:255 254 251; --sunk:237 232 222; --ink:14 27 46; --muted:76 88 106; --line:219 211 196;
+  --brand:12 25 45; --onbrand:233 240 250; --accent:38 80 196; --onaccent:255 255 255; --glow:52 212 166;
+  --teal:9 118 93; --mint:213 238 229; --sky:34 88 186; --skysoft:224 232 249; --amber:168 78 34; --ambersoft:250 229 214;
+  --warn:252 238 204; --warnink:108 66 0; --bad:176 38 38; --badsoft:250 225 222; --violet:96 78 188; --violetsoft:234 230 250;
+  --shadow:14 27 46; --tint1:228 235 246; --tint2:240 234 222;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:11 19 16; --surface:20 31 27; --sunk:27 40 35; --ink:234 243 238; --muted:165 182 173; --line:43 59 52;
-  --brand:18 33 27; --onbrand:230 244 236; --accent:0 224 145; --onaccent:3 34 22; --glow:0 224 145;
-  --sky:157 176 255; --skysoft:32 42 82; --amber:240 178 88; --ambersoft:58 43 16; --mint:18 54 42;
-  --warn:58 44 12; --warnink:243 201 112; --bad:255 143 133; --badsoft:65 25 26; --violet:186 165 255; --violetsoft:42 32 72;
-  --shadow:0 0 0; --tint1:20 40 33; --tint2:14 30 26; color-scheme: dark; } }
+  --bg:7 15 28; --surface:14 26 46; --sunk:20 34 57; --ink:233 239 248; --muted:160 174 196; --line:35 51 78;
+  --brand:10 21 39; --onbrand:233 240 250; --accent:128 162 255; --onaccent:7 15 28; --glow:70 224 182;
+  --teal:92 220 182; --mint:15 50 50; --sky:140 172 255; --skysoft:25 40 80; --amber:244 160 112; --ambersoft:60 34 22;
+  --warn:58 44 12; --warnink:243 201 112; --bad:255 140 130; --badsoft:66 24 28; --violet:186 170 255; --violetsoft:40 32 72;
+  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; color-scheme: dark; } }
 :root[data-theme="dark"]{
-  --bg:11 19 16; --surface:20 31 27; --sunk:27 40 35; --ink:234 243 238; --muted:165 182 173; --line:43 59 52;
-  --brand:18 33 27; --onbrand:230 244 236; --accent:0 224 145; --onaccent:3 34 22; --glow:0 224 145;
-  --sky:157 176 255; --skysoft:32 42 82; --amber:240 178 88; --ambersoft:58 43 16; --mint:18 54 42;
-  --warn:58 44 12; --warnink:243 201 112; --bad:255 143 133; --badsoft:65 25 26; --violet:186 165 255; --violetsoft:42 32 72;
-  --shadow:0 0 0; --tint1:20 40 33; --tint2:14 30 26; color-scheme: dark; }
+  --bg:7 15 28; --surface:14 26 46; --sunk:20 34 57; --ink:233 239 248; --muted:160 174 196; --line:35 51 78;
+  --brand:10 21 39; --onbrand:233 240 250; --accent:128 162 255; --onaccent:7 15 28; --glow:70 224 182;
+  --teal:92 220 182; --mint:15 50 50; --sky:140 172 255; --skysoft:25 40 80; --amber:244 160 112; --ambersoft:60 34 22;
+  --warn:58 44 12; --warnink:243 201 112; --bad:255 140 130; --badsoft:66 24 28; --violet:186 170 255; --violetsoft:40 32 72;
+  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; color-scheme: dark; }
 
 html{ font-size:112.5%; -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent; }
 html[data-fs="2"]{ font-size:125%; } html[data-fs="3"]{ font-size:140%; }
 body{ @apply bg-bg text-ink font-body antialiased; line-height:1.5; margin:0; position:relative; z-index:0; }
-h1,h2,h3{ @apply font-head font-semibold; text-wrap:balance; line-height:1.15; letter-spacing:-.022em; }
+h1,h2,h3{ @apply font-head font-bold; text-wrap:balance; line-height:1.15; letter-spacing:-.018em; }
+p{ text-wrap:pretty; }
 button,input,select,textarea{ font:inherit; color:inherit; }
 :focus-visible{ outline:3px solid rgb(var(--sky)); outline-offset:2px; border-radius:10px; }
 /* Superficies del navegador con la paleta propia */
@@ -40,15 +42,29 @@ button, summary, [role="button"]{ -webkit-user-select:none; user-select:none; -w
 :root{ --ease-out: cubic-bezier(.23,1,.32,1); --ease-in-out: cubic-bezier(.77,0,.175,1); }
 .press{ transition: transform 140ms var(--ease-out); }
 .press:active{ transform: scale(.97); }
+.press-soft:active{ transform: scale(.985); } /* superficies grandes: escala casi imperceptible */
+/* Filas de navegación: respuesta con fondo (no escala) y agrupadas en una sola superficie con divisores */
+.rowlink{ transition: background-color 140ms var(--ease-out), border-color 140ms var(--ease-out); -webkit-user-select:none; user-select:none; }
+.rowlink:active{ background-color: rgb(var(--sunk)); }
+@media (hover:hover) and (pointer:fine){ .rowlink:hover{ background-color: rgb(var(--sunk) / .55); } }
+.rows{ display:flex; flex-direction:column; border-radius:.875rem; background: rgb(var(--surface)); border:1px solid rgb(var(--line)); overflow:hidden; }
+.rows > .rowlink{ border:0; border-radius:0; position:relative; }
+.rows > .rowlink + .rowlink::before{ content:''; position:absolute; top:0; right:0; left:4.75rem; height:1px; background: rgb(var(--line)); }
 details > summary:focus-visible{ outline-offset:-3px; }
 .num{ font-variant-numeric: tabular-nums; }
 .scroll-x{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
 .safe-b{ padding-bottom: calc(.4rem + env(safe-area-inset-bottom,0px)); }
 .safe-t{ padding-top: env(safe-area-inset-top,0px); }
 .hero-glow{ background:
-  radial-gradient(120% 90% at 100% 0%, rgb(36 72 60 / .55) 0%, transparent 55%),
-  radial-gradient(90% 80% at 0% 100%, rgb(10 22 18 / .6) 0%, transparent 60%),
-  linear-gradient(150deg, rgb(28 48 41) 0%, rgb(var(--brand)) 48%, rgb(17 30 26) 100%); }
+  radial-gradient(90% 70% at 88% -12%, rgb(64 104 196 / .42) 0%, transparent 60%),
+  linear-gradient(180deg, rgb(17 34 62) 0%, rgb(var(--brand)) 72%); }
+/* Cielo de noche: unas pocas estrellas fijas, sin animación */
+.night-stars{ background-image:
+  radial-gradient(1.2px 1.2px at 78% 18%, rgb(255 255 255 / .7), transparent 60%),
+  radial-gradient(1px 1px at 88% 34%, rgb(255 255 255 / .5), transparent 60%),
+  radial-gradient(1.4px 1.4px at 64% 10%, rgb(120 230 200 / .8), transparent 60%),
+  radial-gradient(1px 1px at 93% 12%, rgb(255 255 255 / .55), transparent 60%),
+  radial-gradient(1px 1px at 70% 42%, rgb(255 255 255 / .35), transparent 60%); }
 /* Foto del inicio (pantallas anchas): un velo claro a la izquierda para que el texto se lea sobre el cielo y el mar */
 .hero-sea-veil{ background:
   linear-gradient(90deg, rgb(244 250 253 / .9) 0%, rgb(240 248 252 / .78) 30%, rgb(236 246 251 / .35) 47%, transparent 58%); }
@@ -69,7 +85,7 @@ details > summary{ list-style:none; } details > summary::-webkit-details-marker{
   header.sticky, nav{ display:none !important; }
   .print-card{ border-color:#000 !important; box-shadow:none !important; }
 }
-@media (prefers-reduced-motion: reduce){ *{ scroll-behavior:auto !important; } .press:active{ transform:none; } }
+@media (prefers-reduced-motion: reduce){ *{ scroll-behavior:auto !important; } .press:active, .press-soft:active{ transform:none; } }
 
 /* Animación del logo (pantalla de carga y entrada a Inicio) */
 .intro-bg{ background: radial-gradient(circle at 50% 50%, #052629 0, #03191c 32vmax, #010c0e 75vmax); }

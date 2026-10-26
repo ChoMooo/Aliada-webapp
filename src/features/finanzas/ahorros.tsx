@@ -28,7 +28,7 @@ export function AhorrosPaso() {
         {LUGARES.map((L) => (
           <li key={L.k} className="p-4 flex flex-col gap-3 sm:grid sm:grid-cols-[1fr_12rem] sm:items-center sm:gap-4">
             <label htmlFor={'ah-' + L.k} className="flex gap-3 min-w-0">
-              <span className="grid place-items-center size-11 rounded-xl bg-mint text-accent [&_svg]:size-5 shrink-0">{L.icon}</span>
+              <span className="grid place-items-center size-11 rounded-xl bg-mint text-teal [&_svg]:size-5 shrink-0">{L.icon}</span>
               <span className="min-w-0"><b className="block text-[1.05rem] leading-tight">{L.t}</b><span className="block text-[.86rem] text-muted mt-0.5">{L.h}</span></span>
             </label>
             <MoneyInput id={'ah-' + L.k} value={A[L.k]} onChange={setA(L.k)} />
@@ -54,7 +54,7 @@ export function AhorrosPaso() {
           <p className="text-[.85rem] text-muted">Buscá el precio de <b className="text-ink">compra</b> (lo que te pagan por cada dólar) en tu banco, en tu billetera o en el diario, y escribilo. Lo usamos solo para pasar tus dólares a pesos.</p>
           <AnimatePresence initial={false} mode="wait">
             {P.usd > 0 && (
-              <motion.div key={c.cot > 0 ? 'ok' : 'falta'} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}
+              <motion.div key={c.cot > 0 ? 'ok' : 'falta'} initial={{ opacity: 0, transform: 'translate(0px, 4px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}
                 className={cx('rounded-lg px-4 py-3 num', c.cot > 0 ? 'bg-skysoft' : 'bg-warn text-warnink')} aria-live="polite">
                 {c.cot > 0
                   ? <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1"><span>US$ {fmt(P.usd, P.usd % 1 ? 2 : 0)} × $ {fmt(c.cot, c.cot % 1 ? 2 : 0)}</span><span aria-hidden>=</span><b className="text-[1.15rem]">{money(P.usdARS)}</b></span>

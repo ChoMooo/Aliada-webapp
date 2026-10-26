@@ -45,9 +45,14 @@ export default function Libro() {
       <Item><Card className="flex flex-col gap-3">
         <h2 className="text-[1.3rem]">Cómo usarlo</h2>
         <p className="text-[.98rem]">Leé un capítulo del ebook y completá el ejercicio o el día correspondiente del cuaderno. No hace falta seguir un orden estricto: cada capítulo funciona por separado.</p>
-        <div className="grid sm:grid-cols-2 gap-2.5">
-          {PARTES.map(([t, s], i) => <div key={t} className="rounded-xl bg-sunk p-3.5"><span className="text-[.78rem] font-semibold text-accent">Parte {i + 1}</span><b className="block font-head font-semibold">{t}</b><span className="text-[.88rem] text-muted">{s}</span></div>)}
-        </div>
+        <ol className="flex flex-col divide-y divide-line" aria-label="Las 4 partes del libro">
+          {PARTES.map(([t, s], i) => (
+            <li key={t} className="flex gap-3.5 py-3 first:pt-1 last:pb-0">
+              <span className="grid place-items-center size-9 rounded-full bg-violetsoft text-violet font-bold num shrink-0" aria-label={'Parte ' + (i + 1)}>{i + 1}</span>
+              <span className="min-w-0"><b className="block font-head font-semibold leading-tight">{t}</b><span className="text-[.88rem] text-muted">{s}</span></span>
+            </li>
+          ))}
+        </ol>
       </Card></Item>
 
       <Item><Card className="flex flex-col gap-4">
