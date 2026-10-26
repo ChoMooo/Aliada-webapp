@@ -8,7 +8,7 @@
   --brand:12 25 45; --onbrand:233 240 250; --accent:38 80 196; --onaccent:255 255 255; --glow:52 212 166;
   --teal:9 118 93; --mint:213 238 229; --sky:34 88 186; --skysoft:224 232 249; --amber:168 78 34; --ambersoft:250 229 214;
   --warn:252 238 204; --warnink:108 66 0; --bad:176 38 38; --badsoft:250 225 222; --violet:96 78 188; --violetsoft:234 230 250;
-  --shadow:14 27 46; --tint1:228 235 246; --tint2:240 234 222;
+  --shadow:14 27 46; --tint1:228 235 246; --tint2:240 234 222; --sea-night:0;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
@@ -16,13 +16,13 @@
   --brand:10 21 39; --onbrand:233 240 250; --accent:128 162 255; --onaccent:7 15 28; --glow:70 224 182;
   --teal:92 220 182; --mint:15 50 50; --sky:140 172 255; --skysoft:25 40 80; --amber:244 160 112; --ambersoft:60 34 22;
   --warn:58 44 12; --warnink:243 201 112; --bad:255 140 130; --badsoft:66 24 28; --violet:186 170 255; --violetsoft:40 32 72;
-  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; color-scheme: dark; } }
+  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; --sea-night:.58; color-scheme: dark; } }
 :root[data-theme="dark"]{
   --bg:7 15 28; --surface:14 26 46; --sunk:20 34 57; --ink:233 239 248; --muted:160 174 196; --line:35 51 78;
   --brand:10 21 39; --onbrand:233 240 250; --accent:128 162 255; --onaccent:7 15 28; --glow:70 224 182;
   --teal:92 220 182; --mint:15 50 50; --sky:140 172 255; --skysoft:25 40 80; --amber:244 160 112; --ambersoft:60 34 22;
   --warn:58 44 12; --warnink:243 201 112; --bad:255 140 130; --badsoft:66 24 28; --violet:186 170 255; --violetsoft:40 32 72;
-  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; color-scheme: dark; }
+  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; --sea-night:.58; color-scheme: dark; }
 
 html{ font-size:112.5%; -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent; }
 html[data-fs="2"]{ font-size:125%; } html[data-fs="3"]{ font-size:140%; }
@@ -68,6 +68,9 @@ details > summary:focus-visible{ outline-offset:-3px; }
 /* Foto del inicio (pantallas anchas): un velo claro a la izquierda para que el texto se lea sobre el cielo y el mar */
 .hero-sea-veil{ background:
   linear-gradient(90deg, rgb(244 250 253 / .9) 0%, rgb(240 248 252 / .78) 30%, rgb(236 246 251 / .35) 47%, transparent 58%); }
+/* Inicio con el mar de fondo: de noche el mar se oscurece; arriba un velo para que el encabezado y el saludo se lean */
+.sea-night{ background: rgb(3 9 20 / var(--sea-night)); }
+.sea-top{ background: linear-gradient(to bottom, rgb(var(--bg) / .72) 0%, rgb(var(--bg) / .28) 14%, rgb(var(--bg) / 0) 30%); }
 /* Fondo general: un degradado muy leve del mismo verde (fijo, detrás de todo) */
 body::before{ content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   background:

@@ -25,7 +25,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
       {h.veil?.kind === 'section' && <SectionVeil key={h.veilKey} id={h.veil.id} />}
       {/* Barra superior */}
-      <header className="no-print sticky top-0 z-30 lg:col-span-2 safe-t bg-bg/90 backdrop-blur-md border-b border-line">
+      <header className={cx('no-print sticky top-0 z-30 lg:col-span-2 safe-t backdrop-blur-md border-b', pathname === '/' ? 'bg-bg/70 border-transparent' : 'bg-bg/90 border-line')}>
         <div className="flex items-center gap-3 px-4 sm:px-6 h-16">
           <button onClick={() => nav('/')} className="flex items-center gap-3 text-left" aria-label="Ir al inicio">
             <img src={LOGO} alt="" className="size-10 rounded-full" />
@@ -37,7 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Navegación lateral (computadora) */}
-      <nav aria-label="Secciones" className="no-print hidden lg:flex flex-col gap-1.5 sticky top-16 self-start p-4 pt-6">
+      <nav aria-label="Secciones" className={cx('no-print hidden lg:flex flex-col gap-1.5 sticky top-16 self-start p-4 pt-6', pathname === '/' && 'm-4 mt-6 pt-4 rounded-2xl bg-bg/90 shadow-card')}>
         {NAV.map((n) => {
           const on = n.match(pathname);
           return (

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, HeartPulse, Wallet, Smartphone, BookHeart } from 'lucide-react';
 import { useStore, useD } from '../store';
@@ -33,34 +34,85 @@ export default function Home() {
   const [firstVisit] = useState(() => { try { const f = !sessionStorage.getItem('aliada.hola'); sessionStorage.setItem('aliada.hola', '1'); return f; } catch { return false; } });
   const secs = useSections();
 
-  return (
+  const saludo = (
+    <Item className="flex items-end justify-between gap-3">
+      <div className="min-w-0 pb-2">
+        <h1 className="text-[2.1rem] sm:text-[2.4rem] leading-[1.1] [overflow-wrap:anywhere] text-balance">{greet}{nombre ? ',' : ''}{nombre && <><br className="sm:hidden" /> {nombre}</>}</h1>
+        <p className={cx('mt-1.5 first-letter:uppercase', MAR_DE_FONDO ? 'text-ink/80' : 'text-muted')}>{new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+      </div>
+      <Mascot pose="wave" gesture={firstVisit ? 'wave' : 'none'} size={88} label="La mascota de Aliada te saluda" />
+    </Item>
+  );
+  const resto = (<>
+    <Item className="flex flex-col gap-3">
+      <h2 className="text-[1.3rem]">Tus secciones</h2>
+      <div className="grid grid-cols-2 gap-3">
+        {secs.map((x, i) => <SectionTile key={x.to} {...x} wide={secs.length === 3 && i === 0} />)}
+      </div>
+    </Item>
+    {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este celular. Hacé una copia desde Ajustes para no perderlos si lo cambiás.</Note></Item>}
+    <Item className="flex flex-col gap-1">
+      <QuietLink to="/salud" icon={<HeartPulse />} title="Mi ficha de salud" sub="Medicamentos, alergias y a quién avisar" />
+      <QuietLink to="/resumen" icon={<FileText />} title="Mi resumen" sub="Todo lo tuyo en una hoja, para imprimir o compartir" />
+      <QuietLink to="/ajustes" icon={<Settings />} title="Ajustes" sub="Letra, colores, voz y copia de tus datos" />
+    </Item>
+    <Item><p className="text-[.78rem] text-muted border-t border-line pt-4">{LEGAL}</p></Item>
+  </>);
+
+  if (!MAR_DE_FONDO) return (
     <Stagger className="flex flex-col gap-7">
-      <Item className="flex items-end justify-between gap-3">
-        <div className="min-w-0 pb-2">
-          <h1 className="text-[2.1rem] sm:text-[2.4rem] leading-[1.1] [overflow-wrap:anywhere] text-balance">{greet}{nombre ? ',' : ''}{nombre && <><br className="sm:hidden" /> {nombre}</>}</h1>
-          <p className="text-muted mt-1.5 first-letter:uppercase">{new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-        </div>
-        <Mascot pose="wave" gesture={firstVisit ? 'wave' : 'none'} size={88} label="La mascota de Aliada te saluda" />
-      </Item>
-
+      {saludo}
       {main && <Item><NextStepHero tag={main.tag} title={main.t} sub={main.s} go={main.go} /></Item>}
-
-      <Item className="flex flex-col gap-3">
-        <h2 className="text-[1.3rem]">Tus secciones</h2>
-        <div className={cx('grid gap-3', secs.length === 4 ? 'grid-cols-2' : 'grid-cols-2')}>
-          {secs.map((x, i) => <SectionTile key={x.to} {...x} wide={secs.length === 3 && i === 0} />)}
-        </div>
-      </Item>
-
-      {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este celular. Hacé una copia desde Ajustes para no perderlos si lo cambiás.</Note></Item>}
-
-      <Item className="flex flex-col gap-1">
-        <QuietLink to="/salud" icon={<HeartPulse />} title="Mi ficha de salud" sub="Medicamentos, alergias y a quién avisar" />
-        <QuietLink to="/resumen" icon={<FileText />} title="Mi resumen" sub="Todo lo tuyo en una hoja, para imprimir o compartir" />
-        <QuietLink to="/ajustes" icon={<Settings />} title="Ajustes" sub="Letra, colores, voz y copia de tus datos" />
-      </Item>
-      <Item><p className="text-[.78rem] text-muted border-t border-line pt-4">{LEGAL}</p></Item>
+      {resto}
     </Stagger>
+  );
+
+  /* Versión de prueba: el mar en movimiento detrás de toda la pantalla.
+     Arriba el saludo sobre el cielo y el próximo paso flotando sobre el agua;
+     el resto sube como una hoja que tapa el mar al bajar (así todo se lee bien). */
+  return (
+    <>
+      <SeaBackdrop />
+      <Stagger className="flex flex-col gap-7">
+        {saludo}
+        {main && <Item><NextStepCard tag={main.tag} title={main.t} sub={main.s} go={main.go} /></Item>}
+        <div className="h-[16dvh] sm:h-[22dvh]" aria-hidden />
+        <div className="-mx-4 sm:-mx-6 lg:mx-0 -mb-32 lg:mb-0 px-4 sm:px-6 pt-6 pb-36 lg:pb-8 rounded-t-[1.75rem] lg:rounded-[1.75rem] bg-bg shadow-[0_-10px_40px_-12px_rgb(var(--shadow)/.35)] flex flex-col gap-7">
+          <span className="self-center -mt-2 h-1 w-10 rounded-full bg-ink/15" aria-hidden />
+          {resto}
+        </div>
+      </Stagger>
+    </>
+  );
+}
+
+/* Interruptor de la prueba: false vuelve al Inicio anterior (foto dentro de la tarjeta) */
+const MAR_DE_FONDO = true;
+
+/* El mar ocupa toda la pantalla, fijo detrás del contenido.
+   Va en un portal porque las animaciones de entrada usan transform y eso rompería el position: fixed. */
+function SeaBackdrop() {
+  return createPortal(
+    <div className="fixed inset-x-0 top-0 h-[100lvh] -z-[1] pointer-events-none" aria-hidden>
+      <LivingSea src="inicio/mar-1000.webp" mask="inicio/mar-mask.png" hz={0.292} pos={[0.16, 0.5]} posSm={[1, 0.6]} imgClass="object-[16%_50%] sm:object-[100%_60%]" />
+      <div className="absolute inset-0 sea-night" />
+      <div className="absolute inset-0 sea-top" />
+    </div>,
+    document.body
+  );
+}
+
+/* El próximo paso, como una tarjeta que flota sobre el agua */
+function NextStepCard({ tag, title, sub, go }: { tag: string; title: string; sub: string; go: string }) {
+  return (
+    <section className="rounded-xl3 bg-surface/95 border border-line/60 shadow-lift p-5 sm:p-7 sm:max-w-[30rem]">
+      <h2 className="text-[1.5rem] sm:text-[1.7rem] leading-tight">{title}</h2>
+      <p className="text-muted mt-1.5">{sub}</p>
+      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <Button to={go} iconRight={<ArrowRight />}>Continuar</Button>
+        <span className="text-[.9rem] text-muted">Tu próximo paso en {tag}</span>
+      </div>
+    </section>
   );
 }
 
