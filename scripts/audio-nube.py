@@ -38,10 +38,14 @@ def post(url, data, headers, tries=4):
             raise SystemExit(f'Error {e.code} del servicio: {e.read()[:300]!r}')
     raise SystemExit('El servicio no respondió.')
 
+def ssml_body(text):
+    """Lo que Azure cobra: el texto MÁS las etiquetas (salvo <speak> y <voice>). Por eso se cuenta igual que se manda."""
+    body = '<break time="{}ms"/>'.format(int(PAUSE_SENT * 1000)).join(escape(s) for s in sentences(text))
+    return f"<prosody rate='{RATE}'>{body}</prosody>"
+
 def azure(text):
     key, region = os.environ['AZURE_KEY'], os.environ.get('AZURE_REGION', 'eastus')
-    body = '<break time="{}ms"/>'.format(int(PAUSE_SENT * 1000)).join(escape(s) for s in sentences(text))
-    ssml = f"<speak version='1.0' xml:lang='es-AR'><voice name='{VOICE}'><prosody rate='{RATE}'>{body}</prosody></voice></speak>"
+    ssml = f"<speak version='1.0' xml:lang='es-AR'><voice name='{VOICE}'>{ssml_body(text)}</voice></speak>"
     raw = post(f'https://{region}.tts.speech.microsoft.com/cognitiveservices/v1', ssml.encode('utf-8'), {
         'Ocp-Apim-Subscription-Key': key, 'Content-Type': 'application/ssml+xml',
         'X-Microsoft-OutputFormat': 'riff-24khz-16bit-mono-pcm', 'User-Agent': 'aliada-digital'})
@@ -67,8 +71,14 @@ man = json.load(open(manp)) if os.path.exists(manp) else {}
 man = {k: v for k, v in man.items() if k in src and v.get('v') == PROVIDER + ':' + VOICE}   # rehace todo si cambia la voz
 os.makedirs(outdir, exist_ok=True)
 keys = [k for k in src if k not in man]
-chars = sum(len(src[k].get('speak') or ' '.join(src[k].get('parts', []))) for k in keys)
-print(f'{len(keys)} audios pendientes · {chars:,} caracteres · servicio {PROVIDER} · voz {VOICE}'.replace(',', '.'), flush=True)
+def costo(e):
+    t = [e['speak']] if e.get('speak') else e.get('parts', [])
+    return sum(len(ssml_body(x)) if PROVIDER == 'azure' else len(x) for x in t)
+chars = sum(costo(src[k]) for k in keys)
+# Tope de seguridad: el plan gratis de Azure (F0) trae 500.000 caracteres por mes. Nunca mandamos más de TOPE.
+TOPE = int(os.environ.get('TOPE', '450000'))
+if chars > TOPE: sys.exit(f'Son {chars:,} caracteres y el tope es {TOPE:,}. No se manda nada.'.replace(',', '.'))
+print(f'{len(keys)} audios pendientes · {chars:,} caracteres facturables · servicio {PROVIDER} · voz {VOICE}'.replace(',', '.'), flush=True)
 if not keys: sys.exit(0)
 if os.environ.get('SI') != '1' and input('¿Generar? (s/n) ').strip().lower() != 's': sys.exit('Cancelado.')
 
