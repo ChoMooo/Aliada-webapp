@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Galaxy from '../ui/bits/Galaxy/Galaxy';
+import { NightAurora } from '../ui/fx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet, Smartphone, Lock, ArrowRight, TrendingUp } from 'lucide-react';
 import { useD, mut } from '../store';
@@ -31,7 +33,12 @@ export default function Welcome() {
   };
   return (
     <div className="min-h-dvh hero-glow text-onbrand relative overflow-hidden">
-      <Topo className="absolute -right-40 -top-24 w-[640px] text-white/25" draw />
+      {/* Cielo de noche con estrellas que se mueven despacio (React Bits) y la aurora del mar */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <Galaxy starColors={['#ffffff', '#9fe8d2', '#a8c0ff']} density={0.75} glowIntensity={0.22} saturation={0.25} hueShift={200} speed={0.35} twinkleIntensity={0.4} mouseInteraction={false} transparent dpr={1.25} />
+      </div>
+      <NightAurora className="opacity-70" />
+      <Topo className="absolute -right-40 -top-24 w-[640px] text-white/15" draw />
       <div className="relative max-w-[34rem] mx-auto px-5 py-8 sm:py-14 min-h-dvh flex flex-col">
         <AnimatePresence mode="wait">
           {step === 0 && (

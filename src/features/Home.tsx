@@ -3,7 +3,12 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, HeartPulse, Wallet, Smartphone, BookHeart } from 'lucide-react';
 import { useStore, useD } from '../store';
-import { Button, Stagger, Item, Note, cx, Mascot, LivingSea } from '../ui';
+import { Button, Stagger, Item, Note, cx, Mascot, LivingSea, Horizon } from '../ui';
+import { MisionCard, misionesOrdenadas } from './Misiones';
+import { Spot, useDark } from '../ui/fx';
+import GlassSurface from '../ui/bits/GlassSurface/GlassSurface';
+import BlurText from '../ui/bits/BlurText/BlurText';
+import ShinyText from '../ui/bits/ShinyText/ShinyText';
 import { urgentes } from './finanzas/vencimientos';
 import { money } from '../lib/format';
 import { calc, tramSiguiente, taSiguiente } from './finanzas/calc';
@@ -37,7 +42,11 @@ export default function Home() {
   const saludo = (
     <Item className="flex items-end justify-between gap-3">
       <div className="min-w-0 pb-2">
-        <h1 className="text-[2.1rem] sm:text-[2.4rem] leading-[1.1] [overflow-wrap:anywhere] text-balance">{greet}{nombre ? ',' : ''}{nombre && <><br className="sm:hidden" /> {nombre}</>}</h1>
+        {/* Saludo que aparece palabra por palabra, desenfocándose (React Bits) */}
+        <h1 className="text-[2.1rem] sm:text-[2.4rem] leading-[1.1] [overflow-wrap:anywhere] text-balance">
+          <span className="sr-only">{greet}{nombre ? ', ' + nombre : ''}</span>
+          <span aria-hidden><BlurText text={greet + (nombre ? ',' : '')} animateBy="words" delay={70} stepDuration={0.28} trigger="load" className="inline" />{nombre && <><br className="sm:hidden" /> <BlurText text={nombre} animateBy="words" delay={70} stepDuration={0.28} trigger="load" className="inline text-accent" /></>}</span>
+        </h1>
         <p className={cx('mt-1.5 first-letter:uppercase', MAR_DE_FONDO ? 'text-ink/80' : 'text-muted')}>{new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
       </div>
       <Mascot pose="wave" gesture={firstVisit ? 'wave' : 'none'} size={88} label="La mascota de Aliada te saluda" />
@@ -51,6 +60,7 @@ export default function Home() {
       </div>
     </Item>
     {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este celular. Hacé una copia desde Ajustes para no perderlos si lo cambiás.</Note></Item>}
+    <Item><MisionesInicio /></Item>
     <Item className="flex flex-col gap-1">
       <QuietLink to="/salud" icon={<HeartPulse />} title="Mi ficha de salud" sub="Medicamentos, alergias y a quién avisar" />
       <QuietLink to="/resumen" icon={<FileText />} title="Mi resumen" sub="Todo lo tuyo en una hoja, para imprimir o compartir" />
@@ -86,6 +96,22 @@ export default function Home() {
   );
 }
 
+/* Misiones, al final del Inicio y separadas del resto: tres para empezar (las empezadas primero) */
+function MisionesInicio() {
+  const d = useStore((s) => s.d), L = misionesOrdenadas(d), total = L.length;
+  return (
+    <section className="flex flex-col gap-4 pt-2" aria-labelledby="mis-t">
+      <Horizon />
+      <div>
+        <h2 id="mis-t" className="text-[1.45rem]">Misiones</h2>
+        <p className="text-muted mt-1">Elegí una situación y te llevamos paso a paso hasta resolverla.</p>
+      </div>
+      <div className="flex flex-col gap-3">{L.slice(0, 3).map((m) => <MisionCard key={m.id} m={m} />)}</div>
+      <Button variant="secondary" to="/misiones" iconRight={<ArrowRight />}>Ver las {total} misiones</Button>
+    </section>
+  );
+}
+
 /* Interruptor de la prueba: false vuelve al Inicio anterior (foto dentro de la tarjeta) */
 const MAR_DE_FONDO = true;
 
@@ -104,15 +130,20 @@ function SeaBackdrop() {
 
 /* El próximo paso, como una tarjeta que flota sobre el agua */
 function NextStepCard({ tag, title, sub, go }: { tag: string; title: string; sub: string; go: string }) {
+  const dark = useDark();
+  /* Vidrio líquido (React Bits) sobre el mar: el agua se refracta en los bordes de la tarjeta */
   return (
-    <section className="rounded-xl3 bg-surface/95 border border-line/60 shadow-lift p-5 sm:p-7 sm:max-w-[30rem]">
-      <h2 className="text-[1.5rem] sm:text-[1.7rem] leading-tight">{title}</h2>
-      <p className="text-muted mt-1.5">{sub}</p>
-      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <Button to={go} iconRight={<ArrowRight />}>Continuar</Button>
-        <span className="text-[.9rem] text-muted">Tu próximo paso en {tag}</span>
-      </div>
-    </section>
+    <GlassSurface width="100%" height="auto" borderRadius={22} backgroundOpacity={dark ? 0.42 : 0.62} blur={14} brightness={dark ? 40 : 60}
+      distortionScale={-70} redOffset={0} greenOffset={4} blueOffset={8} saturation={1.25} className="next-glass sm:!max-w-[30rem] shadow-lift">
+      <section className="w-full p-4 sm:p-6 text-left">
+        <h2 className="text-[1.5rem] sm:text-[1.7rem] leading-tight">{title}</h2>
+        <p className="text-ink/80 mt-1.5">{sub}</p>
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Button to={go} iconRight={<ArrowRight />}>Continuar</Button>
+          <ShinyText text={'Tu próximo paso en ' + tag} className="text-[.9rem] font-semibold" color={dark ? '#a0aec4' : '#4c586a'} shineColor={dark ? '#ffffff' : '#2650C4'} speed={4} delay={1.5} />
+        </div>
+      </section>
+    </GlassSurface>
   );
 }
 
@@ -134,13 +165,17 @@ function useSections(): Sec[] {
 const TILE: Record<Sec['tone'], string> = { mint: 'bg-mint text-teal', sky: 'bg-skysoft text-sky', violet: 'bg-violetsoft text-violet', amber: 'bg-ambersoft text-amber' };
 function SectionTile({ to, t, status, icon, tone, alert, wide }: Sec & { wide?: boolean }) {
   return (
-    <Link to={to} className={cx('press group relative flex flex-col justify-between gap-6 rounded-xl2 bg-surface border border-line shadow-card p-4 min-h-[9.5rem]', wide && 'col-span-2 min-h-0 flex-row items-center gap-4')}>
-      <span className={cx('grid place-items-center size-12 rounded-2xl [&_svg]:size-6 shrink-0', TILE[tone])}>{icon}</span>
-      <span className={cx('flex flex-col gap-1 min-w-0', wide && 'flex-1')}>
-        <b className="text-[1.2rem] leading-tight">{t}</b>
-        <span className={cx('text-[.9rem] leading-snug line-clamp-2', alert ? 'text-bad font-semibold' : 'text-muted')}>{status}</span>
-      </span>
-      <ArrowRight className={cx('size-5 text-muted transition-transform duration-150 group-hover:translate-x-0.5', wide ? 'shrink-0' : 'absolute top-4 right-4')} />
+    <Link to={to} className={cx('press group block rounded-xl2', wide && 'col-span-2')}>
+      <Spot className="h-full">
+        <span className={cx('relative flex flex-col justify-between gap-6 p-4 min-h-[9.5rem] h-full', wide && 'min-h-0 flex-row items-center gap-4')}>
+          <span className={cx('grid place-items-center size-12 rounded-2xl [&_svg]:size-6 shrink-0', TILE[tone])}>{icon}</span>
+          <span className={cx('flex flex-col gap-1 min-w-0', wide && 'flex-1')}>
+            <b className="text-[1.2rem] leading-tight">{t}</b>
+            <span className={cx('text-[.9rem] leading-snug line-clamp-2', alert ? 'text-bad font-semibold' : 'text-muted')}>{status}</span>
+          </span>
+          <ArrowRight className={cx('size-5 text-muted transition-transform duration-150 group-hover:translate-x-0.5', wide ? 'shrink-0' : 'absolute top-4 right-4')} />
+        </span>
+      </Spot>
     </Link>
   );
 }

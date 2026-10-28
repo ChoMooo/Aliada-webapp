@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { NightAurora } from './fx';
 import React, { useId, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useReducedMotion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -81,9 +82,10 @@ export function Card({ children, className, onClick, to, tone = 'surface', pad =
     </button>
   );
 }
-export function Hero({ children, className }: { children: React.ReactNode; className?: string }) {
+export function Hero({ children, className, aurora = true }: { children: React.ReactNode; className?: string; aurora?: boolean }) {
   return (
-    <div className={cx('relative overflow-hidden rounded-xl3 hero-glow text-onbrand p-6 sm:p-8', className)}>
+    <div className={cx('relative overflow-hidden rounded-xl3 hero-glow text-onbrand p-6 sm:p-8 isolate', className)}>
+      {aurora && <NightAurora />}
       <div className="absolute inset-0 night-stars pointer-events-none" aria-hidden />
       <div className="relative">{children}</div>
     </div>
@@ -504,3 +506,5 @@ export const Section = ({ title, children, right, className }: { title?: React.R
 export { Mascot } from './Mascot';
 export { Topo, SectionVeil, SECTION_INFO } from './Motion';
 export { LivingSea } from './LivingSea';
+
+export { NightAurora, SectionWaves, Spot, useTokenColor, useDark } from './fx';

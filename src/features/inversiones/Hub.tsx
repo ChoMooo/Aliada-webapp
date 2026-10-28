@@ -1,7 +1,7 @@
 import React from 'react';
 import { Calculator, BookA, ShieldCheck, ExternalLink } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, Stagger, Item, Note, RowLink, Disclosure, Card } from '../../ui';
+import { PageHeader, Stagger, Item, Note, RowLink, Disclosure, Card, SectionWaves } from '../../ui';
 import { INV_MODULES, INV_FUENTES, INV_FECHA } from '../../content/learn';
 import { fdate } from '../../lib/format';
 import { ModCard } from '../digital/Hub';
@@ -12,7 +12,7 @@ export default function InvHub() {
   const done = INV_MODULES.reduce((a, m) => a + modProg(d, m).n, 0);
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item><PageHeader title="Inversiones" lead="Cómo se invierte en Argentina, paso a paso: qué es cada opción, dónde se contrata y cómo se usan las apps. La decisión de en qué invertir es siempre tuya." /></Item>
+      <Item className="relative isolate"><SectionWaves tone="sky" className="-inset-x-4 sm:-inset-x-6 -top-5" /><PageHeader title="Inversiones" lead="Cómo se invierte en Argentina, paso a paso: qué es cada opción, dónde se contrata y cómo se usan las apps. La decisión de en qué invertir es siempre tuya." /></Item>
       <Item><RowLink to="/inversiones/calculadora" icon={<Calculator />} tone="sky" title="¿Dónde rinde más mi plata?" sub="Compará plazo fijo y billetera con las tasas que te ofrecen hoy" /></Item>
       <Item className="flex flex-col gap-3">
         <h2 className="text-[1.35rem]">{done ? 'Seguí aprendiendo' : 'Empezá por acá'}</h2>

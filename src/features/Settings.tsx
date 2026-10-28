@@ -11,6 +11,7 @@ import { CONTENIDO_DIGITAL } from '../content/digital';
 import { ETAPAS, SEXOS } from './Welcome';
 import { fdate } from '../lib/format';
 import { PROBAR_VOZ } from '../lib/audio';
+import HoldButton from '../ui/bits/HoldButton/HoldButton';
 
 let deferred: any = null;
 if (typeof window !== 'undefined') window.addEventListener('beforeinstallprompt', (e: any) => { e.preventDefault(); deferred = e; });
@@ -90,7 +91,13 @@ export default function Settings() {
         <h2 className="text-[1.3rem]">Empezar de cero</h2>
         <p className="text-muted">Borra todo lo que cargaste en este dispositivo. No se puede deshacer.</p>
         <div>{!confirm ? <Button variant="danger" icon={<Trash2 />} onClick={() => setConfirm(true)}>Borrar todos mis datos</Button>
-          : <div className="flex flex-wrap gap-3"><Button variant="danger" onClick={() => { reset(); toast('Datos borrados'); }}>Sí, borrar todo</Button><Button variant="ghost" onClick={() => setConfirm(false)}>Cancelar</Button></div>}</div>
+          : <div className="flex flex-col gap-3 items-start">
+              <p className="text-[.92rem] font-semibold">Para confirmar, mantené apretado el botón hasta que se llene.</p>
+              {/* Mantener apretado para confirmar (React Bits): evita borrar todo con un toque sin querer */}
+              <HoldButton holdTime={1.8} size="lg" radius={12} backgroundColor="#b02626" fillColor="#6e1414" textColor="#ffffff" fillTextColor="#ffffff"
+                doneLabel="Borrado" onHold={() => { reset(); toast('Datos borrados'); }}>Mantené apretado para borrar</HoldButton>
+              <Button variant="ghost" onClick={() => setConfirm(false)}>Cancelar</Button>
+            </div>}</div>
       </Card>
       <Card tone="sunk" className="flex flex-col gap-2">
         <h3 className="text-[1.1rem]">Acerca de</h3>

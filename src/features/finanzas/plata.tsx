@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, ListChecks, LineChart, CalendarDays, PiggyBank, Calculator, Share2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useStore, mut } from '../../store';
+import Counter from '../../ui/bits/Counter/Counter'; // dígitos que giran como un contador (React Bits)
 import { PageHeader, Card, Hero, Button, Field, MoneyInput, TextInput, Progress, KV, Note, RowLink, RowList, Stagger, Item, CountUp, ListenButton, Legal, ease, cx } from '../../ui';
 import { fmt, money, pn } from '../../lib/format';
 import { wa } from '../../lib/share';
@@ -34,7 +35,7 @@ export function PlataHub() {
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
           </>) : (<>
             <div className="text-onbrand/80 text-[.98rem]">Cada mes te sobran</div>
-            <div className={cx('font-head font-semibold leading-none text-glow mt-2 num', money(c.brecha).length > 11 ? 'text-[clamp(1.7rem,8vw,2.6rem)]' : 'text-[clamp(2.3rem,11vw,3.2rem)]')}><CountUp value={c.brecha} format={money} /></div>
+            <div className="font-head font-semibold leading-none text-glow mt-2"><Counter value={Math.abs(c.brecha)} prefix={'$\u00a0'} locale="es-AR" fontSize={money(c.brecha).length > 11 ? 32 : 46} fontWeight={700} /></div>
             <p className="opacity-85 mt-2">Tus ingresos cubren tus gastos. Ese margen puede ir a tu meta de ahorro.</p>
             <div className="mt-5 flex flex-wrap gap-3"><Button variant="glow" to="/finanzas/plata/resultado">Ver mi resultado</Button><Button variant="onbrand" to="/finanzas/plata/inflacion">Probar con inflación</Button></div>
           </>)}

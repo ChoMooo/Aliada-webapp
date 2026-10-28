@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Wallet, FileCheck2, Lightbulb, CreditCard, CalendarClock, Scale } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, RowLink, RowList, Stagger, Item, cx } from '../../ui';
+import { PageHeader, RowLink, RowList, Stagger, Item, cx, SectionWaves } from '../../ui';
 import { fmt, money } from '../../lib/format';
 import { estados } from './vencimientos';
 import { calc, progresoTram } from './calc';
@@ -14,7 +14,7 @@ export default function FinanzasHub() {
   const c = calc(d), pt = progresoTram(d), fp = finModProg(d), E = estados(d), pend = E.filter((e) => !e.pagado), prox = pend[0];
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item><PageHeader title="Finanzas" lead="Tu plata del mes, tus pagos, tus trámites y cómo generar un ingreso extra con lo que sabés." /></Item>
+      <Item className="relative isolate"><SectionWaves tone="teal" className="-inset-x-4 sm:-inset-x-6 -top-5" /><PageHeader title="Finanzas" lead="Tu plata del mes, tus pagos, tus trámites y cómo generar un ingreso extra con lo que sabés." /></Item>
       {(c.has || E.length > 0) && (
         <Item><section className="rounded-xl2 bg-sunk p-4 sm:p-5 grid gap-3 sm:grid-cols-2" aria-label="Este mes">
           {c.has && <Link to="/finanzas/plata/resultado" className="press flex flex-col"><span className="text-[.9rem] text-muted">Cada mes {c.brecha >= 0 ? 'te sobran' : 'te faltan'}</span><b className={cx('font-head font-semibold text-[1.6rem] leading-tight num', c.brecha < 0 && 'text-bad')}>{money(Math.abs(c.brecha))}</b></Link>}

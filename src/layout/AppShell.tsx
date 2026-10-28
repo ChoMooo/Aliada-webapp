@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Home, Wallet, Smartphone, Settings, TrendingUp, BookHeart } from 'lucide-react';
 import { useD } from '../store';
 import { cx, IconButton, LOGO, SectionVeil } from '../ui';
+import { VolverMision } from '../features/Misiones';
 import { track } from '../lib/navhist';
 
 const NAV_ALL = [
@@ -51,6 +52,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
 
       <main className="px-4 sm:px-6 pt-5 pb-32 lg:pb-16 w-full max-w-[46rem] mx-auto lg:mx-0 lg:px-10">{children}</main>
+      <VolverMision />
 
       {/* Navegación inferior (celular) */}
       <nav aria-label="Secciones" className="no-print lg:hidden fixed inset-x-0 bottom-0 z-40 bg-surface/95 backdrop-blur-md border-t border-line safe-b">

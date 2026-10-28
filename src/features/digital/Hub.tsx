@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { SlidersHorizontal, ShieldCheck, ArrowRight, Cpu, Clock, ScanSearch, Gamepad2 } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, Card, Hero, Button, Progress, Stagger, Item, Tag, Ring, cx } from '../../ui';
+import { PageHeader, Card, Hero, Button, Progress, Stagger, Item, Tag, Ring, cx, SectionWaves , Spot } from '../../ui';
 import { MODULES, SOON, type Module } from '../../content/learn';
 import { ESCENARIOS } from '../../content/escudo';
 import { ruta, nextLesson, modProg, setupProg, digitalProg, startLevel } from './logic';
@@ -14,14 +14,17 @@ export { MOD_ICON, TONE };
 export function ModCard({ m, tag, base = '/digital/m/' }: { m: Module; tag?: string; base?: string }) {
   const d = useStore((s) => s.d), p = modProg(d, m), nav = useNavigate();
   return (
-    <button type="button" onClick={() => nav(base + m.id)}
-      className="press text-left rounded-xl2 border p-4 flex gap-3.5 w-full bg-surface border-line shadow-card">
-      <span className={cx('grid place-items-center size-12 rounded-xl [&_svg]:size-6 shrink-0', TONE[m.tone])}>{MOD_ICON[m.id]}</span>
-      <span className="flex-1 min-w-0 flex flex-col gap-1.5">
-        <span className="flex items-start justify-between gap-2"><b className="font-head font-semibold text-[1.15rem] leading-tight">{m.n}</b>{tag ? <Tag tone="ok">{tag}</Tag> : p.n === p.t ? <Tag tone="ok">Completo</Tag> : null}</span>
-        <span className="text-[.9rem] text-muted line-clamp-2">{m.desc}</span>
-        <Progress size="sm" value={p.n} max={p.t} label={<span className="text-[.82rem] font-normal text-muted">{p.n} de {p.t} lecciones</span>} />
-      </span>
+    <button type="button" onClick={() => nav(base + m.id)} className="press text-left rounded-xl2 w-full block">
+      <Spot>
+        <span className="p-4 flex gap-3.5">
+          <span className={cx('grid place-items-center size-12 rounded-xl [&_svg]:size-6 shrink-0', TONE[m.tone])}>{MOD_ICON[m.id]}</span>
+          <span className="flex-1 min-w-0 flex flex-col gap-1.5">
+            <span className="flex items-start justify-between gap-2"><b className="font-head font-semibold text-[1.15rem] leading-tight">{m.n}</b>{tag ? <Tag tone="ok">{tag}</Tag> : p.n === p.t ? <Tag tone="ok">Completo</Tag> : null}</span>
+            <span className="text-[.9rem] text-muted line-clamp-2">{m.desc}</span>
+            <Progress size="sm" value={p.n} max={p.t} label={<span className="text-[.82rem] font-normal text-muted">{p.n} de {p.t} lecciones</span>} />
+          </span>
+        </span>
+      </Spot>
     </button>
   );
 }
@@ -49,7 +52,7 @@ export default function DigitalHub() {
   const order = done ? r.map((x) => x.m) : MODULES;
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item><PageHeader kicker="Sección" title="Mundo digital" lead="Las apps que usa todo el mundo, explicadas a tu ritmo, con videos cortos y práctica real. Para sacarles el máximo provecho, no solo lo básico." /></Item>
+      <Item className="relative isolate"><SectionWaves tone="violet" className="-inset-x-4 sm:-inset-x-6 -top-5" /><PageHeader kicker="Sección" title="Mundo digital" lead="Las apps que usa todo el mundo, explicadas a tu ritmo, con videos cortos y práctica real. Para sacarles el máximo provecho, no solo lo básico." /></Item>
       <Item><Hero>
         {!done ? (<>
           <div className="text-onbrand/80 text-[.98rem]">Para empezar · 3 minutos</div>

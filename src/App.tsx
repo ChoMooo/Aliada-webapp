@@ -12,6 +12,8 @@ import AccessGate from './features/AccessGate';
 import Home from './features/Home';
 import Settings from './features/Settings';
 import Resumen from './features/Resumen';
+import { MisionesPage, MisionPage } from './features/Misiones';
+const Lab = import.meta.env.DEV ? React.lazy(() => import('./features/Lab')) : null; // banco de pruebas, solo en desarrollo
 import FinanzasHub from './features/finanzas/Hub';
 import * as Plata from './features/finanzas/plata';
 import * as Tram from './features/finanzas/tramites';
@@ -119,6 +121,9 @@ export default function App() {
           <Route path="/escudo/simulador" element={<Navigate to="/digital/escudo/simulador" replace />} />
           <Route path="/escudo/analizador" element={<Navigate to="/digital/escudo/analizador" replace />} />
           <Route path="/digital/m/pay" element={<Navigate to="/finanzas/m/pay" replace />} />
+          <Route path="/misiones" element={R(<MisionesPage />)} />
+          <Route path="/misiones/:id" element={R(<MisionPage />)} />
+          {Lab && <Route path="/lab" element={R(<React.Suspense fallback={null}><Lab /></React.Suspense>)} />}
           <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       </ErrorBoundary>

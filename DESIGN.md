@@ -57,6 +57,29 @@ Arena de día y mar de noche. Fondo cálido de arena, títulos en azul noche, ac
 - Entrada de las 5 secciones: 620 ms en total. Inicio: el logo aparece y se va en menos de medio segundo.
 - "Reducir movimiento" apaga desplazamientos y deja solo cambios de opacidad.
 
+## Efectos (React Bits, en `src/ui/bits`, licencia en `LICENSE-react-bits.md`)
+
+Adaptados a la marca y a React 18 (framer-motion en lugar de motion/react). Todos respetan "reducir movimiento" y se pausan fuera de pantalla.
+
+| Efecto | Dónde | Para qué |
+|---|---|---|
+| Aurora | Toda tarjeta de noche (`Hero`) y la bienvenida | Luz azul y turquesa sobre el mar de noche |
+| Waves | Encabezado de Finanzas, Inversiones, Digital y Mi libro, arriba a la derecha | Corrientes de mar en el color de la sección, sin cruzar el texto |
+| Galaxy | Bienvenida | Cielo con estrellas |
+| GlassSurface | "Tu próximo paso" sobre el mar del Inicio | Vidrio líquido que refracta el agua |
+| SpotlightCard (`Spot`) | Accesos de sección, misiones y módulos | Brillo que sigue el dedo |
+| BlurText | Saludo del Inicio | Entrada palabra por palabra |
+| ShinyText | "Tu próximo paso en…" | Brillo suave que invita a seguir |
+| Counter | Cifra principal de Mi plata | Dígitos que giran |
+| FlipCard | Glosario, modo "Practicar con tarjetas" | Palabra de un lado, significado del otro |
+| TiltedCard | Portada de Mi libro | Se inclina con el dedo |
+| SpringCheck, StatusMark, ClickSpark | Pasos de misiones y final de lecciones | Confirmación clara de lo hecho |
+| HoldButton | "Empezar de cero" en Ajustes | Mantener apretado para borrar: evita borrar sin querer |
+
+## Misiones
+
+`src/content/misiones.ts`: cada misión va de una situación ("¿Me alcanza la plata del mes?") a un resultado. Sus pasos usan herramientas y lecciones existentes; la app marca sola los pasos que puede detectar y el resto se marca con "Ya lo hice". Se ven al final del Inicio, en `/misiones` y en Mi resumen; mientras se usa una herramienta aparece "Volver a tu misión".
+
 ## Celular
 
 `viewport-fit=cover`, `interactive-widget=resizes-content`, `theme-color` por tema, `100dvh`, `touch-action: manipulation`, sin resaltado gris al tocar, hover solo en dispositivos con mouse (`hoverOnlyWhenSupported`), `overscroll-behavior` contenido en modo instalado.

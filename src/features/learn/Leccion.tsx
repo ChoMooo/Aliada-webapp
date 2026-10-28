@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, X, Copy, Share2, Trophy, Lightbulb, Wrench, HelpCircle, Hand, ListChecks, Flag, PlayCircle } from 'lucide-react';
 import { useStore, mut } from '../../store';
+import ClickSpark from '../../ui/bits/ClickSpark/ClickSpark';
 import { BackLink, Card, Button, Chips, Note, CheckRow, ListenButton, Bullets, Celebrate, Ring, ease, cx, Tag, Mascot } from '../../ui';
 import { MOD, modPath } from '../../content/learn';
 import { N } from '../../lib/narration';
@@ -140,9 +141,12 @@ export default function Leccion() {
       {sec !== 'fin' && (
         <div className={cx('z-20 flex gap-3 -mx-4 px-4 pt-6 pb-3', sec === 'ver' || sec === 'practica' ? 'relative' : 'sticky bottom-[5.2rem] lg:bottom-0 bg-gradient-to-t from-bg via-bg/95 to-transparent')}>
           {k > 0 && <Button variant="ghost" icon={<ArrowLeft />} onClick={() => { if (sec === 'quiz' && qi > 0) setQi(qi - 1); else go(k - 1); }}>Atrás</Button>}
-          <Button className="flex-1 shadow-lift" disabled={!canNext} iconRight={<ArrowRight />} onClick={() => go(k + 1)}>
-            {sec === 'quiz' ? 'Terminar' : sec === 'practica' && !simDone && !st.done ? 'Seguir sin practicar' : 'Siguiente'}
-          </Button>
+          {/* Al terminar, chispas en el lugar del toque (React Bits) */}
+          <ClickSpark className="flex-1 flex" disabled={sec !== 'quiz'} sparkColor={['#34D4A6', '#2650C4', '#9fb8ff']} sparkCount={10} sparkRadius={34}>
+            <Button className="flex-1 shadow-lift" disabled={!canNext} iconRight={<ArrowRight />} onClick={() => go(k + 1)}>
+              {sec === 'quiz' ? 'Terminar' : sec === 'practica' && !simDone && !st.done ? 'Seguir sin practicar' : 'Siguiente'}
+            </Button>
+          </ClickSpark>
         </div>
       )}
     </div>

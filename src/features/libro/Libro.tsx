@@ -1,8 +1,9 @@
 import React from 'react';
+import TiltedCard from '../../ui/bits/TiltedCard/TiltedCard';
 import { Navigate } from 'react-router-dom';
 import { Download, FileText, NotebookPen, PackageOpen, Check, BookOpen } from 'lucide-react';
 import { useStore, mut } from '../../store';
-import { PageHeader, Card, Stagger, Item, Note, Progress, Disclosure, Mascot, cx } from '../../ui';
+import { PageHeader, Card, Stagger, Item, Note, Progress, Disclosure, Mascot, cx, SectionWaves } from '../../ui';
 
 export const PARTES = [
   ['Entender los cambios', 'Qué está pasando en tu cuerpo y cómo se forma la imagen corporal.'],
@@ -24,9 +25,11 @@ export default function Libro() {
   const next = DIAS.findIndex((_, i) => !d.libro.dias[i + 1]);
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item><PageHeader kicker="Tu libro" title="Mi nueva versión" lead="Un acompañamiento para mujeres de más de 50 sobre el cuerpo, la autoestima y la identidad en esta etapa." /></Item>
+      <Item className="relative isolate"><SectionWaves tone="amber" className="-inset-x-4 sm:-inset-x-6 -top-5" /><PageHeader kicker="Tu libro" title="Mi nueva versión" lead="Un acompañamiento para mujeres de más de 50 sobre el cuerpo, la autoestima y la identidad en esta etapa." /></Item>
       <Item><Card className="flex flex-col sm:flex-row gap-5 items-center">
-        <img src="libro/portada.webp" alt="Portada del libro Mi nueva versión" className="w-40 sm:w-44 rounded-lg shadow-lift" />
+        {/* Portada que se inclina con el dedo o el mouse, con brillo (React Bits) */}
+        <TiltedCard imageSrc="libro/portada.webp" altText="Portada del libro Mi nueva versión" containerWidth={176} containerHeight={262} imageWidth={176} imageHeight={262}
+          radius={10} rotateAmplitude={12} scaleOnHover={1.04} glare={0.35} shadow={0.5} showTooltip={false} floating />
         <div className="flex flex-col gap-3 min-w-0">
           <p className="text-[1rem]">Un ebook para leer de corrido o por capítulos, y un cuaderno con un programa de 30 días para llevar a la práctica, con calma.</p>
           <div className="flex flex-col gap-2">

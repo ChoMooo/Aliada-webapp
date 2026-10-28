@@ -10,6 +10,7 @@ import { modProg, setupProg } from './digital/logic';
 import { copyText, wa } from '../lib/share';
 import { toast } from '../ui/toast';
 import { estados } from './finanzas/vencimientos';
+import { misionesPara, progresoMision } from '../content/misiones';
 
 /* El resumen se arma una sola vez como datos; de ahí salen la hoja que se ve
    y el texto plano para copiar o mandar por WhatsApp (así nunca se contradicen). */
@@ -20,6 +21,13 @@ export function resumenData(d: Data) {
   const c = calc(d), pt = progresoTram(d), S: Sec[] = [];
   const sec = (t: string) => { const x: Sec = { t, rows: [] }; S.push(x); return x.rows; };
   const lec = (p: { n: number; t: number }) => p.n + ' de ' + p.t + ' lecciones';
+
+  /* Misiones: las hechas con su resultado, y las que están en curso */
+  const MS = misionesPara(d).map((m) => ({ m, p: progresoMision(d, m) })).filter((x) => x.p.n > 0);
+  if (MS.length) {
+    const rm = sec('Mis misiones');
+    MS.forEach(({ m, p }) => { const R = p.fin ? m.res(d) : null; rm.push({ k: m.t, v: p.fin ? (R?.big ? R.big + ' ' + R.t : 'Hecha') : `${p.n} de ${p.t} pasos`, done: p.fin }); });
+  }
 
   let r = sec('Mi plata');
   if (c.has) {

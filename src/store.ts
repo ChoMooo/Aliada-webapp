@@ -59,6 +59,8 @@ export const DEF = () => ({
     contactos: [] as { id: string; n: string; rel: string; tel: string }[]
   },
   libro: { dias: {} as Record<string, 1>, desc: 0 },
+  /* Misiones: pasos marcados a mano ("mision:paso"), cuándo se terminó cada una y la misión en curso (para el botón de volver) */
+  mis: { ck: {} as Record<string, 1>, fin: {} as Record<string, number>, act: '' },
   ui: { seen: {} as Record<string, 1> }
 });
 export type Data = ReturnType<typeof DEF>;
