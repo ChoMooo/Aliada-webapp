@@ -96,7 +96,7 @@ export default function Settings() {
         <h3 className="text-[1.1rem]">Acerca de</h3>
         <p className="text-[.85rem] text-muted">Aliada Digital 2.2 · Trámites verificados el {fdate(CONTENIDO_VERSION)} · Mundo digital: contenido del {fdate(CONTENIDO_DIGITAL.fecha)}.</p>
         <p className="text-[.85rem] text-muted">{LEGAL}</p>
-        <p className="text-[.85rem] text-muted">Voz de las narraciones: generada con la voz sintética «em_alex» del modelo Kokoro v1.0 (licencia Apache 2.0). Las pantallas de los videos son ilustraciones propias que reproducen la disposición de cada app, sin sus logos; los nombres de las apps pertenecen a sus respectivos dueños.</p>
+        <p className="text-[.85rem] text-muted">Voz de las narraciones: voz sintética «Daniela» (Piper, español de Argentina), entrenada con el corpus «Crowdsourced high-quality Argentinian Spanish speech data set» de Google (openslr.org/61), licencia CC BY-SA 4.0. Las pantallas de los videos son ilustraciones propias que reproducen la disposición de cada app, sin sus logos; los nombres de las apps pertenecen a sus respectivos dueños.</p>
       </Card>
     </div>
   );
