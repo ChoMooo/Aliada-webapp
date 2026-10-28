@@ -10,7 +10,7 @@ export const DEF = () => ({
   v: 2,
   lastBackup: 0,
   perfil: { nombre: '', etapa: '' as '' | 'falta' | 'tramitando' | 'jubilado', sexo: '' as '' | 'mujer' | 'hombre' | 'nd', onb: false },
-  aj: { fs: '1', tema: 'auto' as 'auto' | 'light' | 'dark', voz: true, vel: '1' as '0.5' | '1' | '1.5' },
+  aj: { fs: '1', tema: 'auto' as 'auto' | 'light' | 'dark', voz: true, vel: '1' },
   acceso: { ok: false },
   plata: {
     ing: [{ id: uid(), n: 'Ingreso principal', m: '' }] as Row[],
@@ -73,7 +73,7 @@ function merge(a: any, b: any): any {
 }
 export function mergeData(o: any): Data {
   const d = merge(DEF(), o) as Data;
-  if (!['0.5', '1', '1.5'].includes(d.aj.vel)) d.aj.vel = '1'; // velocidades anteriores (0,85 / 1,2)
+  { const v = Number(d.aj.vel); d.aj.vel = v >= 0.5 && v <= 1.5 ? String(Math.round(v * 10) / 10) : '1'; } // de 0,5x a 1,5x, de a 0,1
   /* Datos anteriores a la calculadora de ahorros: pasan las filas conocidas a sus casilleros */
   if (o?.plata && !o.plata.ah && Array.isArray(d.plata.aho)) {
     const rest: Row[] = [];

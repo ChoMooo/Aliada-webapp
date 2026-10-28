@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Download, Upload, Smartphone, Copy, Trash2 } from 'lucide-react';
 import { useStore, useD, mut, mergeData } from '../store';
-import { PageHeader, Card, Chips, Field, TextInput, Button, Note, Section, TextArea, Choices, ListenButton } from '../ui';
+import { PageHeader, Card, Chips, Field, TextInput, Button, Note, Section, TextArea, Choices, ListenButton, SpeedSlider } from '../ui';
 import { toast } from '../ui/toast';
 import { copyText, downloadText } from '../lib/share';
 import { isIOS, isStandalone } from '../lib/device';
@@ -10,7 +10,7 @@ import { CONTENIDO_VERSION } from '../content/finanzas';
 import { CONTENIDO_DIGITAL } from '../content/digital';
 import { ETAPAS, SEXOS } from './Welcome';
 import { fdate } from '../lib/format';
-import { VELOCIDADES, PROBAR_VOZ } from '../lib/audio';
+import { PROBAR_VOZ } from '../lib/audio';
 
 let deferred: any = null;
 if (typeof window !== 'undefined') window.addEventListener('beforeinstallprompt', (e: any) => { e.preventDefault(); deferred = e; });
@@ -42,10 +42,11 @@ export default function Settings() {
         <Field label="Tamaño de letra"><Chips options={[['1', 'Normal'], ['2', 'Grande'], ['3', 'Muy grande']]} value={d.aj.fs} onChange={(v) => v && mut((x) => { x.aj.fs = v; })} /></Field>
         <Field label="Colores"><Chips options={[['auto', 'Automático'], ['light', 'Claro'], ['dark', 'Oscuro']]} value={d.aj.tema} onChange={(v) => v && mut((x) => { x.aj.tema = v; })} /></Field>
         <Field label="Botones “Escuchar”"><Chips options={[['1', 'Mostrar'], ['0', 'Ocultar']]} value={d.aj.voz ? '1' : '0'} onChange={(v) => v && mut((x) => { x.aj.voz = v === '1'; })} /></Field>
-        <Field label="Velocidad de la voz" hint="Vale para todas las narraciones y videos. También la podés cambiar mientras escuchás.">
-          <Chips options={VELOCIDADES} value={d.aj.vel} onChange={(v) => v && mut((x) => { x.aj.vel = v; })} />
-          <div className="mt-2"><ListenButton label="Probar la voz" text={PROBAR_VOZ} /></div>
-        </Field>
+        <div className="flex flex-col gap-3">
+          <SpeedSlider />
+          <p className="text-[.88rem] text-muted">Vale para todas las narraciones y videos. También la podés cambiar mientras escuchás.</p>
+          <ListenButton label="Probar la voz" text={PROBAR_VOZ} />
+        </div>
       </Card>
       <Card className="flex flex-col gap-5">
         <h2 className="text-[1.3rem]">Tu perfil</h2>

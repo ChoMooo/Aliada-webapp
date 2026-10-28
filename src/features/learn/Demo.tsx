@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { PhoneScreen, type Frame } from './Screen';
-import { demoKey, entry, urlOf, stopAll, claim, rate, nextRate, rateLabel } from '../../lib/audio';
+import { demoKey, entry, urlOf, stopAll, claim, rate } from '../../lib/audio';
 import { useD } from '../../store';
-import { cx } from '../../ui';
+import { cx, SpeedControl } from '../../ui';
 
 /* Mini video: pantallas animadas con narración y subtítulos sincronizados */
 export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string }) {
@@ -16,7 +16,8 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
   const [muted, setMuted] = useState(false);
   const [noAudio, setNoAudio] = useState(false);
   const [t, setT] = useState(0);
-  const vel = useD((d) => d.aj.vel); const r = Number(vel) || 1;
+  const vel = useD((d) => d.aj.vel); const r = rate();
+  useEffect(() => { if (audio.current) audio.current.playbackRate = rate(); }, [vel]); // la barra cambia la velocidad mientras suena
   const [pw] = useState(() => (typeof window !== 'undefined' && window.innerWidth < 520 ? 214 : 250));
   const audio = useRef<HTMLAudioElement | null>(null);
   const timer = useRef<any>(null);
@@ -72,8 +73,7 @@ export function DemoPlayer({ frames, title }: { frames: Frame[]; title?: string 
           {playing ? <IconBtn big label="Pausar" onClick={pause}><Pause /></IconBtn> : <IconBtn big label={ended ? 'Ver de nuevo' : 'Reproducir'} onClick={play}>{ended ? <RotateCcw /> : <Play className="ml-0.5" />}</IconBtn>}
           <IconBtn label="Paso siguiente" onClick={() => go(i + 1)} disabled={i === frames.length - 1}><SkipForward /></IconBtn>
           {e && <IconBtn label={muted ? 'Activar sonido' : 'Silenciar'} onClick={() => setMuted(!muted)}>{muted ? <VolumeX /> : <Volume2 />}</IconBtn>}
-          <button type="button" onClick={() => { const n = nextRate(); if (audio.current) audio.current.playbackRate = n; }} aria-label={'Velocidad de la voz: ' + rateLabel(r) + '. Tocá para cambiarla'} title="Velocidad de la voz"
-            className="press min-w-[3.4rem] h-12 px-2.5 rounded-full border border-line bg-surface font-bold num text-[.95rem]">{rateLabel(r)}</button>
+          <SpeedControl align="right" />
         </div>
       </div>
     </div>

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import React, { useId, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useReducedMotion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Check, ChevronLeft, ChevronRight, Volume2, Square, Info, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { cx } from './cx';
 import { useToasts } from './toast';
-import { playText, stopAll, nextRate, rateLabel } from '../lib/audio';
+import { playText, stopAll, setRate, rateLabel, rateWord, normRate, VEL_MIN, VEL_MAX, VEL_PASO } from '../lib/audio';
 import { useD } from '../store';
 import { pn } from '../lib/format';
 import logo from '../logo.png';
@@ -372,11 +373,82 @@ export function ListenButton({ text, getText, label = 'Escuchar' }: { text?: str
         {on ? <span className="flex items-end gap-[3px] h-4" aria-hidden>{[0, 1, 2].map((i) => <motion.span key={i} className="w-[3px] rounded-full bg-accent" animate={{ height: ['30%', '100%', '45%'] }} transition={{ duration: 0.7, repeat: Infinity, repeatType: 'mirror', delay: i * 0.15 }} />)}</span> : <Volume2 className="size-4 text-accent" />}
         {on ? 'Detener' : label}
       </button>
-      {on && (
-        <button type="button" onClick={() => nextRate()} title="Velocidad de la voz" aria-label={'Velocidad de la voz: ' + rateLabel(Number(vel) || 1) + '. Tocá para cambiarla'}
-          className="press min-w-[3.2rem] min-h-[2.75rem] px-2.5 rounded-full border border-line bg-surface font-bold num text-[.9rem]">{rateLabel(Number(vel) || 1)}</button>
-      )}
+      {on && <SpeedControl align="left" />}
     </span>
+  );
+}
+
+/* Barra de velocidad: un control nativo (funciona con lector de pantalla y teclado sin código extra),
+   con marcas cada 0,1, la marca de 1x más visible y botones − / + para quien no quiere arrastrar. */
+export function SpeedSlider({ id }: { id?: string }) {
+  const r = normRate(Number(useD((d) => d.aj.vel)));
+  const auto = useId(), sid = id || auto;
+  const pct = ((r - VEL_MIN) / (VEL_MAX - VEL_MIN)) * 100;
+  const ticks = Math.round((VEL_MAX - VEL_MIN) / VEL_PASO) + 1;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+        <label htmlFor={sid} className="font-bold">Velocidad de la voz</label>
+        <span className="num whitespace-nowrap" aria-hidden><b className="text-[1.25rem]">{rateLabel(r)}</b> <span className="text-muted text-[.9rem]">· {rateWord(r)}</span></span>
+      </div>
+      <div className="flex items-center gap-2.5">
+        <button type="button" onClick={() => setRate(r - VEL_PASO)} disabled={r <= VEL_MIN} aria-label="Más lenta"
+          className="press grid place-items-center size-11 shrink-0 rounded-full border border-line bg-surface text-[1.4rem] font-bold leading-none disabled:opacity-35">−</button>
+        <div className="relative flex-1 min-w-0">
+          <input id={sid} type="range" min={VEL_MIN} max={VEL_MAX} step={VEL_PASO} value={r}
+            onChange={(e) => setRate(Number(e.target.value))}
+            aria-valuetext={rateLabel(r) + ', ' + rateWord(r).toLowerCase()}
+            className="speed-range" style={{ ['--p' as any]: pct + '%' }} />
+          {/* Marcas: alineadas con el recorrido del círculo (que tiene 32 px) */}
+          <div className="pointer-events-none relative mx-4 h-2.5 -mt-1" aria-hidden>
+            {Array.from({ length: ticks }, (_, i) => (
+              <span key={i} className={cx('absolute top-0 -translate-x-1/2 w-px rounded-full', i === (ticks - 1) / 2 ? 'h-2.5 w-[2px] bg-ink/60' : 'h-1.5 bg-ink/25')} style={{ left: (i / (ticks - 1)) * 100 + '%' }} />
+            ))}
+          </div>
+        </div>
+        <button type="button" onClick={() => setRate(r + VEL_PASO)} disabled={r >= VEL_MAX} aria-label="Más rápida"
+          className="press grid place-items-center size-11 shrink-0 rounded-full border border-line bg-surface text-[1.4rem] font-bold leading-none disabled:opacity-35">+</button>
+      </div>
+      <div className="flex justify-between px-[3.4rem] text-[.8rem] text-muted num" aria-hidden><span>0,5x</span><button type="button" tabIndex={-1} onClick={() => setRate(1)} className="font-semibold text-ink/80">1x normal</button><span>1,5x</span></div>
+    </div>
+  );
+}
+
+/* Mientras suena: un botón con la velocidad actual que abre la barra en una hoja desde abajo
+   (en un portal: así nunca queda tapada ni cortada por el resto de la pantalla) */
+export function SpeedControl(_: { align?: 'left' | 'right' }) {
+  const r = normRate(Number(useD((d) => d.aj.vel)));
+  const [open, setOpen] = useState(false);
+  const reduce = useReducedMotion();
+  const btn = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('keydown', esc); btn.current?.focus(); };
+  }, [open]);
+  return (
+    <>
+      <button ref={btn} type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" title="Velocidad de la voz" aria-label={'Velocidad de la voz: ' + rateLabel(r) + '. Tocá para cambiarla'}
+        className="press min-w-[3.4rem] min-h-[2.75rem] self-stretch px-2.5 rounded-full border border-line bg-surface font-bold num text-[.9rem]">{rateLabel(r)}</button>
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <div className="fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Velocidad de la voz">
+              <motion.div className="absolute inset-0 bg-ink/30" onClick={() => setOpen(false)}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} />
+              <motion.div className="absolute inset-x-0 bottom-0 mx-auto max-w-[32rem] rounded-t-[1.5rem] bg-surface shadow-lift px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] flex flex-col gap-4"
+                initial={reduce ? { opacity: 0 } : { transform: 'translateY(100%)' }} animate={reduce ? { opacity: 1 } : { transform: 'translateY(0%)' }}
+                exit={reduce ? { opacity: 0 } : { transform: 'translateY(100%)', transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }}
+                transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}>
+                <span className="self-center h-1 w-10 rounded-full bg-ink/15" aria-hidden />
+                <SpeedSlider />
+                <Button block onClick={() => setOpen(false)}>Listo</Button>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>, document.body)}
+    </>
   );
 }
 

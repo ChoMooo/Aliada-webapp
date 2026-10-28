@@ -36,9 +36,17 @@ export const entry = (key: string): Entry | undefined => M[key];
 export const urlOf = (e: Entry) => 'audio/' + e.f;
 
 /* Velocidad de las narraciones (Ajustes → Velocidad de la voz) */
-export const VELOCIDADES: [string, string][] = [['0.5', 'Lenta · 0,5x'], ['1', 'Normal · 1x'], ['1.5', 'Rápida · 1,5x']];
-export function rate() { const v = Number(getD().aj.vel); return [0.5, 1, 1.5].includes(v) ? v : 1; }
-export function nextRate() { const i = VELOCIDADES.findIndex((x) => Number(x[0]) === rate()); const n = VELOCIDADES[(i + 1) % VELOCIDADES.length][0]; mut((d) => { d.aj.vel = n as any; }); if (current) current.playbackRate = Number(n); return Number(n); }
+/* Velocidad de la voz: de 0,5x a 1,5x, de a 0,1 (1x es la normal) */
+export const VEL_MIN = 0.5, VEL_MAX = 1.5, VEL_PASO = 0.1;
+export const normRate = (n: number) => (Number.isFinite(n) ? Math.min(VEL_MAX, Math.max(VEL_MIN, Math.round(n * 10) / 10)) : 1);
+export function rate() { return normRate(Number(getD().aj.vel)); }
+export function setRate(n: number) {
+  const v = normRate(n);
+  mut((d) => { d.aj.vel = String(v); });
+  if (current) current.playbackRate = v;
+  return v;
+}
+export const rateWord = (r: number) => (r < 0.75 ? 'Lenta' : r < 1 ? 'Un poco lenta' : r === 1 ? 'Normal' : r <= 1.25 ? 'Un poco rápida' : 'Rápida');
 export const PROBAR_VOZ = 'Hola. Así suena la voz de Aliada a esta velocidad. Si te parece rápida o lenta, cambiala acá arriba.';
 export const rateLabel = (r = rate()) => String(r).replace('.', ',') + 'x';
 
