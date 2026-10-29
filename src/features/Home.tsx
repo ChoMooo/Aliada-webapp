@@ -3,10 +3,9 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, HeartPulse, Wallet, Smartphone, BookHeart } from 'lucide-react';
 import { useStore, useD } from '../store';
-import { Button, Stagger, Item, Note, cx, Mascot, LivingSea, Horizon } from '../ui';
+import { Button, Stagger, Item, Note, cx, Mascot, LivingSea } from '../ui';
 import { MisionCard, misionesOrdenadas } from './Misiones';
 import { Spot, useDark } from '../ui/fx';
-import GlassSurface from '../ui/bits/GlassSurface/GlassSurface';
 import BlurText from '../ui/bits/BlurText/BlurText';
 import ShinyText from '../ui/bits/ShinyText/ShinyText';
 import { urgentes } from './finanzas/vencimientos';
@@ -53,6 +52,7 @@ export default function Home() {
     </Item>
   );
   const resto = (<>
+    <Item><MisionesInicio /></Item>
     <Item className="flex flex-col gap-3">
       <h2 className="text-[1.3rem]">Tus secciones</h2>
       <div className="grid grid-cols-2 gap-3">
@@ -60,7 +60,6 @@ export default function Home() {
       </div>
     </Item>
     {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este celular. Hacé una copia desde Ajustes para no perderlos si lo cambiás.</Note></Item>}
-    <Item><MisionesInicio /></Item>
     <Item className="flex flex-col gap-1">
       <QuietLink to="/salud" icon={<HeartPulse />} title="Mi ficha de salud" sub="Medicamentos, alergias y a quién avisar" />
       <QuietLink to="/resumen" icon={<FileText />} title="Mi resumen" sub="Todo lo tuyo en una hoja, para imprimir o compartir" />
@@ -96,12 +95,11 @@ export default function Home() {
   );
 }
 
-/* Misiones, al final del Inicio y separadas del resto: tres para empezar (las empezadas primero) */
+/* Misiones: lo primero de la hoja, arriba de "Tus secciones". Tres para empezar (las empezadas primero) */
 function MisionesInicio() {
   const d = useStore((s) => s.d), L = misionesOrdenadas(d), total = L.length;
   return (
-    <section className="flex flex-col gap-4 pt-2" aria-labelledby="mis-t">
-      <Horizon />
+    <section className="flex flex-col gap-4" aria-labelledby="mis-t">
       <div>
         <h2 id="mis-t" className="text-[1.45rem]">Misiones</h2>
         <p className="text-muted mt-1">Elegí una situación y te llevamos paso a paso hasta resolverla.</p>
@@ -131,19 +129,16 @@ function SeaBackdrop() {
 /* El próximo paso, como una tarjeta que flota sobre el agua */
 function NextStepCard({ tag, title, sub, go }: { tag: string; title: string; sub: string; go: string }) {
   const dark = useDark();
-  /* Vidrio líquido (React Bits) sobre el mar: el agua se refracta en los bordes de la tarjeta */
+  /* Vidrio esmerilado común sobre el mar: desenfoca el agua de atrás sin deformarla en los bordes */
   return (
-    <GlassSurface width="100%" height="auto" borderRadius={22} backgroundOpacity={dark ? 0.42 : 0.62} blur={14} brightness={dark ? 40 : 60}
-      distortionScale={-70} redOffset={0} greenOffset={4} blueOffset={8} saturation={1.25} className="next-glass sm:!max-w-[30rem] shadow-lift">
-      <section className="w-full p-4 sm:p-6 text-left">
-        <h2 className="text-[1.5rem] sm:text-[1.7rem] leading-tight">{title}</h2>
-        <p className="text-ink/80 mt-1.5">{sub}</p>
-        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <Button to={go} iconRight={<ArrowRight />}>Continuar</Button>
-          <ShinyText text={'Tu próximo paso en ' + tag} className="text-[.9rem] font-semibold" color={dark ? '#a0aec4' : '#4c586a'} shineColor={dark ? '#ffffff' : '#2650C4'} speed={4} delay={1.5} />
-        </div>
-      </section>
-    </GlassSurface>
+    <section className="frost rounded-[22px] shadow-lift sm:max-w-[30rem] p-4 sm:p-6">
+      <h2 className="text-[1.5rem] sm:text-[1.7rem] leading-tight">{title}</h2>
+      <p className="text-ink/80 mt-1.5">{sub}</p>
+      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <Button to={go} iconRight={<ArrowRight />}>Continuar</Button>
+        <ShinyText text={'Tu próximo paso en ' + tag} className="text-[.9rem] font-semibold" color={dark ? '#a0aec4' : '#4c586a'} shineColor={dark ? '#ffffff' : '#2650C4'} speed={4} delay={1.5} />
+      </div>
+    </section>
   );
 }
 
