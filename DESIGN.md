@@ -76,6 +76,17 @@ Adaptados a la marca y a React 18 (framer-motion en lugar de motion/react). Todo
 | SpringCheck, StatusMark, ClickSpark | Pasos de misiones y final de lecciones | Confirmación clara de lo hecho |
 | HoldButton | "Empezar de cero" en Ajustes | Mantener apretado para borrar: evita borrar sin querer |
 
+## Mar al atardecer (fotos, títulos con emoción y luz)
+- **Fotos**: paisajes de océano y atardeceres, sin animales reales (`public/fotos`, créditos en `CREDITOS.md`, licencia Unsplash). Encabezados con foto a todo el ancho (`PhotoHero` en `src/ui/sunset.tsx`) con degradado oscuro abajo para que el texto se lea siempre.
+- **Títulos con emoción**: Instrument Serif en cursiva (`font-display`, componente `Display`), solo en tamaños grandes: saludo del Inicio, títulos de Misiones, Mis logros, Revisión del mes, Mi libro y la bienvenida. El resto sigue en Atkinson Hyperlegible.
+- **Botón con luz** (`ShineButton`, Moving Border de Aceternity): una sola acción principal por pantalla (Continuar en el Inicio, Empezar el paso actual de una misión, Armar mi plan).
+- **Vidrio sobre foto**: `GlassStat` (cifras grandes), `.liquid` (tarjetas que se eligen), `.glass-chip` (etiquetas y "Volver" con `PhotoBack`).
+- **Cada misión tiene su atardecer** (`fotoMision`): siempre la misma foto para la misma misión; el ícono de la esquina dice el área.
+- Pantallas nuevas: `/empezar` (primera vez: qué querés resolver), `/logros`, `/revision` (barras que se dibujan solas, plan contra gastado).
+- Vencimientos: las filas se deslizan a su lugar al marcar un pago; el vencido late con una franja coral (quieta con movimiento reducido).
+- Mis números: pasos como un camino tocable, con anillo que se mueve al paso actual.
+- Componentes de Aceternity UI en `src/ui/aceternity` (licencia: se pueden usar dentro de productos finales; no se revenden sueltos).
+
 ## Misiones
 
 `src/content/misiones.ts`: cada misión va de una situación ("¿Me alcanza la plata del mes?") a un resultado. Sus pasos usan herramientas y lecciones existentes; la app marca sola los pasos que puede detectar y el resto se marca con "Ya lo hice". Se ven al final del Inicio, en `/misiones` y en Mi resumen; mientras se usa una herramienta aparece "Volver a tu misión".

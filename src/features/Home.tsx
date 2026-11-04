@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, HeartPulse, Wallet, Smartphone, BookHeart } from 'lucide-react';
 import { useStore, useD } from '../store';
 import { Button, Stagger, Item, Note, cx, Mascot, LivingSea } from '../ui';
 import { MisionCard, misionesOrdenadas } from './Misiones';
 import { Spot, useDark } from '../ui/fx';
+import { ShineButton } from '../ui/sunset';
 import BlurText from '../ui/bits/BlurText/BlurText';
 import ShinyText from '../ui/bits/ShinyText/ShinyText';
 import { urgentes } from './finanzas/vencimientos';
@@ -42,7 +44,7 @@ export default function Home() {
     <Item className="flex items-end justify-between gap-3">
       <div className="min-w-0 pb-2">
         {/* Saludo que aparece palabra por palabra, desenfocándose (React Bits) */}
-        <h1 className="text-[2.1rem] sm:text-[2.4rem] leading-[1.1] [overflow-wrap:anywhere] text-balance">
+        <h1 className="font-display italic font-normal tracking-[-.01em] text-[2.75rem] sm:text-[3.3rem] leading-[1.02] [overflow-wrap:anywhere] text-balance">
           <span className="sr-only">{greet}{nombre ? ', ' + nombre : ''}</span>
           <span aria-hidden><BlurText text={greet + (nombre ? ',' : '')} animateBy="words" delay={70} stepDuration={0.28} trigger="load" className="inline" />{nombre && <><br className="sm:hidden" /> <BlurText text={nombre} animateBy="words" delay={70} stepDuration={0.28} trigger="load" className="inline text-accent" /></>}</span>
         </h1>
@@ -53,6 +55,7 @@ export default function Home() {
   );
   const resto = (<>
     <Item><MisionesInicio /></Item>
+    <Item><TuMes /></Item>
     <Item className="flex flex-col gap-3">
       <h2 className="text-[1.3rem]">Tus secciones</h2>
       <div className="grid grid-cols-2 gap-3">
@@ -110,8 +113,53 @@ function MisionesInicio() {
   );
 }
 
+/* Tu mes: dos tarjetas con foto del atardecer que llevan a la revisión del mes y a los logros.
+   Cada una muestra un dato real en grande, para que den ganas de entrar */
+function TuMes() {
+  const d = useStore((s) => s.d), c = calc(d);
+  const hechas = Object.keys(d.mis.fin).length, lec = Object.values(d.md.lec).filter((x) => x?.done).length;
+  const mes = new Date().toLocaleDateString('es-AR', { month: 'long' });
+  const cards = [
+    { to: '/revision', src: 'fotos/revision.webp', t: 'Revisión del mes', big: mes, sub: c.has ? 'Plan contra lo gastado' : 'Armala con tus números', cap: true },
+    { to: '/logros', src: 'fotos/logros.webp', t: 'Mis logros', big: String(hechas + lec), sub: hechas + lec === 1 ? 'cosa lograda' : 'cosas logradas', cap: false }
+  ];
+  return (
+    <section className="flex flex-col gap-3" aria-labelledby="mes-t">
+      <h2 id="mes-t" className="text-[1.3rem]">Tu mes</h2>
+      <div className="grid grid-cols-2 gap-3">
+        {cards.map((k) => (
+          <Link key={k.to} to={k.to} className="press relative isolate overflow-hidden rounded-xl3 min-h-[11.5rem] p-4 flex flex-col justify-end text-white shadow-card">
+            <img src={k.src} alt="" loading="lazy" className="absolute inset-0 -z-[2] size-full object-cover" />
+            <span className="absolute inset-0 -z-[1] bg-[linear-gradient(180deg,rgb(7_15_28/.15),rgb(7_15_28/.25)_40%,rgb(7_15_28/.82))]" aria-hidden />
+            <span className="text-[.88rem] text-white/85 font-semibold">{k.t}</span>
+            <span className={cx('font-display italic leading-[1] mt-1 num', k.cap ? 'text-[1.8rem] first-letter:uppercase' : 'text-[2.4rem]')}>{k.big}</span>
+            <span className="text-[.82rem] text-white/80 mt-1 leading-snug">{k.sub}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* Interruptor de la prueba: false vuelve al Inicio anterior (foto dentro de la tarjeta) */
 const MAR_DE_FONDO = true;
+
+/* La mascota cruza el mar nadando una vez por visita (de derecha a izquierda, que es hacia donde mira),
+   y a mitad de camino tira un chorrito de agua */
+function MascotaNadando() {
+  const reduce = useReducedMotion();
+  const [go] = useState(() => { try { const f = !sessionStorage.getItem('aliada.nado'); sessionStorage.setItem('aliada.nado', '1'); return f; } catch { return false; } });
+  if (reduce || !go) return null;
+  return (
+    <motion.div className="absolute top-[64%] sm:top-[70%] w-[64px] sm:w-[84px]" style={{ right: 0 }}
+      initial={{ transform: 'translateX(120%)' }} animate={{ transform: 'translateX(-115vw)' }} transition={{ delay: 2.2, duration: 16, ease: 'linear' }}>
+      <motion.img src="mascota/mascota-neutral.webp" alt="" className="w-full [filter:drop-shadow(0_6px_8px_rgb(0_20_40/.35))]"
+        animate={{ transform: ['translateY(0px) rotate(-6deg)', 'translateY(-6px) rotate(4deg)', 'translateY(0px) rotate(-6deg)'] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }} />
+      {/* Agua que tapa la mitad de abajo: parece que nada */}
+      <span className="absolute inset-x-[-10%] bottom-[-6%] h-[48%] bg-gradient-to-b from-transparent via-[#2b5f8a]/70 to-[#1d4a72]/90 rounded-[50%] blur-[2px]" />
+    </motion.div>
+  );
+}
 
 /* El mar ocupa toda la pantalla, fijo detrás del contenido.
    Va en un portal porque las animaciones de entrada usan transform y eso rompería el position: fixed. */
@@ -121,6 +169,7 @@ function SeaBackdrop() {
       <LivingSea src="inicio/mar-1000.webp" mask="inicio/mar-mask.png" hz={0.292} pos={[0.16, 0.5]} posSm={[1, 0.6]} imgClass="object-[16%_50%] sm:object-[100%_60%]" />
       <div className="absolute inset-0 sea-night" />
       <div className="absolute inset-0 sea-top" />
+      <MascotaNadando />
     </div>,
     document.body
   );
@@ -135,7 +184,7 @@ function NextStepCard({ tag, title, sub, go }: { tag: string; title: string; sub
       <h2 className="text-[1.5rem] sm:text-[1.7rem] leading-tight">{title}</h2>
       <p className="text-ink/80 mt-1.5">{sub}</p>
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <Button to={go} iconRight={<ArrowRight />}>Continuar</Button>
+        <ShineButton to={go} iconRight={<ArrowRight />}>Continuar</ShineButton>
         <ShinyText text={'Tu próximo paso en ' + tag} className="text-[.9rem] font-semibold" color={dark ? '#a0aec4' : '#4c586a'} shineColor={dark ? '#ffffff' : '#2650C4'} speed={4} delay={1.5} />
       </div>
     </section>

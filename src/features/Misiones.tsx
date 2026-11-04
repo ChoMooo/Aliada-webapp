@@ -8,7 +8,8 @@ import { Link, useNavigate, useParams, Navigate, useLocation } from 'react-route
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Clock, Share2, X, Wallet, FileCheck2, Smartphone, HeartPulse, ChevronRight } from 'lucide-react';
 import { useStore, mut } from '../store';
-import { PageHeader, Hero, Button, Stagger, Item, Progress, Spot, cx } from '../ui';
+import { PageHeader, Hero, Button, Stagger, Item, Progress, Spot, BackLink, Mascot, cx } from '../ui';
+import { PhotoBack, PhotoHero, Display, ShineButton } from '../ui/sunset';
 import { MISIONES, MISION, AREAS, misionesPara, pasoHecho, progresoMision, minutos, type Mision, type Area } from '../content/misiones';
 import SpringCheck from '../ui/bits/SpringCheck/SpringCheck';
 import StatusMark from '../ui/bits/StatusMark/StatusMark';
@@ -18,6 +19,14 @@ import { wa } from '../lib/share';
 const AREA_ICON: Record<Area, React.ReactNode> = { plata: <Wallet />, tramites: <FileCheck2 />, celular: <Smartphone />, bienestar: <HeartPulse /> };
 const AREA_TONE: Record<Area, string> = { plata: 'bg-mint text-teal', tramites: 'bg-skysoft text-sky', celular: 'bg-violetsoft text-violet', bienestar: 'bg-ambersoft text-amber' };
 
+/* Cada misión tiene su propio atardecer (siempre el mismo para la misma misión), así una lista de tres
+   misiones de la misma área no repite la foto. El ícono de la esquina dice el área. */
+const FOTOS = ['plata', 'tramites', 'celular', 'bienestar', 'misiones', 'logros', 'revision', 'libro', 'bienvenida'];
+export function fotoMision(m: Mision) {
+  let h = 0; for (const ch of m.id) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return 'fotos/' + FOTOS[h % FOTOS.length] + '.webp';
+}
+
 /* ---------- Tarjeta ---------- */
 export function MisionCard({ m }: { m: Mision }) {
   const d = useStore((s) => s.d), p = progresoMision(d, m);
@@ -25,7 +34,11 @@ export function MisionCard({ m }: { m: Mision }) {
     <Link to={'/misiones/' + m.id} className="press block rounded-xl2">
       <Spot className="h-full">
         <div className="p-4 flex gap-3.5 items-start">
-          <span className={cx('grid place-items-center size-11 rounded-xl shrink-0 [&_svg]:size-5', AREA_TONE[m.area])}>{AREA_ICON[m.area]}</span>
+          {/* Foto del área (mar al atardecer) con el ícono encima: se reconoce el tema de un vistazo */}
+          <span className="relative size-16 shrink-0 rounded-2xl overflow-hidden shadow-card">
+            <img src={fotoMision(m)} alt="" loading="lazy" className="size-full object-cover" />
+            <span className={cx('absolute right-1 bottom-1 grid place-items-center size-7 rounded-lg [&_svg]:size-4 shadow-card', AREA_TONE[m.area])}>{AREA_ICON[m.area]}</span>
+          </span>
           <span className="flex-1 min-w-0 flex flex-col gap-1">
             <b className="text-[1.08rem] leading-snug">{m.t}</b>
             <span className="text-[.88rem] text-muted leading-snug">{m.tendras}</span>
@@ -35,7 +48,7 @@ export function MisionCard({ m }: { m: Mision }) {
                   : <span className="inline-flex items-center gap-1 text-muted"><Clock className="size-3.5" />{minutos(m)} · {p.t} {p.t === 1 ? 'paso' : 'pasos'}</span>}
             </span>
           </span>
-          <ChevronRight className="size-5 text-muted shrink-0 mt-3" />
+          <ChevronRight className="size-5 text-muted shrink-0 mt-5" />
         </div>
         {p.n > 0 && !p.fin && <div className="px-4 pb-3 -mt-1"><Progress value={p.n} max={p.t} size="sm" /></div>}
       </Spot>
@@ -48,8 +61,10 @@ export function misionesOrdenadas(d: ReturnType<typeof useStore.getState>['d']) 
   const L = misionesPara(d).map((m) => ({ m, p: progresoMision(d, m) }));
   const enCurso = L.filter((x) => x.p.n > 0 && !x.p.fin), hechas = L.filter((x) => x.p.fin);
   /* Las que faltan empezar, alternando áreas para que se vea todo lo que se puede resolver */
-  const resto = L.filter((x) => x.p.n === 0 && !x.p.fin), orden: Area[] = ['plata', 'celular', 'tramites', 'bienestar'], mezcla: typeof L = [];
-  while (mezcla.length < resto.length) for (const a of orden) { const i = resto.findIndex((x) => x.m.area === a && !mezcla.includes(x)); if (i >= 0) mezcla.push(resto[i]); }
+  /* Primero las que la persona eligió en la encuesta inicial, en ese orden */
+  const pref = d.mis.pref || [], elegidas = pref.map((id) => L.find((x) => x.m.id === id && x.p.n === 0 && !x.p.fin)).filter(Boolean) as typeof L;
+  const resto = L.filter((x) => x.p.n === 0 && !x.p.fin && !elegidas.includes(x)), orden: Area[] = ['plata', 'celular', 'tramites', 'bienestar'], mezcla: typeof L = [...elegidas];
+  while (mezcla.length < resto.length + elegidas.length) for (const a of orden) { const i = resto.findIndex((x) => x.m.area === a && !mezcla.includes(x)); if (i >= 0) mezcla.push(resto[i]); }
   return [...enCurso, ...mezcla, ...hechas].map((x) => x.m);
 }
 
@@ -59,8 +74,17 @@ export function MisionesPage() {
   const hechas = L.filter((m) => progresoMision(d, m).fin).length;
   return (
     <Stagger className="flex flex-col gap-7">
-      <Item><PageHeader back={{ to: '/', label: 'Inicio' }} title="Misiones" lead="Elegí una situación y la app te lleva paso a paso hasta resolverla. Cada misión termina en algo concreto que te llevás." /></Item>
-      {hechas > 0 && <Item><p className="text-[.95rem] text-muted num">Llevás {hechas} de {L.length} misiones hechas.</p></Item>}
+      <Item>
+        <PhotoHero src="fotos/misiones.webp" pos="center 60%" height="min-h-[22rem] sm:min-h-[25rem]">
+          <div className="absolute left-4 sm:left-8 top-4"><PhotoBack to="/" label="Inicio" /></div>
+          <Display className="text-white">Misiones</Display>
+          <p className="text-white/90 text-[1.05rem] mt-2 max-w-[30rem]">Elegí una situación y te llevamos paso a paso hasta resolverla. Cada misión termina en algo concreto que te llevás.</p>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Link to="/empezar" className="press glass-chip !text-[.95rem] !py-2.5 !px-4">Elegir qué resolver primero</Link>
+            {hechas > 0 && <span className="text-white/85 text-[.95rem] num">{hechas} de {L.length} hechas</span>}
+          </div>
+        </PhotoHero>
+      </Item>
       {(Object.keys(AREAS) as Area[]).map((a) => {
         const M = L.filter((m) => m.area === a);
         if (!M.length) return null;
@@ -99,14 +123,20 @@ export function MisionPage() {
 
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item><PageHeader back={{ to: '/misiones', label: 'Misiones' }} title={m.t} lead={m.para} /></Item>
       <Item>
-        <Hero>
-          <p className="text-onbrand/80 text-[.98rem]">Al terminar vas a tener</p>
-          <p className="text-[1.35rem] font-bold text-onbrand leading-snug mt-1">{m.tendras}</p>
-          <p className="mt-3 inline-flex items-center gap-2 text-[.92rem] text-onbrand/85"><Clock className="size-4" />Unos {minutos(m)} · {p.t} {p.t === 1 ? 'paso' : 'pasos'}</p>
-          <div className="mt-4"><Progress value={p.n} max={p.t} tone="glow" right={<span className="text-onbrand/85">{p.n} de {p.t}</span>} /></div>
-        </Hero>
+        <PhotoHero key={m.id} src={fotoMision(m)} height="min-h-[24rem] sm:min-h-[26rem]">
+          <div className="absolute left-4 sm:left-8 top-4"><PhotoBack to="/misiones" label="Misiones" /></div>
+          <span className="glass-chip">{AREA_ICON[m.area] && <span className="[&_svg]:size-4">{AREA_ICON[m.area]}</span>}{AREAS[m.area]}</span>
+          <Display className="text-white mt-3 !text-[2.3rem] sm:!text-[3rem] !leading-[1.05]">{m.t}</Display>
+          <p className="text-white/90 mt-2 max-w-[32rem]">{m.para}</p>
+          {/* Lo que te llevás: vidrio sobre la foto */}
+          <div className="mt-5 rounded-2xl border border-white/25 bg-white/[.14] backdrop-blur-xl p-4 shadow-[inset_0_1px_0_rgb(255_255_255/.25)]">
+            <p className="text-white/80 text-[.9rem]">Al terminar vas a tener</p>
+            <p className="text-[1.15rem] font-bold text-white leading-snug mt-0.5">{m.tendras}</p>
+            <p className="mt-2 inline-flex items-center gap-2 text-[.88rem] text-white/80"><Clock className="size-4" />Unos {minutos(m)} · {p.t} {p.t === 1 ? 'paso' : 'pasos'}</p>
+            <div className="mt-3"><Progress value={p.n} max={p.t} tone="glow" right={<span className="text-white/85 num">{p.n} de {p.t}</span>} /></div>
+          </div>
+        </PhotoHero>
       </Item>
 
       <Item>
@@ -128,7 +158,8 @@ export function MisionPage() {
                       <span className="block text-[.88rem] text-muted mt-0.5">{x.s}</span>
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                      <Button size={now ? 'md' : 'sm'} variant={now ? 'primary' : 'secondary'} onClick={() => ir(x.go)} iconRight={<ArrowRight />}>{ok ? 'Ver de nuevo' : now ? 'Empezar' : 'Ir'}</Button>
+                      {now ? <ShineButton onClick={() => ir(x.go)} iconRight={<ArrowRight />}>Empezar</ShineButton>
+                        : <Button size="sm" variant="secondary" onClick={() => ir(x.go)} iconRight={<ArrowRight />}>{ok ? 'Ver de nuevo' : 'Ir'}</Button>}
                       {!auto && (
                         <SpringCheck label="Ya lo hice" checked={ok} onChange={(v) => marcar(x.id, v)} color="rgb(var(--teal))" fillColor="rgb(var(--teal))" checkColor="#fff" boxSize={26} fontSize={16} strike="none" />
                       )}
@@ -147,7 +178,10 @@ export function MisionPage() {
           <Item>
             <motion.section initial={{ opacity: 0, transform: 'translateY(12px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}>
               <Hero>
-                <div className="flex items-center gap-3"><StatusMark status="done" size={30} doneColor="#34D4A6" strike={false} /><b className="text-onbrand text-[1.1rem]">¡Misión hecha!</b></div>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 pt-2"><StatusMark status="done" size={30} doneColor="#34D4A6" strike={false} /><b className="text-onbrand text-[1.1rem]">¡Misión hecha!</b></div>
+                  <Mascot size={74} gesture="hop" say="¡Lo lograste!" sayFor={3500} side="left" />
+                </div>
                 {R.big && <p className="font-head font-bold text-glow num leading-none mt-4 text-[clamp(2.2rem,10vw,3.2rem)]">{R.big}</p>}
                 <p className={cx('text-onbrand font-semibold', R.big ? 'text-[1.15rem] mt-1' : 'text-[1.4rem] mt-3')}>{R.t}</p>
                 {R.s && <p className="text-onbrand/85 mt-3">{R.s}</p>}
@@ -155,7 +189,7 @@ export function MisionPage() {
                   <ClickSpark sparkColor={['#34D4A6', '#9fb8ff', '#ffffff']} sparkCount={10} sparkRadius={28}>
                     <Button variant="glow" href={wa(`Terminé la misión "${m.t}" en Aliada Digital.${R.big ? ' ' + R.big + ' ' + R.t + '.' : ' ' + R.t + '.'}`)} icon={<Share2 />}>Contárselo a alguien</Button>
                   </ClickSpark>
-                  <Button variant="onbrand" to="/resumen">Ver en Mi resumen</Button>
+                  <Button variant="onbrand" to="/logros">Ver mis logros</Button>
                 </div>
               </Hero>
             </motion.section>

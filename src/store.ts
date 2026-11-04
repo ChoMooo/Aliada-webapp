@@ -60,7 +60,7 @@ export const DEF = () => ({
   },
   libro: { dias: {} as Record<string, 1>, desc: 0 },
   /* Misiones: pasos marcados a mano ("mision:paso"), cuándo se terminó cada una y la misión en curso (para el botón de volver) */
-  mis: { ck: {} as Record<string, 1>, fin: {} as Record<string, number>, act: '' },
+  mis: { ck: {} as Record<string, 1>, fin: {} as Record<string, number>, act: '', pref: [] as string[], enc: false },
   ui: { seen: {} as Record<string, 1> }
 });
 export type Data = ReturnType<typeof DEF>;

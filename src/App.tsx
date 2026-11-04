@@ -8,6 +8,9 @@ import { Toaster, ease } from './ui';
 import { ErrorBoundary } from './ui/ErrorBoundary';
 import { ACCESS_REQUIRED } from './config';
 import Welcome from './features/Welcome';
+import Empezar from './features/Empezar';
+import Logros from './features/Logros';
+import Revision from './features/Revision';
 import AccessGate from './features/AccessGate';
 import Home from './features/Home';
 import Settings from './features/Settings';
@@ -65,6 +68,8 @@ export default function App() {
   const acceso = useD((d) => d.acceso.ok);
   if (ACCESS_REQUIRED && !acceso) return <><AccessGate /><Toaster /></>;
   if (!onb) return <><Welcome /><Toaster /></>;
+  /* Primera vez: la encuesta va a pantalla completa, sin la barra de navegación */
+  if (loc.pathname === '/empezar') return <><Empezar /><Toaster /></>;
   const R = (el: React.ReactNode) => <Page>{el}</Page>;
   return (
     <AppShell>
@@ -121,6 +126,8 @@ export default function App() {
           <Route path="/escudo/simulador" element={<Navigate to="/digital/escudo/simulador" replace />} />
           <Route path="/escudo/analizador" element={<Navigate to="/digital/escudo/analizador" replace />} />
           <Route path="/digital/m/pay" element={<Navigate to="/finanzas/m/pay" replace />} />
+          <Route path="/logros" element={R(<Logros />)} />
+          <Route path="/revision" element={R(<Revision />)} />
           <Route path="/misiones" element={R(<MisionesPage />)} />
           <Route path="/misiones/:id" element={R(<MisionPage />)} />
           {Lab && <Route path="/lab" element={R(<React.Suspense fallback={null}><Lab /></React.Suspense>)} />}

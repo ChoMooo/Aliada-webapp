@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import Galaxy from '../ui/bits/Galaxy/Galaxy';
-import { NightAurora } from '../ui/fx';
+import { StarsBackground } from '../ui/aceternity/stars-background';
+import { ShootingStars } from '../ui/aceternity/shooting-stars';
+import { ShineButton } from '../ui/sunset';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet, Smartphone, Lock, ArrowRight, TrendingUp } from 'lucide-react';
 import { useD, mut } from '../store';
-import { Button, Choices, Chips, Field, TextInput, ease, Mascot, Topo } from '../ui';
+import { Button, Choices, Chips, Field, TextInput, ease, Mascot } from '../ui';
 import { toast } from '../ui/toast';
 import { LEGAL } from '../config';
 
@@ -27,18 +28,21 @@ export default function Welcome() {
     if (!perfil.etapa) { toast('Elegí una opción para continuar'); return; }
     mut((d) => {
       d.perfil.onb = true;
+      d.mis.enc = false;
       d.tr.sit.sit = ({ falta: 'nada', tramitando: 'inicio', jubilado: 'jub' } as any)[d.perfil.etapa] || '';
       if (!d.tr.sit.sexo && d.perfil.sexo) d.tr.sit.sexo = ({ mujer: 'F', hombre: 'M', nd: 'X' } as any)[d.perfil.sexo];
     });
+    window.location.hash = '#/empezar'; // sigue con "¿Qué te gustaría resolver primero?"
   };
   return (
-    <div className="min-h-dvh hero-glow text-onbrand relative overflow-hidden">
-      {/* Cielo de noche con estrellas que se mueven despacio (React Bits) y la aurora del mar */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <Galaxy starColors={['#ffffff', '#9fe8d2', '#a8c0ff']} density={0.75} glowIntensity={0.22} saturation={0.25} hueShift={200} speed={0.35} twinkleIntensity={0.4} mouseInteraction={false} transparent dpr={1.25} />
+    <div className="min-h-dvh bg-brand text-onbrand relative overflow-hidden isolate">
+      {/* El mar en la hora azul (foto), con estrellas fugaces encima (Aceternity) y un velo para leer bien */}
+      <img src="fotos/bienvenida.webp" alt="" className="fixed inset-0 -z-[2] size-full object-cover object-[60%_50%]" />
+      <div className="fixed inset-0 -z-[1] pointer-events-none" aria-hidden>
+        <StarsBackground starDensity={0.00014} allStarsTwinkle={false} twinkleProbability={0.6} />
+        <ShootingStars minDelay={2200} maxDelay={5200} starColor="#9fe8d2" trailColor="#2650C4" />
       </div>
-      <NightAurora className="opacity-70" />
-      <Topo className="absolute -right-40 -top-24 w-[640px] text-white/15" draw />
+      <div className="fixed inset-0 -z-[1] bg-[linear-gradient(180deg,rgb(7_15_28/.35),rgb(7_15_28/.2)_30%,rgb(7_15_28/.7)_62%,rgb(7_15_28/.94))]" />
       <div className="relative max-w-[34rem] mx-auto px-5 py-8 sm:py-14 min-h-dvh flex flex-col">
         <AnimatePresence mode="wait">
           {step === 0 && (
@@ -48,7 +52,7 @@ export default function Welcome() {
                 <Mascot gesture="wave" pose="wave" size={112} label="La mascota de Aliada te saluda" />
               </div>
               <div className="flex flex-col gap-3">
-                <motion.h1 className="text-[2.2rem] sm:text-[2.6rem] text-onbrand leading-[1.08]" initial={{ opacity: 0, transform: 'translateY(10px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ delay: 0.1, duration: 0.4, ease }}>
+                <motion.h1 className="font-display italic font-normal text-[3rem] sm:text-[3.6rem] text-white leading-[1.02] tracking-[-.01em] text-balance" initial={{ opacity: 0, transform: 'translateY(10px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ delay: 0.1, duration: 0.5, ease }}>
                   Tu experiencia, <span className="text-glow">tus reglas.</span> Nosotros te acompañamos.
                 </motion.h1>
                 <motion.p className="text-[1.08rem]" initial={{ opacity: 0 }} animate={{ opacity: 0.85 }} transition={{ delay: 0.2, duration: 0.3 }}>
@@ -58,20 +62,20 @@ export default function Welcome() {
               <div className="flex flex-col gap-2.5">
                 {PILARES.map((p, i) => (
                   <motion.div key={p.t} initial={{ opacity: 0, transform: 'translateX(-12px)' }} animate={{ opacity: 1, transform: 'translateX(0px)' }} transition={{ delay: 0.28 + i * 0.06, duration: 0.35, ease }}
-                    className="flex gap-4 items-center rounded-xl bg-white/[.06] border border-white/10 px-4 py-3">
+                    className="liquid flex gap-4 items-center rounded-2xl px-4 py-3">
                     <span className="grid place-items-center size-10 rounded-lg shrink-0 bg-glow/15 text-glow [&_svg]:size-5">{p.i}</span>
                     <div><b className="block">{p.t}</b><span className="text-[.9rem] opacity-80">{p.s}</span></div>
                   </motion.div>
                 ))}
               </div>
               <div className="flex items-center gap-2 text-[.88rem] opacity-80"><Lock className="size-4 shrink-0" />Tus datos quedan solo en este dispositivo. Sin cuentas ni claves.</div>
-              <div className="mt-auto"><Button variant="glow" size="lg" block onClick={() => setStep(1)} iconRight={<ArrowRight />}>Empezar</Button></div>
+              <div className="mt-auto"><ShineButton block onClick={() => setStep(1)} iconRight={<ArrowRight />}>Empezar</ShineButton></div>
             </motion.div>
           )}
           {step === 1 && (
             <motion.div key="b" initial={{ opacity: 0, transform: 'translateX(20px)' }} animate={{ opacity: 1, transform: 'translateX(0px)' }} exit={{ opacity: 0, transform: 'translateX(-20px)' }} transition={{ duration: 0.28, ease }} className="flex flex-col gap-6">
               <div className="flex items-center gap-2 text-[.85rem] opacity-80"><span className="h-1.5 w-10 rounded-full bg-glow" /><span className="h-1.5 w-10 rounded-full bg-white/25" />Paso 1 de 2</div>
-              <h1 className="text-[2rem] text-onbrand">Contanos un poco de vos</h1>
+              <h1 className="font-display italic font-normal text-[2.6rem] leading-[1.05] text-white">Contanos un poco de vos</h1>
               <div className="rounded-xl3 bg-surface text-ink p-5 sm:p-6 flex flex-col gap-6 shadow-lift">
                 <Field label={<>¿Cómo querés que te llamemos? <span className="text-muted font-normal">(opcional)</span></>} htmlFor="nm">
                   <TextInput id="nm" value={perfil.nombre} onChange={(v) => mut((d) => { d.perfil.nombre = v; })} placeholder="Tu nombre" />
@@ -87,7 +91,7 @@ export default function Welcome() {
           {step === 2 && (
             <motion.div key="c" initial={{ opacity: 0, transform: 'translateX(20px)' }} animate={{ opacity: 1, transform: 'translateX(0px)' }} exit={{ opacity: 0 }} transition={{ duration: 0.28, ease }} className="flex flex-col gap-6">
               <div className="flex items-center gap-2 text-[.85rem] opacity-80"><span className="h-1.5 w-10 rounded-full bg-glow" /><span className="h-1.5 w-10 rounded-full bg-glow" />Paso 2 de 2</div>
-              <h1 className="text-[2rem] text-onbrand">¿En qué momento estás?</h1>
+              <h1 className="font-display italic font-normal text-[2.6rem] leading-[1.05] text-white">¿En qué momento estás?</h1>
               <div className="rounded-xl3 bg-surface text-ink p-5 sm:p-6 flex flex-col gap-6 shadow-lift">
                 <Choices options={ETAPAS} value={perfil.etapa} onChange={(v) => mut((d) => { d.perfil.etapa = v; })} />
                 <Button size="lg" block iconRight={<ArrowRight />} onClick={finish}>Entrar a mi espacio</Button>
