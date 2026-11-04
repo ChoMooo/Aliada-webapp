@@ -8,7 +8,7 @@
   --brand:12 25 45; --onbrand:233 240 250; --accent:38 80 196; --onaccent:255 255 255; --glow:52 212 166;
   --teal:9 118 93; --mint:213 238 229; --sky:34 88 186; --skysoft:224 232 249; --amber:168 78 34; --ambersoft:250 229 214;
   --warn:252 238 204; --warnink:108 66 0; --bad:176 38 38; --badsoft:250 225 222; --violet:96 78 188; --violetsoft:234 230 250;
-  --shadow:14 27 46; --tint1:228 235 246; --tint2:240 234 222; --sea-night:0;
+  --shadow:14 27 46; --tint1:228 235 246; --tint2:240 234 222; --sea-night:0; --coral:196 92 62;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
@@ -16,13 +16,13 @@
   --brand:10 21 39; --onbrand:233 240 250; --accent:128 162 255; --onaccent:7 15 28; --glow:70 224 182;
   --teal:92 220 182; --mint:15 50 50; --sky:140 172 255; --skysoft:25 40 80; --amber:244 160 112; --ambersoft:60 34 22;
   --warn:58 44 12; --warnink:243 201 112; --bad:255 140 130; --badsoft:66 24 28; --violet:186 170 255; --violetsoft:40 32 72;
-  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; --sea-night:.58; color-scheme: dark; } }
+  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; --sea-night:.58; --coral:255 160 128; color-scheme: dark; } }
 :root[data-theme="dark"]{
   --bg:7 15 28; --surface:14 26 46; --sunk:20 34 57; --ink:233 239 248; --muted:160 174 196; --line:35 51 78;
   --brand:10 21 39; --onbrand:233 240 250; --accent:128 162 255; --onaccent:7 15 28; --glow:70 224 182;
   --teal:92 220 182; --mint:15 50 50; --sky:140 172 255; --skysoft:25 40 80; --amber:244 160 112; --ambersoft:60 34 22;
   --warn:58 44 12; --warnink:243 201 112; --bad:255 140 130; --badsoft:66 24 28; --violet:186 170 255; --violetsoft:40 32 72;
-  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; --sea-night:.58; color-scheme: dark; }
+  --shadow:0 0 0; --tint1:18 36 66; --tint2:10 24 44; --sea-night:.58; --coral:255 160 128; color-scheme: dark; }
 
 html{ font-size:112.5%; -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent; }
 html[data-fs="2"]{ font-size:125%; } html[data-fs="3"]{ font-size:140%; }
@@ -118,3 +118,22 @@ details > summary{ list-style:none; } details > summary::-webkit-details-marker{
 :root[data-theme="dark"] .frost{ background: rgb(var(--surface) / .62); border-color: rgb(255 255 255 / .1); box-shadow: inset 0 1px 0 rgb(255 255 255 / .08), 0 18px 40px -12px rgb(0 0 0 / .5); }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .frost{ background: rgb(var(--surface) / .62); border-color: rgb(255 255 255 / .1); box-shadow: inset 0 1px 0 rgb(255 255 255 / .08), 0 18px 40px -12px rgb(0 0 0 / .5); } }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){ .frost{ background: rgb(var(--surface) / .94); } }
+
+/* Vidrio líquido (encuesta inicial): casi transparente, desenfoca la foto y tiene un borde de luz arriba y abajo */
+.liquid{ position:relative; background: rgb(255 255 255 / .06); -webkit-backdrop-filter: blur(10px) saturate(1.2); backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / .12); transition: background-color 160ms var(--ease-out), transform 140ms var(--ease-out); }
+.liquid::before{ content:''; position:absolute; inset:0; border-radius:inherit; padding:1.4px; pointer-events:none;
+  background: linear-gradient(180deg, rgb(255 255 255 / .5) 0%, rgb(255 255 255 / .15) 20%, transparent 40%, transparent 60%, rgb(255 255 255 / .15) 80%, rgb(255 255 255 / .5) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.liquid-on{ background: rgb(255 255 255 / .2); box-shadow: inset 0 1px 2px rgb(255 255 255 / .25), 0 10px 30px -10px rgb(0 0 0 / .4); }
+.glass-chip{ display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .85rem; border-radius:999px; font-size:.8rem; font-weight:600; color:#fff;
+  background: rgb(255 255 255 / .1); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border:1px solid rgb(255 255 255 / .25); }
+
+/* Vencimientos: un pago vencido tiene una franja coral a la izquierda que late suave (llama la atención sin asustar);
+   el que vence hoy, una franja ámbar quieta. Sin movimiento si la persona lo pidió. */
+.venc-alerta::before, .venc-hoy::before{ content:''; position:absolute; left:0; top:.75rem; bottom:.75rem; width:4px; border-radius:0 4px 4px 0; }
+.venc-hoy::before{ background: rgb(var(--amber)); }
+.venc-alerta::before{ background: rgb(var(--coral)); animation: venc-late 2.4s cubic-bezier(.45,0,.55,1) infinite; }
+.venc-alerta{ background-image: linear-gradient(90deg, rgb(var(--coral) / .09), transparent 45%); }
+@keyframes venc-late{ 0%,100%{ opacity:1 } 50%{ opacity:.35 } }
+@media (prefers-reduced-motion: reduce){ .venc-alerta::before{ animation:none } }

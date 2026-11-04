@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ArrowLeft, ListChecks, LineChart, CalendarDays, PiggyBank, Calculator, Share2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, ArrowRight, ArrowLeft, ListChecks, LineChart, CalendarDays, PiggyBank, Calculator, Share2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useStore, mut } from '../../store';
 import Counter from '../../ui/bits/Counter/Counter'; // dígitos que giran como un contador (React Bits)
 import { PageHeader, Card, Hero, Button, Field, MoneyInput, TextInput, Progress, KV, Note, RowLink, RowList, Stagger, Item, CountUp, ListenButton, Legal, ease, cx } from '../../ui';
@@ -65,7 +65,7 @@ export function Numeros() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader back={{ to: i ? `/finanzas/plata/numeros/${i - 1}` : '/finanzas/plata', label: i ? 'Atrás' : 'Mi plata' }} title="" />
-      <div className="flex gap-1.5">{STEPS.map((_, k) => <motion.span key={k} className={cx('h-2 flex-1 rounded-full', k <= i ? 'bg-accent' : 'bg-line')} layout />)}</div>
+      <Stepper i={i} tot={[c.ing, c.gas, c.ahoARS, c.deu]} go={(k) => nav(`/finanzas/plata/numeros/${k}`)} />
       <AnimatePresence mode="wait">
         <motion.div key={i} initial={{ opacity: 0, transform: 'translate(20px, 0px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0, transform: 'translate(-20px, 0px)' }} transition={{ duration: 0.22, ease }} className="flex flex-col gap-5">
           <div><div className="text-accent font-bold text-[.85rem]">Paso {i + 1} de 4</div><h1 className="text-[1.9rem] mt-1">{st.t}</h1><p className="text-muted mt-1">{st.h}</p></div>
@@ -81,6 +81,39 @@ export function Numeros() {
         <Button className="flex-1" iconRight={<ArrowRight />} onClick={() => nav(i === 3 ? '/finanzas/plata/resultado' : `/finanzas/plata/numeros/${i + 1}`)}>{i === 3 ? 'Ver mi resultado' : 'Siguiente'}</Button>
       </div>
     </div>
+  );
+}
+
+/* Los 4 pasos de "Mis números" como un camino: se puede tocar cualquiera para ir directo.
+   La línea entre pasos se llena al avanzar; el paso actual tiene un anillo que se mueve de uno a otro. */
+const PASO_N = ['Ingresos', 'Gastos', 'Ahorros', 'Deudas'];
+function Stepper({ i, tot, go }: { i: number; tot: number[]; go: (k: number) => void }) {
+  return (
+    <nav aria-label="Pasos de Mis números">
+      <ol className="grid grid-cols-4">
+        {PASO_N.map((n, k) => {
+          const now = k === i, done = k < i || (k !== i && tot[k] > 0);
+          return (
+            <li key={n} className="relative flex flex-col items-center">
+              {k > 0 && (
+                <span className="absolute top-[1.3rem] right-1/2 w-full h-[3px] -translate-y-1/2 bg-line rounded-full overflow-hidden" aria-hidden>
+                  <span className="block h-full w-full bg-accent origin-left transition-transform duration-500 [transition-timing-function:cubic-bezier(.23,1,.32,1)]" style={{ transform: `scaleX(${k <= i ? 1 : 0})` }} />
+                </span>
+              )}
+              <button type="button" onClick={() => go(k)} aria-current={now ? 'step' : undefined} aria-label={`Paso ${k + 1}: ${n}`}
+                className="press relative z-[1] flex flex-col items-center gap-1.5 min-w-[3rem]">
+                <span className={cx('relative grid place-items-center size-[2.6rem] rounded-full border-2 font-bold num transition-colors duration-200',
+                  now ? 'bg-accent border-accent text-onaccent' : done ? 'bg-mint border-teal/40 text-teal' : 'bg-surface border-line text-muted')}>
+                  {now && <motion.span layoutId="paso-anillo" className="absolute -inset-[5px] rounded-full border-2 border-accent/35" transition={{ type: 'spring', duration: 0.45, bounce: 0.15 }} />}
+                  {done && !now ? <Check className="size-5" strokeWidth={3} /> : k + 1}
+                </span>
+                <span className={cx('text-[.82rem] leading-tight', now ? 'font-bold text-ink' : 'text-muted')}>{n}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }
 

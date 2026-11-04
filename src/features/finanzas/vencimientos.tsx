@@ -1,7 +1,7 @@
 /* Mis vencimientos: qué tengo que pagar este mes, cuándo y cuánto.
    Marcás lo que ya pagaste, ves lo que falta y podés llevar recordatorios al calendario del celular. */
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Plus, Check, CalendarPlus, Share2, Trash2, Pencil } from 'lucide-react';
 import { useStore, mut, type Data } from '../../store';
 import { PageHeader, Stagger, Item, Button, MoneyInput, TextInput, Note, cx } from '../../ui';
@@ -58,6 +58,7 @@ function textoMes(d: Data) {
 export default function Vencimientos() {
   const d = useStore((s) => s.d), E = estados(d), now = new Date(), mk = mesKey(now);
   const [edit, setEdit] = useState<string | null>(null);
+  const reduce = useReducedMotion();
   const [nuevo, setNuevo] = useState(d.venc.items.length === 0);
   const total = E.reduce((t, e) => t + e.m, 0), pagado = E.filter((e) => e.pagado).reduce((t, e) => t + e.m, 0);
   const toggle = (id: string) => mut((x) => { const m = (x.venc.pagos[mk] ||= {}); if (m[id]) delete m[id]; else m[id] = 1; });
@@ -73,18 +74,21 @@ export default function Vencimientos() {
             <b className="block font-head font-semibold text-[1.9rem] leading-tight num">{money(total - pagado)}</b>
             <span className="block text-[.9rem] text-muted num">Ya pagaste {money(pagado)} de {money(total)}</span>
           </div>
-          <div className="h-2 rounded-full bg-line overflow-hidden" aria-hidden><div className="h-full bg-accent rounded-full transition-[width] duration-300" style={{ width: (total ? (pagado / total) * 100 : 0) + '%' }} /></div>
+          <div className="h-2.5 rounded-full bg-line overflow-hidden" aria-hidden><div className="h-full w-full bg-accent rounded-full origin-left transition-transform duration-500 [transition-timing-function:cubic-bezier(.23,1,.32,1)]" style={{ transform: `scaleX(${total ? pagado / total : 0})` }} /></div>
         </section></Item>
       )}
 
       {E.length > 0 && (
         <Item><ul className="rounded-xl2 bg-surface border border-line shadow-card divide-y divide-line overflow-hidden">
-          {E.map((e) => (
-            <li key={e.id} className="p-3.5 sm:p-4">
+          {/* Al marcar un pago, la fila baja a su nuevo lugar deslizándose (no salta): se ve adónde fue */}
+          {E.map((e, i) => (
+            <motion.li key={e.id} layout={reduce ? false : 'position'} transition={{ duration: 0.3, delay: Math.min(i, 8) * 0.04, ease: [0.23, 1, 0.32, 1], layout: { duration: 0.35, ease: [0.77, 0, 0.175, 1] } }}
+              initial={reduce ? false : { opacity: 0, transform: 'translateY(8px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }}
+              className={cx('relative p-3.5 sm:p-4 bg-surface', e.tone === 'vencido' && 'venc-alerta', e.tone === 'hoy' && 'venc-hoy')}>
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => toggle(e.id)} aria-pressed={e.pagado} aria-label={(e.pagado ? 'Desmarcar ' : 'Marcar como pagado: ') + e.n}
                   className={cx('press grid place-items-center size-12 rounded-full border-2 shrink-0 transition-colors duration-150', e.pagado ? 'bg-accent border-accent text-onaccent' : 'border-line bg-surface text-transparent')}>
-                  <Check className="size-6" />
+                  <motion.span key={String(e.pagado)} initial={reduce || !e.pagado ? false : { transform: 'scale(.6)', opacity: 0 }} animate={{ transform: 'scale(1)', opacity: 1 }} transition={{ type: 'spring', duration: 0.35, bounce: 0.3 }}><Check className="size-6" /></motion.span>
                 </button>
                 <div className="flex-1 min-w-0">
                   <b className={cx('block text-[1.05rem] leading-tight break-words', e.pagado && 'text-muted line-through decoration-1')}>{e.n}</b>
@@ -98,7 +102,7 @@ export default function Vencimientos() {
                   className="press grid place-items-center size-11 rounded-full text-muted hover:bg-sunk shrink-0"><Pencil className="size-5" /></button>
               </div>
               <AnimatePresence initial={false}>{edit === e.id && <Editor id={e.id} onClose={() => setEdit(null)} />}</AnimatePresence>
-            </li>
+            </motion.li>
           ))}
         </ul></Item>
       )}
