@@ -40,7 +40,7 @@ export default function Diagnostico() {
     <div className="relative -mx-4 sm:-mx-6 -mt-5 px-4 sm:px-6 pt-10 pb-8 min-h-[78vh] flex flex-col items-center justify-center text-center overflow-hidden">
       <Topo className="absolute w-[min(150vw,760px)] text-accent/25" draw />
       <motion.div className="relative flex flex-col items-center gap-5" initial={{ opacity: 0, transform: 'translateY(10px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ delay: 0.1, duration: 0.3, ease }}>
-        <Mascot size={110} gesture="nod" />
+        <Mascot size={110} act="piensa" />
         <div className="flex flex-col gap-2 max-w-[26rem]">
           <h1 className="text-[2rem] leading-tight text-balance">Armemos tu ruta en Mundo digital</h1>
           <p className="text-muted text-[1.05rem]">Unas preguntas cortas sobre tu celular y lo que te gustaría lograr. Te lleva unos 3 minutos y podés saltear lo que quieras.</p>

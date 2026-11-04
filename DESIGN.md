@@ -87,6 +87,9 @@ Adaptados a la marca y a React 18 (framer-motion en lugar de motion/react). Todo
 - Mis números: pasos como un camino tocable, con anillo que se mueve al paso actual.
 - Componentes de Aceternity UI en `src/ui/aceternity` (licencia: se pueden usar dentro de productos finales; no se revenden sueltos).
 
+- **Mascota animada** (`Mascot act=…`): tres acciones recortadas del video de la mascota (festeja, piensa, señala), WebP animado con transparencia en `public/mascota/`. Se reproducen una vez y quedan quietas en el último cuadro; tocarla la repite. Con movimiento reducido se muestra el último cuadro. Festeja: misión y lección terminadas, plan armado, logros. Piensa: encuesta inicial, diagnóstico, pantallas vacías. Señala: logros sin misiones.
+- **Volver**: botón en la barra de arriba en todas las pantallas menos el Inicio. Vuelve a la pantalla anterior; si no hay, al "padre" que declara la página (`PageHeader back`) o a la sección (`src/lib/back.ts`).
+
 ## Misiones
 
 `src/content/misiones.ts`: cada misión va de una situación ("¿Me alcanza la plata del mes?") a un resultado. Sus pasos usan herramientas y lecciones existentes; la app marca sola los pasos que puede detectar y el resto se marca con "Ya lo hice". Se ven al final del Inicio, en `/misiones` y en Mi resumen; mientras se usa una herramienta aparece "Volver a tu misión".

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, Wallet, Smartphone, Settings, TrendingUp, BookHeart } from 'lucide-react';
+import { Home, Wallet, Smartphone, Settings, TrendingUp, BookHeart, ChevronLeft } from 'lucide-react';
 import { useD } from '../store';
-import { cx, IconButton, LOGO, SectionVeil } from '../ui';
+import { cx, IconButton, LOGO, SectionVeil, SavedMark } from '../ui';
+import { volver } from '../lib/back';
 import { VolverMision } from '../features/Misiones';
 import { track } from '../lib/navhist';
 
@@ -19,6 +20,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const nav = useNavigate();
   const h = track(pathname);
+  const home = pathname === '/';
   useEffect(() => { window.scrollTo({ top: 0 }); }, [pathname]);
   const mujer = useD((d) => d.perfil.sexo === 'mujer');
   const NAV = NAV_ALL.filter((n) => !n.women || mujer);
@@ -28,11 +30,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Barra superior */}
       <header className={cx('no-print sticky top-0 z-30 lg:col-span-2 safe-t backdrop-blur-md border-b', pathname === '/' ? 'bg-bg/70 border-transparent' : 'bg-bg/90 border-line')}>
         <div className="flex items-center gap-3 px-4 sm:px-6 h-16">
-          <button onClick={() => nav('/')} className="flex items-center gap-3 text-left" aria-label="Ir al inicio">
-            <img src={LOGO} alt="" className="size-10 rounded-full" />
-            <span><b className="block font-head font-bold text-[1.1rem] leading-none">Aliada Digital</b><span className="text-[.74rem] text-muted">A tu ritmo, con calma</span></span>
+          {/* Volver: en todas las pantallas menos el Inicio, siempre en el mismo lugar */}
+          {!home && (
+            <button type="button" onClick={() => volver(nav, pathname)} aria-label="Volver a la pantalla anterior"
+              className="press shrink-0 inline-flex items-center gap-1 min-h-[2.9rem] pl-2 pr-3.5 rounded-full border border-line bg-surface font-bold text-[1rem] shadow-card [&_svg]:size-5">
+              <ChevronLeft strokeWidth={2.5} />Volver
+            </button>
+          )}
+          <button onClick={() => nav('/')} className="flex items-center gap-3 text-left min-w-0" aria-label="Ir al inicio">
+            <img src={LOGO} alt="" className={cx('rounded-full shrink-0', home ? 'size-10' : 'size-9')} />
+            <span className={cx('min-w-0', !home && 'hidden min-[400px]:block')}><b className="block font-head font-bold text-[1.1rem] leading-none truncate">Aliada Digital</b><span className="text-[.74rem] text-muted">A tu ritmo, con calma</span></span>
           </button>
           <span className="flex-1" />
+          <SavedMark />
           <IconButton label="Ajustes" onClick={() => nav('/ajustes')}><Settings /></IconButton>
         </div>
       </header>

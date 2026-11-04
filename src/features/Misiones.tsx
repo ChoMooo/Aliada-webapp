@@ -8,8 +8,8 @@ import { Link, useNavigate, useParams, Navigate, useLocation } from 'react-route
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Clock, Share2, X, Wallet, FileCheck2, Smartphone, HeartPulse, ChevronRight } from 'lucide-react';
 import { useStore, mut } from '../store';
-import { PageHeader, Hero, Button, Stagger, Item, Progress, Spot, BackLink, Mascot, cx } from '../ui';
-import { PhotoBack, PhotoHero, Display, ShineButton } from '../ui/sunset';
+import { PageHeader, Hero, Button, Stagger, Item, Progress, Spot, Mascot, cx } from '../ui';
+import { PhotoHero, Display, ShineButton } from '../ui/sunset';
 import { MISIONES, MISION, AREAS, misionesPara, pasoHecho, progresoMision, minutos, type Mision, type Area } from '../content/misiones';
 import SpringCheck from '../ui/bits/SpringCheck/SpringCheck';
 import StatusMark from '../ui/bits/StatusMark/StatusMark';
@@ -76,7 +76,6 @@ export function MisionesPage() {
     <Stagger className="flex flex-col gap-7">
       <Item>
         <PhotoHero src="fotos/misiones.webp" pos="center 60%" height="min-h-[22rem] sm:min-h-[25rem]">
-          <div className="absolute left-4 sm:left-8 top-4"><PhotoBack to="/" label="Inicio" /></div>
           <Display className="text-white">Misiones</Display>
           <p className="text-white/90 text-[1.05rem] mt-2 max-w-[30rem]">Elegí una situación y te llevamos paso a paso hasta resolverla. Cada misión termina en algo concreto que te llevás.</p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -125,7 +124,6 @@ export function MisionPage() {
     <Stagger className="flex flex-col gap-6">
       <Item>
         <PhotoHero key={m.id} src={fotoMision(m)} height="min-h-[24rem] sm:min-h-[26rem]">
-          <div className="absolute left-4 sm:left-8 top-4"><PhotoBack to="/misiones" label="Misiones" /></div>
           <span className="glass-chip">{AREA_ICON[m.area] && <span className="[&_svg]:size-4">{AREA_ICON[m.area]}</span>}{AREAS[m.area]}</span>
           <Display className="text-white mt-3 !text-[2.3rem] sm:!text-[3rem] !leading-[1.05]">{m.t}</Display>
           <p className="text-white/90 mt-2 max-w-[32rem]">{m.para}</p>
@@ -180,7 +178,7 @@ export function MisionPage() {
               <Hero>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 pt-2"><StatusMark status="done" size={30} doneColor="#34D4A6" strike={false} /><b className="text-onbrand text-[1.1rem]">¡Misión hecha!</b></div>
-                  <Mascot size={74} gesture="hop" say="¡Lo lograste!" sayFor={3500} side="left" />
+                  <Mascot size={80} act="festeja" say="¡Lo lograste!" sayFor={3500} side="left" />
                 </div>
                 {R.big && <p className="font-head font-bold text-glow num leading-none mt-4 text-[clamp(2.2rem,10vw,3.2rem)]">{R.big}</p>}
                 <p className={cx('text-onbrand font-semibold', R.big ? 'text-[1.15rem] mt-1' : 'text-[1.4rem] mt-3')}>{R.t}</p>

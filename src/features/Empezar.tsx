@@ -64,13 +64,14 @@ export default function Empezar() {
     <div className="relative min-h-dvh text-white isolate overflow-hidden">
       <img src="fotos/misiones.webp" alt="" className="fixed inset-0 -z-[2] size-full object-cover" />
       <div className="fixed inset-0 -z-[1] bg-[linear-gradient(180deg,rgb(7_15_28/.55),rgb(7_15_28/.35)_35%,rgb(7_15_28/.82)_75%,rgb(7_15_28/.94))]" />
-      <div className="max-w-[36rem] mx-auto px-4 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] flex flex-col gap-6 min-h-dvh">
+      <div className="max-w-[36rem] mx-auto px-4 pt-[calc(1.25rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] flex flex-col gap-6 min-h-dvh">
         <AnimatePresence mode="wait">
           {!plan ? (
             <motion.div key="q" className="flex flex-col gap-6" exit={{ opacity: 0, transform: 'translateY(-10px)' }} transition={{ duration: 0.2 }}>
-              <div className="flex items-start justify-between gap-3">
-                <span className="glass-chip">Tu plan en Aliada</span>
-                <Mascot size={74} say={nombre ? `¡Hola, ${nombre}! Elegí lo que quieras.` : 'Elegí lo que quieras, después lo cambiás.'} side="left" />
+              {/* La mascota va un poco más abajo para que su globo entre en la pantalla */}
+              <div className="flex items-end justify-between gap-3 pt-14">
+                <span className="glass-chip mb-2">Tu plan en Aliada</span>
+                <Mascot size={78} act="piensa" say={nombre ? `¡Hola, ${nombre}! Elegí lo que quieras.` : 'Elegí lo que quieras, después lo cambiás.'} side="left" />
               </div>
               <div>
                 <p className="text-white/75 text-[1rem]">Elegí todo lo que quieras</p>
@@ -108,7 +109,7 @@ export default function Empezar() {
             <motion.div key="p" className="flex flex-col gap-6" initial={{ opacity: 0, transform: 'translateY(12px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}>
               <div className="flex items-end justify-between gap-3 pt-6">
                 <div><p className="text-white/75">Listo{nombre ? ', ' + nombre : ''}</p><Display className="text-white mt-1">Este es tu plan</Display></div>
-                <Mascot size={84} gesture="hop" say="¡Buen plan! Empezá por la primera." side="left" />
+                <Mascot size={88} act="festeja" say="¡Buen plan! Empezá por la primera." side="left" />
               </div>
               <p className="text-white/85 text-[1.05rem]">Tres misiones para empezar. Cada una te lleva paso a paso y termina en algo concreto que te llevás. Las demás quedan en el Inicio.</p>
               <div className="flex flex-col gap-3 text-ink">{cards.map((m) => m && <MisionCard key={m.id} m={m} />)}</div>

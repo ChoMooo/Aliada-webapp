@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ArrowRight, CalendarDays, ListChecks } from 'lucide-react';
 import { useStore } from '../store';
-import { Stagger, Item, Button, BackLink, Mascot, RowList, RowLink, Legal, cx } from '../ui';
-import { PhotoBack, PhotoHero, Display, GlassStat, ShineButton } from '../ui/sunset';
+import { Stagger, Item, Button, Mascot, RowList, RowLink, Legal, cx } from '../ui';
+import { PhotoHero, Display, GlassStat, ShineButton } from '../ui/sunset';
 import { money, pn } from '../lib/format';
 import { calc } from './finanzas/calc';
 import { estados } from './finanzas/vencimientos';
@@ -46,7 +46,6 @@ export default function Revision() {
     <Stagger className="flex flex-col gap-7">
       <Item>
         <PhotoHero src="fotos/revision.webp" pos="center 55%" height="min-h-[26rem] sm:min-h-[28rem]">
-          <div className="absolute left-4 sm:left-8 top-4"><PhotoBack to="/" label="Inicio" /></div>
           <div className="flex items-center justify-between gap-2">
             <button type="button" onClick={() => mover(-1)} aria-label="Mes anterior" className="press glass-chip justify-center size-11 !p-0"><ChevronLeft className="size-5" /></button>
             <span className="text-white/85 text-[.95rem]">Revisión del mes</span>
@@ -106,7 +105,7 @@ export default function Revision() {
               <p className="text-muted">Cargá tus ingresos y gastos de cada mes. Tarda unos 5 minutos y después la revisión se arma sola.</p>
               <div><ShineButton to="/finanzas/plata/numeros/0" iconRight={<ArrowRight />}>Cargar mis números</ShineButton></div>
             </div>
-            <Mascot size={70} gesture="nod" />
+            <Mascot size={76} act="piensa" />
           </section>
         </Item>
       )}

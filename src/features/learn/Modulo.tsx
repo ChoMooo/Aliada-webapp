@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Check, ChevronRight, ArrowRight } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, Card, Progress, Stagger, Item, Note, Button, BackLink, cx } from '../../ui';
+import { PageHeader, Card, Progress, Stagger, Item, Note, Button, cx } from '../../ui';
 import { MOD, modPath, CONTENIDO_DIGITAL, isExtra } from '../../content/learn';
 import type { Lesson } from '../../content/learn/shared';
 import { fdate } from '../../lib/format';
@@ -11,7 +11,7 @@ import { MOD_ICON, TONE, sectionOf } from './meta';
 
 export default function Modulo() {
   const { mod = '' } = useParams(); const d = useStore((s) => s.d); const m = MOD(mod);
-  if (!m) return <div className="flex flex-col gap-4"><BackLink to="/" label="Inicio" /><Note tone="warn">No encontramos este módulo.</Note></div>;
+  if (!m) return <div className="flex flex-col gap-4"><Note tone="warn">No encontramos este módulo.</Note></div>;
   const p = modProg(d, m), lv = m.section === 'digital' ? startLevel(d, m.id) : 'basico', base = modPath(m), sec = sectionOf(m);
   const core = m.lessons.filter((l) => !isExtra(l.id)), extra = m.lessons.filter((l) => isExtra(l.id));
   const next = core.find((l) => !isDone(d, l.id) && (lv === 'basico' || l.nivel === 'intermedio')) || core.find((l) => !isDone(d, l.id)) || extra.find((l) => !isDone(d, l.id));

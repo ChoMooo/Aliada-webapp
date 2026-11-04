@@ -2,7 +2,8 @@ import { createPortal } from 'react-dom';
 import { NightAurora } from './fx';
 import React, { useId, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useReducedMotion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { setPadre } from '../lib/back';
 import { Check, ChevronLeft, ChevronRight, Volume2, Square, Info, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { cx } from './cx';
 import { useToasts } from './toast';
@@ -104,10 +105,13 @@ export function BackLink({ to, label = 'Volver' }: { to: string; label?: string 
     </button>
   );
 }
+/** Encabezado de página. `back` ya no dibuja un enlace: el botón Volver está en la barra de arriba;
+    se usa como destino si no hay pantalla anterior (por ejemplo, al abrir la app directo en esta página). */
 export function PageHeader({ kicker, title, lead, back, right }: { kicker?: string; title: React.ReactNode; lead?: React.ReactNode; back?: { to: string; label?: string }; right?: React.ReactNode }) {
+  const { pathname } = useLocation();
+  useEffect(() => { if (back) setPadre(pathname, back.to); }, [pathname, back?.to]);
   return (
     <header className="flex flex-col gap-2">
-      {back && <div className="flex items-center justify-between"><BackLink to={back.to} label={back.label} /><SavedMark /></div>}
       {(title || right) && <div className="flex items-start justify-between gap-3">
         {title && <h1 className="text-[1.85rem] sm:text-[2.1rem]">{title}</h1>}{right}
       </div>}

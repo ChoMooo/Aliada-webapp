@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { setPadre } from '../../lib/back';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, X, Copy, Share2, Trophy, Lightbulb, Wrench, HelpCircle, Hand, ListChecks, Flag, PlayCircle } from 'lucide-react';
 import { useStore, mut } from '../../store';
 import ClickSpark from '../../ui/bits/ClickSpark/ClickSpark';
-import { BackLink, Card, Button, Chips, Note, CheckRow, ListenButton, Bullets, Celebrate, Ring, ease, cx, Tag, Mascot } from '../../ui';
+import { Card, Button, Chips, Note, CheckRow, ListenButton, Bullets, Celebrate, Ring, ease, cx, Tag, Mascot } from '../../ui';
 import { MOD, modPath } from '../../content/learn';
 import { N } from '../../lib/narration';
 import { DemoPlayer, VisualGuide } from './Demo';
@@ -31,8 +32,10 @@ export default function Leccion() {
   const [ans, setAns] = useState<(number | null)[]>([]);
   const [simDone, setSimDone] = useState(false);
   React.useEffect(() => { setK(0); setQi(0); setAns([]); setSimDone(false); }, [lec]);
+  const { pathname } = useLocation();
+  React.useEffect(() => { if (m) setPadre(pathname, modPath(m)); }, [pathname, m]); // Volver sin historial: al módulo
   const secs = useMemo<Sec[]>(() => (l ? (['ver', l.sim || l.demo.length ? 'practica' : null, 'hacer', l.quiz.length ? 'quiz' : null, 'fin'].filter(Boolean) as Sec[]) : []), [l]);
-  if (!m || !l) return <div className="flex flex-col gap-4"><BackLink to="/" label="Inicio" /><Note tone="warn">No encontramos esta lección.</Note></div>;
+  if (!m || !l) return <div className="flex flex-col gap-4"><Note tone="warn">No encontramos esta lección.</Note></div>;
   const sec = secs[k], st = d.md.lec[l.id] || {}, Sim = l.sim ? SIMS[l.sim] : null;
   const base = modPath(m), sc = sectionOf(m);
   const idx = m.lessons.findIndex((x) => x.id === l.id), nextL = m.lessons[idx + 1];
@@ -42,7 +45,7 @@ export default function Leccion() {
   const canNext = sec !== 'quiz' || (ans[qi] != null && qi === l.quiz.length - 1);
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between gap-3"><BackLink to={base} label={m.n} /><Tag>{l.min} min</Tag></div>
+      <div className="flex items-center justify-between gap-3"><span className="text-[.95rem] font-semibold text-muted">{m.n}</span><Tag>{l.min} min</Tag></div>
       <div className="flex items-start gap-3">
         <span className={cx('grid place-items-center size-12 rounded-xl shrink-0 [&_svg]:size-6', TONE[m.tone])}>{MOD_ICON[m.id]}</span>
         <h1 className="text-[1.7rem] sm:text-[2rem] leading-tight">{l.t}</h1>
@@ -114,7 +117,7 @@ export default function Leccion() {
             <Card className="relative flex flex-col items-center text-center gap-3 py-8 overflow-visible">
               <Celebrate show />
               <div className="flex items-end gap-4">
-                <Mascot pose="wave" gesture="hop" size={84} />
+                <Mascot act="festeja" size={90} />
                 <motion.div initial={{ transform: 'scale(0.6)' }} animate={{ transform: 'scale(1)' }} transition={{ type: 'spring', stiffness: 220, damping: 14 }}>
                   <Ring value={score} max={l.quiz.length || 1} size={84} stroke={8}><Trophy className="size-7 text-accent" /></Ring>
                 </motion.div>

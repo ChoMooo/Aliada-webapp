@@ -2,8 +2,7 @@
    botón principal con un borde de luz y tarjetas de vidrio con cifras grandes.
    Usan componentes de Aceternity UI (src/ui/aceternity) adaptados a la marca. */
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button as MovingBorderButton } from './aceternity/moving-border';
 import { ShootingStars } from './aceternity/shooting-stars';
 import { StarsBackground } from './aceternity/stars-background';
@@ -20,16 +19,6 @@ export function PhotoHero({ src, children, stars, className, height = 'min-h-[22
       <div className="absolute inset-0 -z-[1] bg-[linear-gradient(180deg,rgb(7_15_28/.55)_0%,rgb(7_15_28/.05)_32%,rgb(7_15_28/.25)_58%,rgb(7_15_28/.86)_100%)]" aria-hidden />
       <div className="px-4 sm:px-8 pt-24 pb-7 sm:pb-9">{children}</div>
     </section>
-  );
-}
-
-/** "Volver" sobre una foto: píldora de vidrio, se lee sobre cualquier cielo */
-export function PhotoBack({ to, label = 'Volver' }: { to: string; label?: string }) {
-  const nav = useNavigate();
-  return (
-    <button type="button" onClick={() => nav(to)} className="no-print press glass-chip !text-[.95rem] !min-h-[2.75rem] !pl-2.5 !pr-4">
-      <ChevronLeft className="size-5" />{label}
-    </button>
   );
 }
 

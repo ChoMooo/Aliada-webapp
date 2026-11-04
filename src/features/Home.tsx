@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, HeartPulse, Wallet, Smartphone, BookHeart } from 'lucide-react';
 import { useStore, useD } from '../store';
@@ -144,23 +143,6 @@ function TuMes() {
 /* Interruptor de la prueba: false vuelve al Inicio anterior (foto dentro de la tarjeta) */
 const MAR_DE_FONDO = true;
 
-/* La mascota cruza el mar nadando una vez por visita (de derecha a izquierda, que es hacia donde mira),
-   y a mitad de camino tira un chorrito de agua */
-function MascotaNadando() {
-  const reduce = useReducedMotion();
-  const [go] = useState(() => { try { const f = !sessionStorage.getItem('aliada.nado'); sessionStorage.setItem('aliada.nado', '1'); return f; } catch { return false; } });
-  if (reduce || !go) return null;
-  return (
-    <motion.div className="absolute top-[64%] sm:top-[70%] w-[64px] sm:w-[84px]" style={{ right: 0 }}
-      initial={{ transform: 'translateX(120%)' }} animate={{ transform: 'translateX(-115vw)' }} transition={{ delay: 2.2, duration: 16, ease: 'linear' }}>
-      <motion.img src="mascota/mascota-neutral.webp" alt="" className="w-full [filter:drop-shadow(0_6px_8px_rgb(0_20_40/.35))]"
-        animate={{ transform: ['translateY(0px) rotate(-6deg)', 'translateY(-6px) rotate(4deg)', 'translateY(0px) rotate(-6deg)'] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }} />
-      {/* Agua que tapa la mitad de abajo: parece que nada */}
-      <span className="absolute inset-x-[-10%] bottom-[-6%] h-[48%] bg-gradient-to-b from-transparent via-[#2b5f8a]/70 to-[#1d4a72]/90 rounded-[50%] blur-[2px]" />
-    </motion.div>
-  );
-}
-
 /* El mar ocupa toda la pantalla, fijo detrás del contenido.
    Va en un portal porque las animaciones de entrada usan transform y eso rompería el position: fixed. */
 function SeaBackdrop() {
@@ -169,7 +151,6 @@ function SeaBackdrop() {
       <LivingSea src="inicio/mar-1000.webp" mask="inicio/mar-mask.png" hz={0.292} pos={[0.16, 0.5]} posSm={[1, 0.6]} imgClass="object-[16%_50%] sm:object-[100%_60%]" />
       <div className="absolute inset-0 sea-night" />
       <div className="absolute inset-0 sea-top" />
-      <MascotaNadando />
     </div>,
     document.body
   );

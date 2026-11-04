@@ -2,8 +2,8 @@
    Inspirado en las pantallas de perfil (foto arriba, tres cifras, "tu favorito"), con la identidad de Aliada. */
 import { Share2, ArrowRight, Trophy } from 'lucide-react';
 import { useStore } from '../store';
-import { Stagger, Item, Button, Progress, Mascot, BackLink, cx } from '../ui';
-import { PhotoBack, PhotoHero, Display, GlassStat, ShineButton } from '../ui/sunset';
+import { Stagger, Item, Button, Progress, Mascot, cx } from '../ui';
+import { PhotoHero, Display, GlassStat, ShineButton } from '../ui/sunset';
 import Counter from '../ui/bits/Counter/Counter';
 import { misionesPara, progresoMision, AREAS } from '../content/misiones';
 import { ALL_MODULES } from '../content/learn';
@@ -31,13 +31,12 @@ export default function Logros() {
     <Stagger className="flex flex-col gap-7">
       <Item>
         <PhotoHero src="fotos/logros.webp" pos="center 40%" height="min-h-[28rem] sm:min-h-[30rem]">
-          <div className="absolute left-4 sm:left-8 top-[calc(1rem)]"><PhotoBack to="/" label="Inicio" /></div>
           <div className="flex items-end justify-between gap-3">
             <div className="min-w-0">
               <p className="text-white/80">{nombre ? nombre + ', estos son' : 'Estos son'}</p>
               <Display className="text-white">Tus logros</Display>
             </div>
-            <Mascot size={78} gesture="hop" say={hechas.length ? '¡Mirá todo lo que hiciste!' : 'Tu primer logro está a un paso.'} side="left" />
+            <Mascot size={84} act={hechas.length ? 'festeja' : 'senala'} say={hechas.length ? '¡Mirá todo lo que hiciste!' : 'Tu primer logro está a un paso.'} side="left" />
           </div>
           <div className="grid grid-cols-3 gap-2.5 mt-5">
             <GlassStat label="Misiones" value={<Counter value={hechas.length} fontSize={28} fontWeight={700} locale="es-AR" />} hint={`de ${M.length}`} />

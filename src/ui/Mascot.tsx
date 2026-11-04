@@ -1,4 +1,5 @@
-/* Mascota de Aliada Digital: dos poses (parada y saludando) con gestos suaves.
+/* Mascota de Aliada Digital: dos poses (parada y saludando) con gestos suaves,
+   y tres acciones animadas recortadas del video de la mascota (act): festeja, piensa y señala.
    Al tocarla salta, tira un chorrito de agua y dice algo; puede mostrar un globo de diálogo (say).
    Aparece en: bienvenida, inicio, encuesta, misiones, logros, fin de lección y libro. */
 import React, { useEffect, useState } from 'react';
@@ -9,6 +10,27 @@ const SRC = { neutral: 'mascota/mascota-neutral.webp', wave: 'mascota/mascota-wa
 if (typeof window !== 'undefined') Object.values(SRC).forEach((u) => { const i = new Image(); i.src = u; });
 
 type Gesture = 'wave' | 'hop' | 'nod' | 'none';
+export type Act = 'festeja' | 'piensa' | 'senala';
+/* Hacia dónde mira cada clip en el video original; se espeja para que mire hacia el contenido (a la izquierda) */
+const ACT_MIRA_DERECHA: Record<Act, boolean> = { festeja: true, piensa: false, senala: true };
+
+/* Los clips son WebP animados que se reproducen una vez y quedan en el último cuadro.
+   Para poder repetirlos (al tocar o al volver a mostrarse) se bajan una sola vez y cada reproducción usa una copia nueva. */
+const blobs: Record<string, Promise<Blob | null>> = {};
+const traer = (u: string) => (blobs[u] ||= fetch(u).then((r) => (r.ok ? r.blob() : null)).catch(() => null));
+
+function Clip({ act, play }: { act: Act; play: number }) {
+  const reduce = useReducedMotion();
+  const fin = `mascota/${act}-fin.webp`;
+  const [src, setSrc] = useState<string>(reduce ? fin : '');
+  useEffect(() => {
+    if (reduce) { setSrc(fin); return; }
+    let url = '', vivo = true;
+    traer(`mascota/${act}.webp`).then((b) => { if (!vivo) return; if (b) { url = URL.createObjectURL(b); setSrc(url); } else setSrc(fin); });
+    return () => { vivo = false; if (url) setTimeout(() => URL.revokeObjectURL(url), 4000); };
+  }, [act, play, reduce]);
+  return src ? <img src={src} alt="" draggable={false} className="absolute inset-0 w-full h-full object-contain object-bottom" style={{ transform: ACT_MIRA_DERECHA[act] ? 'scaleX(-1)' : undefined }} /> : null;
+}
 const FRASES = ['¡Hola! Acá estoy si me necesitás.', 'Sin apuro: vamos a tu ritmo.', 'Cada paso cuenta. ¡Vamos!', 'Si algo no se entiende, tocá Escuchar.', '¡Qué bueno verte por acá!', 'Podés cambiar el tamaño de la letra en Ajustes.', 'Una misión por día y listo.'];
 
 /** Chorrito de agua que sale de la cabeza (el "resoplido" de la ballena) */
@@ -37,7 +59,8 @@ export function Bubble({ text, side = 'left' }: { text: string; side?: 'left' | 
   );
 }
 
-export function Mascot({ pose = 'neutral', gesture = 'none', size = 120, className, idle = true, label, say, sayFor = 4500, side = 'left' }: { pose?: 'neutral' | 'wave'; gesture?: Gesture; size?: number; className?: string; idle?: boolean; label?: string; say?: string; sayFor?: number; side?: 'left' | 'right' }) {
+export function Mascot({ pose = 'neutral', gesture = 'none', size = 120, className, idle = true, label, say, sayFor = 4500, side = 'left', act }: { pose?: 'neutral' | 'wave'; gesture?: Gesture; size?: number; className?: string; idle?: boolean; label?: string; say?: string; sayFor?: number; side?: 'left' | 'right'; act?: Act }) {
+  const [play, setPlay] = useState(0);
   const reduce = useReducedMotion();
   const [bubble, setBubble] = useState<string | null>(null);
   const [spout, setSpout] = useState(0);
@@ -55,8 +78,11 @@ export function Mascot({ pose = 'neutral', gesture = 'none', size = 120, classNa
     clearTimeout(blinkT.current);
     setBlink(true);
     blinkT.current = setTimeout(() => setBlink(false), 170);
-    if (!reduce) boing.start({ scaleY: [1, 0.92, 1.06, 1], y: [0, 3, -10, 0], transition: { duration: 0.5 } });
-    setSpout((n) => n + 1);
+    if (act) setPlay((n) => n + 1); /* con una acción animada, tocarla la repite */
+    else {
+      if (!reduce) boing.start({ scaleY: [1, 0.92, 1.06, 1], y: [0, 3, -10, 0], transition: { duration: 0.5 } });
+      setSpout((n) => n + 1);
+    }
     decir(FRASES[Math.floor(Math.random() * FRASES.length)], 3200);
   };
   useEffect(() => () => clearTimeout(blinkT.current), []);
@@ -83,6 +109,7 @@ export function Mascot({ pose = 'neutral', gesture = 'none', size = 120, classNa
     <motion.button type="button" aria-label={label || 'Mascota de Aliada Digital'} onPointerDown={tap} onClick={(e) => { if (e.detail === 0) tap(); }}
       className={cx('relative shrink-0 select-none cursor-pointer [-webkit-tap-highlight-color:transparent]', className)} style={{ width: size, height: h }}
       initial={reduce ? false : { opacity: 0, transform: 'translate(0px, 18px) scale(0.92)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px) scale(1)' }} transition={{ type: 'spring', stiffness: 160, damping: 16 }}>
+      {act ? <Clip act={act} play={play} /> : (
       <motion.div className="absolute inset-0" animate={boing} style={{ transformOrigin: '50% 100%' }}>
       <motion.div className="absolute inset-0"
         animate={reduce || !idle ? {} : gesture === 'hop' ? { y: [0, -14, 0, -6, 0], scaleY: [1, 1.04, 0.96, 1.02, 1] } : gesture === 'nod' ? { rotate: [0, -4, 3, 0] } : { y: [0, -4, 0] }}
@@ -91,7 +118,7 @@ export function Mascot({ pose = 'neutral', gesture = 'none', size = 120, classNa
         <img src={SRC.wave} alt="" draggable={false} className={cx('absolute inset-0 w-full h-full', p === 'wave' ? 'opacity-100' : 'opacity-0')} />
         <span className="absolute rounded-full origin-top transition-transform duration-75" style={{ left: '39.2%', top: '28.4%', width: '6.4%', height: '6.4%', background: '#6582ee', borderBottom: `${Math.max(1, size / 140)}px solid #26265e`, transform: `scaleY(${blink ? 1 : 0})` }} />
       </motion.div>
-      </motion.div>
+      </motion.div>)}
       {!reduce && spout > 0 && <Spout key={spout} size={size} />}
       <AnimatePresence>{bubble && <Bubble key={bubble} text={bubble} side={side} />}</AnimatePresence>
     </motion.button>
