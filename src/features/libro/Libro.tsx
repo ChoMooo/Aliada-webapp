@@ -4,7 +4,8 @@ import { Navigate } from 'react-router-dom';
 import { Download, FileText, NotebookPen, PackageOpen, Check, BookOpen } from 'lucide-react';
 import { useStore, mut } from '../../store';
 import { Card, Stagger, Item, Note, Progress, Disclosure, Mascot, cx } from '../../ui';
-import { PhotoHero, Display } from '../../ui/sunset';
+import { Display } from '../../ui/sunset';
+import { OceanHero } from '../../ui/ocean';
 
 export const PARTES = [
   ['Entender los cambios', 'Qué está pasando en tu cuerpo y cómo se forma la imagen corporal.'],
@@ -27,11 +28,11 @@ export default function Libro() {
   return (
     <Stagger className="flex flex-col gap-6">
       <Item>
-        <PhotoHero src="fotos/libro.webp" pos="center 55%" height="min-h-[22rem] sm:min-h-[25rem]">
+        <OceanHero mar="libro" height="min-h-[22rem] sm:min-h-[25rem]">
           <span className="glass-chip">Tu libro</span>
           <Display className="text-white mt-3">Mi nueva versión</Display>
           <p className="text-white/90 text-[1.05rem] mt-2 max-w-[30rem]">Un acompañamiento para mujeres de más de 50 sobre el cuerpo, la autoestima y la identidad en esta etapa.</p>
-        </PhotoHero>
+        </OceanHero>
       </Item>
       <Item><Card className="flex flex-col sm:flex-row gap-5 items-center">
         {/* Portada que se inclina con el dedo o el mouse, con brillo (React Bits) */}

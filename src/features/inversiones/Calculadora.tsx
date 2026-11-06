@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PageHeader, Card, Field, MoneyInput, TextInput, KV, Note, Tabs, Stagger, Item, cx } from '../../ui';
 import { money, pn, fmt } from '../../lib/format';
 
@@ -25,7 +26,8 @@ export function comparar(monto: number, dias: number, tnaPF: number, tnaCta: num
 }
 
 function Comparador() {
-  const [m, setM] = useState('500000'), [dias, setDias] = useState('30'), [tpf, setTpf] = useState(''), [tcta, setTcta] = useState(''), [inf, setInf] = useState('');
+  const [sp] = useSearchParams(); const m0 = sp.get('m');
+  const [m, setM] = useState(m0 && /^\d+$/.test(m0) ? m0 : '500000'), [dias, setDias] = useState('30'), [tpf, setTpf] = useState(''), [tcta, setTcta] = useState(''), [inf, setInf] = useState('');
   const M = pn(m), D = Math.max(1, Math.round(pn(dias))), I = pn(inf);
   const r = comparar(M, D, pn(tpf), pn(tcta), I);
   const filas = [

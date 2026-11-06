@@ -90,6 +90,16 @@ Adaptados a la marca y a React 18 (framer-motion en lugar de motion/react). Todo
 - **Mascota animada** (`Mascot act=…`): tres acciones recortadas del video de la mascota (festeja, piensa, señala), WebP animado con transparencia en `public/mascota/`. Se reproducen una vez y quedan quietas en el último cuadro; tocarla la repite. Con movimiento reducido se muestra el último cuadro. Festeja: misión y lección terminadas, plan armado, logros. Piensa: encuesta inicial, diagnóstico, pantallas vacías. Señala: logros sin misiones.
 - **Volver**: botón en la barra de arriba en todas las pantallas menos el Inicio. Vuelve a la pantalla anterior; si no hay, al "padre" que declara la página (`PageHeader back`) o a la sección (`src/lib/back.ts`).
 
+## Un mar por sección (profundidad)
+- El mismo océano, cada vez más hondo: Inicio (superficie) → Finanzas (recién bajo el agua) → Invertir (más hondo) → Digital (bien profundo) → Mi libro (el fondo, con arena). Fotos en `public/mar/`.
+- `OceanHero` / `OceanLive` (`src/ui/ocean.tsx`): shader WebGL liviano sobre la foto — la superficie ondula con destellos (Finanzas), los rayos de luz respiran y el agua se mece (todas). ~40 cuadros por segundo, se pausa fuera de pantalla; con "reducir movimiento" o sin WebGL queda la foto fija. Mi libro usa un video corto en bucle.
+- Para cambiar una foto: reemplazar `public/mar/<seccion>-1280.webp` y `-1920.webp` (16:9) y ajustar en `CFG` dónde termina la superficie (`surf`) y dónde está el sol (`light`).
+
+## Paneles (Finanzas e Inversiones)
+- `/finanzas/panel` y `/inversiones/panel`, con piezas de `src/ui/viz.tsx`: `Panel`, `Tile`, `Meter`, `SegBar`, `RankBars`, `MonthColumns`.
+- Reglas de gráficos: el color identifica y nunca se usa para texto; paleta validada para daltonismo (`--viz-1..5`, claro y oscuro por separado); colores de estado (`--st-*`) siempre con ícono y texto; cada valor también se lee sin tocar (etiquetas, lista o "Ver tabla"); una sola cifra grande por pantalla, en la letra normal (no la cursiva).
+- Inversiones es educativo: muestra los números de la persona, no recomienda.
+
 ## Misiones
 
 `src/content/misiones.ts`: cada misión va de una situación ("¿Me alcanza la plata del mes?") a un resultado. Sus pasos usan herramientas y lecciones existentes; la app marca sola los pasos que puede detectar y el resto se marca con "Ya lo hice". Se ven al final del Inicio, en `/misiones` y en Mi resumen; mientras se usa una herramienta aparece "Volver a tu misión".

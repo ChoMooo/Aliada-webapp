@@ -1,18 +1,52 @@
 import React from 'react';
-import { Calculator, BookA, ShieldCheck, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Calculator, BookA, ShieldCheck, ExternalLink, ArrowRight } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, Stagger, Item, Note, RowLink, Disclosure, Card, SectionWaves } from '../../ui';
+import { Stagger, Item, Note, RowLink, Disclosure, Card } from '../../ui';
+import { OceanHero } from '../../ui/ocean';
+import { Display } from '../../ui/sunset';
 import { INV_MODULES, INV_FUENTES, INV_FECHA } from '../../content/learn';
-import { fdate } from '../../lib/format';
+import { fdate, money } from '../../lib/format';
+import { calc } from '../finanzas/calc';
+import { partesAhorro } from '../finanzas/Panel';
+import { VIZ } from '../../ui/viz';
 import { ModCard } from '../digital/Hub';
 import { modProg } from '../digital/logic';
+
+/* Tus ahorros, de un vistazo: el total y cómo están repartidos; lleva al panel completo */
+function AhorrosCard() {
+  const d = useStore((s) => s.d), c = calc(d), partes = partesAhorro(c), tot = c.ahoARS;
+  return (
+    <Link to="/inversiones/panel" className="press group block rounded-xl3 border border-line bg-surface p-4 sm:p-5 shadow-card">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[.9rem] text-muted">Tus ahorros, de un vistazo</p>
+          {tot > 0 ? <p className="font-head font-semibold text-[2.2rem] leading-none mt-1.5 [overflow-wrap:anywhere]">{money(tot)}</p>
+            : <p className="font-head font-semibold text-[1.3rem] leading-snug mt-1">Dónde está tu plata y cuánto no rinde</p>}
+        </div>
+        <span className="grid place-items-center size-11 rounded-full bg-sunk shrink-0 transition-transform group-hover:translate-x-0.5"><ArrowRight className="size-5" /></span>
+      </div>
+      {tot > 0 ? (
+        <div className="mt-4 flex gap-[2px] h-2" aria-hidden>
+          {partes.map((p, i) => p.v > 0 && <span key={p.k} className="h-full rounded-full" style={{ flexGrow: p.v / tot, flexBasis: 0, background: VIZ[i] }} />)}
+        </div>
+      ) : <p className="text-muted text-[.95rem] mt-2">Cargá tus ahorros en Mi plata y acá vas a ver cómo están repartidos.</p>}
+    </Link>
+  );
+}
 
 export default function InvHub() {
   const d = useStore((s) => s.d);
   const done = INV_MODULES.reduce((a, m) => a + modProg(d, m).n, 0);
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item className="relative isolate"><SectionWaves tone="sky" className="-inset-x-4 sm:-inset-x-6 -top-5" /><PageHeader title="Inversiones" lead="Cómo se invierte en Argentina, paso a paso: qué es cada opción, dónde se contrata y cómo se usan las apps. La decisión de en qué invertir es siempre tuya." /></Item>
+      <Item>
+        <OceanHero mar="invertir">
+          <Display className="text-white">Inversiones</Display>
+          <p className="text-white/90 text-[1.05rem] mt-2 max-w-[34rem]">Cómo se invierte en Argentina, paso a paso: qué es cada opción, dónde se contrata y cómo se usan las apps. La decisión de en qué invertir es siempre tuya.</p>
+        </OceanHero>
+      </Item>
+      <Item><AhorrosCard /></Item>
       <Item><RowLink to="/inversiones/calculadora" icon={<Calculator />} tone="sky" title="¿Dónde rinde más mi plata?" sub="Compará plazo fijo y billetera con las tasas que te ofrecen hoy" /></Item>
       <Item className="flex flex-col gap-3">
         <h2 className="text-[1.35rem]">{done ? 'Seguí aprendiendo' : 'Empezá por acá'}</h2>

@@ -137,3 +137,10 @@ details > summary{ list-style:none; } details > summary::-webkit-details-marker{
 .venc-alerta{ background-image: linear-gradient(90deg, rgb(var(--coral) / .09), transparent 45%); }
 @keyframes venc-late{ 0%,100%{ opacity:1 } 50%{ opacity:.35 } }
 @media (prefers-reduced-motion: reduce){ .venc-alerta::before{ animation:none } }
+
+/* Colores de gráficos (paleta validada para daltonismo: claro y oscuro elegidos por separado).
+   Orden fijo: 1 azul, 2 naranja, 3 aguamarina, 4 amarillo, 5 rosa. Nunca se usan para texto. */
+:root{ --viz-1:#2a78d6; --viz-2:#eb6834; --viz-3:#1baf7a; --viz-4:#eda100; --viz-5:#e87ba4; --viz-seq:#2a78d6; --viz-dim:#cfd6df; --viz-track:#e7ecf2;
+  --st-good:#0ca30c; --st-warn:#fab219; --st-bad:#d03b3b; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --viz-1:#3987e5; --viz-2:#d95926; --viz-3:#199e70; --viz-4:#c98500; --viz-5:#d55181; --viz-seq:#3987e5; --viz-dim:#3a4a63; --viz-track:#1d2d47; } }
+:root[data-theme="dark"]{ --viz-1:#3987e5; --viz-2:#d95926; --viz-3:#199e70; --viz-4:#c98500; --viz-5:#d55181; --viz-seq:#3987e5; --viz-dim:#3a4a63; --viz-track:#1d2d47; }

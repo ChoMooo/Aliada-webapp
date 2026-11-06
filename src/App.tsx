@@ -11,6 +11,8 @@ import Welcome from './features/Welcome';
 import Empezar from './features/Empezar';
 import Logros from './features/Logros';
 import Revision from './features/Revision';
+import PanelFinanzas from './features/finanzas/Panel';
+import PanelInversiones from './features/inversiones/Panel';
 import AccessGate from './features/AccessGate';
 import Home from './features/Home';
 import Settings from './features/Settings';
@@ -80,6 +82,8 @@ export default function App() {
           <Route path="/resumen" element={R(<Resumen />)} />
           <Route path="/finanzas" element={R(<FinanzasHub />)} />
           <Route path="/salud" element={R(<Salud />)} />
+          <Route path="/finanzas/panel" element={R(<PanelFinanzas />)} />
+          <Route path="/inversiones/panel" element={R(<PanelInversiones />)} />
           <Route path="/finanzas/vencimientos" element={R(<Vencimientos />)} />
           <Route path="/finanzas/cuotas" element={R(<Cuotas />)} />
           <Route path="/finanzas/plata" element={R(<Plata.PlataHub />)} />

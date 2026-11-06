@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { SlidersHorizontal, ShieldCheck, ArrowRight, Cpu, Clock, ScanSearch, Gamepad2 } from 'lucide-react';
 import { useStore } from '../../store';
-import { PageHeader, Card, Hero, Button, Progress, Stagger, Item, Tag, Ring, cx, SectionWaves , Spot } from '../../ui';
+import { PageHeader, Card, Hero, Button, Progress, Stagger, Item, Tag, Ring, cx, Spot } from '../../ui';
+import { OceanHero } from '../../ui/ocean';
+import { Display } from '../../ui/sunset';
 import { MODULES, SOON, type Module } from '../../content/learn';
 import { ESCENARIOS } from '../../content/escudo';
 import { ruta, nextLesson, modProg, setupProg, digitalProg, startLevel } from './logic';
@@ -52,7 +54,12 @@ export default function DigitalHub() {
   const order = done ? r.map((x) => x.m) : MODULES;
   return (
     <Stagger className="flex flex-col gap-6">
-      <Item className="relative isolate"><SectionWaves tone="violet" className="-inset-x-4 sm:-inset-x-6 -top-5" /><PageHeader kicker="Sección" title="Mundo digital" lead="Las apps que usa todo el mundo, explicadas a tu ritmo, con videos cortos y práctica real. Para sacarles el máximo provecho, no solo lo básico." /></Item>
+      <Item>
+        <OceanHero mar="digital">
+          <Display className="text-white">Mundo digital</Display>
+          <p className="text-white/90 text-[1.05rem] mt-2 max-w-[34rem]">Las apps que usa todo el mundo, explicadas a tu ritmo, con videos cortos y práctica real. Para sacarles el máximo provecho, no solo lo básico.</p>
+        </OceanHero>
+      </Item>
       <Item><Hero>
         {!done ? (<>
           <div className="text-onbrand/80 text-[.98rem]">Para empezar · 3 minutos</div>
