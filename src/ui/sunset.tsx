@@ -7,11 +7,14 @@ import { Button as MovingBorderButton } from './aceternity/moving-border';
 import { ShootingStars } from './aceternity/shooting-stars';
 import { StarsBackground } from './aceternity/stars-background';
 import { cx } from './cx';
+import { useAhorro } from '../lib/ahorro';
 
 /** Encabezado con una foto del océano a todo el ancho; el texto va abajo, sobre un degradado que lo hace legible */
 export function PhotoHero({ src, children, stars, className, height = 'min-h-[22rem] sm:min-h-[26rem]', pos = 'center' }: {
   src: string; children?: React.ReactNode; stars?: boolean; className?: string; height?: string; pos?: string;
 }) {
+  const bat = useAhorro();
+  if (bat) stars = false;
   return (
     <section className={cx('relative isolate overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 lg:rounded-[1.75rem] -mt-5 lg:mt-0 text-white flex flex-col justify-end', height, className)}>
       <img src={src} alt="" className="absolute inset-0 -z-[2] size-full object-cover" style={{ objectPosition: pos }} />
@@ -31,11 +34,12 @@ export function Display({ children, className, as: T = 'h1' }: { children: React
 export function ShineButton({ children, to, onClick, icon, iconRight, className, block, type = 'button' }: {
   children: React.ReactNode; to?: string; onClick?: () => void; icon?: React.ReactNode; iconRight?: React.ReactNode; className?: string; block?: boolean; type?: 'button' | 'submit';
 }) {
+  const bat = useAhorro();
   const inner = <span className="inline-flex items-center justify-center gap-2 [&_svg]:size-5">{icon}{children}{iconRight}</span>;
   const common = {
     borderRadius: '0.875rem', duration: 3200,
     containerClassName: cx('press h-auto p-[2px] text-[1.05rem] shadow-lift', block ? 'flex w-full' : 'inline-flex w-auto align-middle', className),
-    borderClassName: 'h-24 w-24 bg-[radial-gradient(#9fffe0_35%,#34D4A6_50%,transparent_68%)] opacity-90',
+    borderClassName: cx('h-24 w-24 bg-[radial-gradient(#9fffe0_35%,#34D4A6_50%,transparent_68%)] opacity-90', bat && 'hidden'),
     className: 'min-h-[3.1rem] px-6 border-0 bg-accent text-onaccent font-bold text-[1.05rem] backdrop-blur-0'
   };
   if (to) return <MovingBorderButton as={Link} to={to} onClick={onClick} {...common}>{inner}</MovingBorderButton>;

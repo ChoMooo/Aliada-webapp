@@ -90,6 +90,11 @@ Adaptados a la marca y a React 18 (framer-motion en lugar de motion/react). Todo
 - **Mascota animada** (`Mascot act=…`): tres acciones recortadas del video de la mascota (festeja, piensa, señala), WebP animado con transparencia en `public/mascota/`. Se reproducen una vez y quedan quietas en el último cuadro; tocarla la repite. Con movimiento reducido se muestra el último cuadro. Festeja: misión y lección terminadas, plan armado, logros. Piensa: encuesta inicial, diagnóstico, pantallas vacías. Señala: logros sin misiones.
 - **Volver**: botón en la barra de arriba en todas las pantallas menos el Inicio. Vuelve a la pantalla anterior; si no hay, al "padre" que declara la página (`PageHeader back`) o a la sección (`src/lib/back.ts`).
 
+## Imágenes y ahorro de batería
+- Solo se usan las fotos del mar: el del Inicio (también en la bienvenida, la encuesta inicial y la pantalla de Misiones) y el mar por profundidad de cada sección. Cada misión muestra el mar de la sección donde se hace (`seccionMision`: manda adónde llevan sus pasos). Las únicas otras fotos son las de "Tu mes" (Mis logros y Revisión del mes).
+- Todas las animaciones están activas por defecto. "Ahorro de batería" en Ajustes (`aj.bat`, `useAhorro`) apaga el agua en movimiento, los videos de fondo, auroras, estrellas, la luz del botón principal, el balanceo de la mascota y las animaciones CSS que corren sin parar (`html[data-bat="1"]`).
+- Botones simples: solo el título. La línea de abajo queda únicamente cuando muestra un estado real (pagos pendientes, avance, próximo paso).
+
 ## Un mar por sección (profundidad)
 - El mismo océano, cada vez más hondo: Inicio (superficie) → Finanzas (recién bajo el agua) → Invertir (más hondo) → Digital (bien profundo) → Mi libro (el fondo, con arena). Fotos en `public/mar/`.
 - `OceanHero` / `OceanLive` (`src/ui/ocean.tsx`): shader WebGL liviano sobre la foto — la superficie ondula con destellos (Finanzas), los rayos de luz respiran y el agua se mece (todas). ~40 cuadros por segundo, se pausa fuera de pantalla; con "reducir movimiento" o sin WebGL queda la foto fija. Mi libro usa un video corto en bucle.

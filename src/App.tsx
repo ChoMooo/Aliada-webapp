@@ -45,13 +45,14 @@ function useThemeSync() {
   useEffect(() => {
     const r = document.documentElement;
     r.dataset.fs = aj.fs;
+    r.dataset.bat = aj.bat ? '1' : '0';
     if (aj.tema === 'auto') r.removeAttribute('data-theme'); else r.dataset.theme = aj.tema;
     /* la barra del celular acompaña el tema elegido en Ajustes */
     document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
       const isDark = (m.getAttribute('media') || '').includes('dark');
       m.setAttribute('content', aj.tema === 'auto' ? (isDark ? '#070F1C' : '#F6F3EC') : aj.tema === 'dark' ? '#070F1C' : '#F6F3EC');
     });
-  }, [aj.fs, aj.tema]);
+  }, [aj.fs, aj.tema, aj.bat]);
 }
 
 function Page({ children }: { children: React.ReactNode }) {

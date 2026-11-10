@@ -112,8 +112,8 @@ export default function Revision() {
 
       <Item>
         <RowList>
-          <RowLink to="/finanzas/vencimientos" icon={<CalendarDays />} title="Mis vencimientos" sub={E.length ? `${pagados} de ${E.length} pagos hechos este mes` : 'Anotá qué pagás y cuándo'} />
-          <RowLink to="/finanzas/plata/numeros/0" icon={<ListChecks />} title="Mis números" sub="Cambiar ingresos o gastos planeados" />
+          <RowLink to="/finanzas/vencimientos" icon={<CalendarDays />} title="Mis vencimientos" sub={E.length ? `${pagados} de ${E.length} pagos hechos este mes` : undefined} />
+          <RowLink to="/finanzas/plata/numeros/0" icon={<ListChecks />} title="Mis números" />
         </RowList>
       </Item>
       {c.has && c.ing > 0 && <Item><Button variant="ghost" to="/finanzas/plata/resultado">Ver cuánto te queda cada mes</Button></Item>}

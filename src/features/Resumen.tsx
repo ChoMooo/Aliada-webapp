@@ -66,7 +66,7 @@ export function resumenData(d: Data) {
   r.push({ k: 'Escudo antiestafas', v: Object.keys(d.escudo.vistos).length + ' situaciones practicadas' });
   r = sec('Inversiones');
   INV_MODULES.forEach((m) => r.push({ k: m.n, v: lec(modProg(d, m)) }));
-  if (d.perfil.sexo === 'mujer') sec('Mi nueva versión').push({ k: 'Programa de 30 días', v: Object.keys(d.libro.dias).length + ' de 30' });
+  sec('Mi nueva versión').push({ k: 'Programa de 30 días', v: Object.keys(d.libro.dias).length + ' de 30' });
   return { nombre: d.perfil.nombre, fecha: new Date().toLocaleDateString('es-AR'), secs: S };
 }
 

@@ -1,5 +1,6 @@
 /* Efectos visuales de React Bits adaptados a la identidad de Aliada (mar de noche, ballena, turquesa).
    Cada uno respeta "reducir movimiento" y se pausa solo cuando no está en pantalla. */
+import { useAhorro } from '../lib/ahorro';
 import React, { useEffect, useState } from 'react';
 import Aurora from './bits/Aurora/Aurora';
 import Waves from './bits/Waves/Waves';
@@ -37,6 +38,7 @@ export function useDark() {
 
 /** Aurora boreal sobre las tarjetas de noche: luz azul y turquesa que se mueve despacio */
 export function NightAurora({ className }: { className?: string }) {
+  if (useAhorro()) return null;
   return (
     <div className={cx('absolute inset-0 pointer-events-none', className)} aria-hidden>
       <Aurora colorStops={['#1E4FD8', '#34D4A6', '#2650C4']} amplitude={0.9} blend={0.6} speed={0.45} opacity={0.7} height={0.5} mouseInteraction={false} dpr={1.25} />
@@ -49,7 +51,8 @@ export function SectionWaves({ tone = 'accent', className }: { tone?: 'accent' |
   const dark = useDark();
   const line = useTokenColor(tone, dark ? 0.3 : 0.22);
   const accent = useTokenColor('glow', dark ? 0.45 : 0.35);
-  if (!line) return null;
+  const bat = useAhorro();
+  if (!line || bat) return null;
   return (
     <div className={cx('absolute h-[17rem] pointer-events-none -z-[1]', className || 'inset-x-0 top-0')} aria-hidden
       style={{ maskImage: 'radial-gradient(75% 85% at 100% 0%, #000 8%, transparent 62%)', WebkitMaskImage: 'radial-gradient(75% 85% at 100% 0%, #000 8%, transparent 62%)' }}>

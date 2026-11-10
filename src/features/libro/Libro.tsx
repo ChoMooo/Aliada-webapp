@@ -1,6 +1,5 @@
 import React from 'react';
 import TiltedCard from '../../ui/bits/TiltedCard/TiltedCard';
-import { Navigate } from 'react-router-dom';
 import { Download, FileText, NotebookPen, PackageOpen, Check, BookOpen } from 'lucide-react';
 import { useStore, mut } from '../../store';
 import { Card, Stagger, Item, Note, Progress, Disclosure, Mascot, cx } from '../../ui';
@@ -22,7 +21,7 @@ const FILES = [
 
 export default function Libro() {
   const d = useStore((s) => s.d);
-  if (d.perfil.sexo !== 'mujer') return <Navigate to="/" replace />;
+  const mujer = d.perfil.sexo === 'mujer';
   const hechos = Object.keys(d.libro.dias).length;
   const next = DIAS.findIndex((_, i) => !d.libro.dias[i + 1]);
   return (
@@ -31,7 +30,7 @@ export default function Libro() {
         <OceanHero mar="libro" height="min-h-[22rem] sm:min-h-[25rem]">
           <span className="glass-chip">Tu libro</span>
           <Display className="text-white mt-3">Mi nueva versión</Display>
-          <p className="text-white/90 text-[1.05rem] mt-2 max-w-[30rem]">Un acompañamiento para mujeres de más de 50 sobre el cuerpo, la autoestima y la identidad en esta etapa.</p>
+          <p className="text-white/90 text-[1.05rem] mt-2 max-w-[30rem]">{mujer ? 'Un acompañamiento para mujeres de más de 50 sobre el cuerpo, la autoestima y la identidad en esta etapa.' : 'Un acompañamiento sobre el cuerpo, la autoestima y la identidad en esta etapa de la vida.'}</p>
         </OceanHero>
       </Item>
       <Item><Card className="flex flex-col sm:flex-row gap-5 items-center">

@@ -41,14 +41,14 @@ export function TalHub() {
       </Hero></Item>
       <Item className="flex flex-col gap-3">
         <RowList>
-          <RowLink to="/finanzas/talento/perfil" tone="amber" icon={<UserRound />} title="Mi perfil" sub={d.ta.done ? 'Revisá o corregí tus respuestas' : 'Experiencia, habilidades, tiempo y recursos'} />
-          <RowLink to="/finanzas/talento/ideas" tone="amber" icon={<Lightbulb />} title="Mis oportunidades" sub="Recomendaciones con motivos y riesgos" />
-          <RowLink to="/finanzas/talento/comparar" tone="amber" icon={<Scale />} title="Comparar oportunidades" sub={d.ta.cmp.length ? d.ta.cmp.length + ' en la comparación' : 'Inversión, dificultad, tiempo y clientes'} />
-          <RowLink to="/finanzas/talento/oferta" tone="amber" icon={<FileText />} title="Mi oferta" sub="Qué ofrecés, a quién y cómo cobrás" />
-          <RowLink to="/finanzas/talento/precio" tone="amber" icon={<Calculator />} title="Precios y costos" sub="Tu precio inicial, con todos los cálculos a la vista" />
-          <RowLink to="/finanzas/talento/materiales" tone="amber" icon={<Megaphone />} title="Material para vender" sub="Propuesta, presupuesto, mensajes y preguntas frecuentes" />
-          <RowLink to="/finanzas/talento/plan" tone="amber" icon={<CalendarCheck />} title="Plan de 30 días" sub={pp.t ? `${pp.n} de ${pp.t} tareas` : 'Tareas semanales a tu medida'} />
-          <RowLink to="/finanzas/talento/seguimiento" tone="amber" icon={<BarChart3 />} title="Seguimiento" sub="Contactos, consultas, trabajos y qué mejorar" />
+          <RowLink to="/finanzas/talento/perfil" tone="amber" icon={<UserRound />} title="Mi perfil" />
+          <RowLink to="/finanzas/talento/ideas" tone="amber" icon={<Lightbulb />} title="Mis oportunidades" />
+          <RowLink to="/finanzas/talento/comparar" tone="amber" icon={<Scale />} title="Comparar oportunidades" sub={d.ta.cmp.length ? d.ta.cmp.length + ' en la comparación' : undefined} />
+          <RowLink to="/finanzas/talento/oferta" tone="amber" icon={<FileText />} title="Mi oferta" />
+          <RowLink to="/finanzas/talento/precio" tone="amber" icon={<Calculator />} title="Precios y costos" />
+          <RowLink to="/finanzas/talento/materiales" tone="amber" icon={<Megaphone />} title="Material para vender" />
+          <RowLink to="/finanzas/talento/plan" tone="amber" icon={<CalendarCheck />} title="Plan de 30 días" sub={pp.t ? `${pp.n} de ${pp.t} tareas` : undefined} />
+          <RowLink to="/finanzas/talento/seguimiento" tone="amber" icon={<BarChart3 />} title="Seguimiento" />
         </RowList>
       </Item>
       <Item><Note tone="info">Las estimaciones son orientativas y no garantizan ingresos. Antes de empezar, verificá tus obligaciones impositivas, comerciales y previsionales (guía “Trabajar siendo jubilado/a” en Mis trámites).</Note></Item>

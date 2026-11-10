@@ -9,7 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Clock, Share2, X, Wallet, FileCheck2, Smartphone, HeartPulse, ChevronRight } from 'lucide-react';
 import { useStore, mut } from '../store';
 import { PageHeader, Hero, Button, Stagger, Item, Progress, Spot, Mascot, cx } from '../ui';
-import { PhotoHero, Display, ShineButton } from '../ui/sunset';
+import { Display, ShineButton } from '../ui/sunset';
+import { OceanHero, type Mar } from '../ui/ocean';
 import { MISIONES, MISION, AREAS, misionesPara, pasoHecho, progresoMision, minutos, type Mision, type Area } from '../content/misiones';
 import SpringCheck from '../ui/bits/SpringCheck/SpringCheck';
 import StatusMark from '../ui/bits/StatusMark/StatusMark';
@@ -19,12 +20,19 @@ import { wa } from '../lib/share';
 const AREA_ICON: Record<Area, React.ReactNode> = { plata: <Wallet />, tramites: <FileCheck2 />, celular: <Smartphone />, bienestar: <HeartPulse /> };
 const AREA_TONE: Record<Area, string> = { plata: 'bg-mint text-teal', tramites: 'bg-skysoft text-sky', celular: 'bg-violetsoft text-violet', bienestar: 'bg-ambersoft text-amber' };
 
-/* Cada misión tiene su propio atardecer (siempre el mismo para la misma misión), así una lista de tres
-   misiones de la misma área no repite la foto. El ícono de la esquina dice el área. */
-const FOTOS = ['plata', 'tramites', 'celular', 'bienestar', 'misiones', 'logros', 'revision', 'libro', 'bienvenida'];
+/* Cada misión muestra el mar de la sección donde se hace: "Tengo que ir a ANSES o PAMI" vive en Finanzas,
+   así que lleva el mar de Finanzas. Se decide por adónde llevan sus pasos (la mayoría manda). */
+export function seccionMision(m: Mision): Mar | 'inicio' {
+  const n: Record<string, number> = {};
+  for (const p of m.pasos) {
+    const s = p.go.startsWith('/finanzas') ? 'finanzas' : p.go.startsWith('/inversiones') ? 'invertir' : p.go.startsWith('/digital') || p.go.startsWith('/escudo') ? 'digital' : p.go.startsWith('/libro') ? 'libro' : 'inicio';
+    n[s] = (n[s] || 0) + 1;
+  }
+  return (Object.entries(n).sort((a, b) => b[1] - a[1])[0]?.[0] as Mar | 'inicio') || 'inicio';
+}
 export function fotoMision(m: Mision) {
-  let h = 0; for (const ch of m.id) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return 'fotos/' + FOTOS[h % FOTOS.length] + '.webp';
+  const s = seccionMision(m);
+  return s === 'inicio' ? 'inicio/mar-1000.webp' : s === 'libro' ? 'mar/libro.webp' : `mar/${s}-1280.webp`;
 }
 
 /* ---------- Tarjeta ---------- */
@@ -75,14 +83,14 @@ export function MisionesPage() {
   return (
     <Stagger className="flex flex-col gap-7">
       <Item>
-        <PhotoHero src="fotos/misiones.webp" pos="center 60%" height="min-h-[22rem] sm:min-h-[25rem]">
+        <OceanHero mar="inicio" height="min-h-[22rem] sm:min-h-[25rem]">
           <Display className="text-white">Misiones</Display>
           <p className="text-white/90 text-[1.05rem] mt-2 max-w-[30rem]">Elegí una situación y te llevamos paso a paso hasta resolverla. Cada misión termina en algo concreto que te llevás.</p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Link to="/empezar" className="press glass-chip !text-[.95rem] !py-2.5 !px-4">Elegir qué resolver primero</Link>
             {hechas > 0 && <span className="text-white/85 text-[.95rem] num">{hechas} de {L.length} hechas</span>}
           </div>
-        </PhotoHero>
+        </OceanHero>
       </Item>
       {(Object.keys(AREAS) as Area[]).map((a) => {
         const M = L.filter((m) => m.area === a);
@@ -123,7 +131,7 @@ export function MisionPage() {
   return (
     <Stagger className="flex flex-col gap-6">
       <Item>
-        <PhotoHero key={m.id} src={fotoMision(m)} height="min-h-[24rem] sm:min-h-[26rem]">
+        <OceanHero key={m.id} mar={seccionMision(m)} height="min-h-[24rem] sm:min-h-[26rem]">
           <span className="glass-chip">{AREA_ICON[m.area] && <span className="[&_svg]:size-4">{AREA_ICON[m.area]}</span>}{AREAS[m.area]}</span>
           <Display className="text-white mt-3 !text-[2.3rem] sm:!text-[3rem] !leading-[1.05]">{m.t}</Display>
           <p className="text-white/90 mt-2 max-w-[32rem]">{m.para}</p>
@@ -134,7 +142,7 @@ export function MisionPage() {
             <p className="mt-2 inline-flex items-center gap-2 text-[.88rem] text-white/80"><Clock className="size-4" />Unos {minutos(m)} · {p.t} {p.t === 1 ? 'paso' : 'pasos'}</p>
             <div className="mt-3"><Progress value={p.n} max={p.t} tone="glow" right={<span className="text-white/85 num">{p.n} de {p.t}</span>} /></div>
           </div>
-        </PhotoHero>
+        </OceanHero>
       </Item>
 
       <Item>

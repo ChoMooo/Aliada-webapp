@@ -5,6 +5,8 @@
    Sin WebGL o con "reducir movimiento" queda la foto fija. Mi libro usa un video corto en bucle. */
 import React, { useEffect, useRef, useState } from 'react';
 import { cx } from './cx';
+import { useAhorro } from '../lib/ahorro';
+import { LivingSea } from './LivingSea';
 
 export type Mar = 'finanzas' | 'invertir' | 'digital' | 'libro';
 
@@ -53,14 +55,16 @@ export function OceanLive({ mar, className }: { mar: Exclude<Mar, 'libro'>; clas
   const cfg = CFG[mar];
   const cv = useRef<HTMLCanvasElement>(null);
   const [live, setLive] = useState(false);
+  const bat = useAhorro();
   const small = `mar/${mar}-1280.webp`, big = `mar/${mar}-1920.webp`;
 
   useEffect(() => {
+    if (bat) { setLive(false); return; }
     let cleanup: void | (() => void);
     try { cleanup = start(); } catch (e) { console.warn('[mar] sin animación:', e); }
     return () => { try { cleanup && cleanup(); } catch { /* */ } };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mar]);
+  }, [mar, bat]);
 
   function start(): void | (() => void) {
     const canvas = cv.current;
@@ -130,7 +134,8 @@ export function OceanLive({ mar, className }: { mar: Exclude<Mar, 'libro'>; clas
 
 /** El fondo con arena: video corto en bucle (sin sonido); con "reducir movimiento" queda el cuadro fijo */
 export function OceanFloor({ className }: { className?: string }) {
-  const still = reduceMotion();
+  const bat = useAhorro();
+  const still = bat || reduceMotion();
   return (
     <div className={cx('absolute inset-0', className)} aria-hidden>
       {still ? <img src="mar/libro.webp" alt="" className="absolute inset-0 size-full object-cover" />
@@ -139,11 +144,19 @@ export function OceanFloor({ className }: { className?: string }) {
   );
 }
 
-/** Encabezado de sección con el mar a todo el ancho y el título abajo, sobre un degradado que lo hace legible */
-export function OceanHero({ mar, children, className, height = 'min-h-[21rem] sm:min-h-[24rem]' }: { mar: Mar; children?: React.ReactNode; className?: string; height?: string }) {
+/** El mar del Inicio (la superficie), con su propio movimiento; para fondos de pantalla completa */
+export function HomeSea({ className, hero }: { className?: string; hero?: boolean }) {
+  /* en un encabezado (más ancho que alto) se corre a la izquierda para que no asome el escritorio */
+  if (hero) return <LivingSea src="inicio/mar-1000.webp" mask="inicio/mar-mask.png" hz={0.292} pos={[0, 0.55]} posSm={[0, 0.6]} imgClass="object-[0%_55%] sm:object-[0%_60%]" className={className} />;
+  return <LivingSea src="inicio/mar-1000.webp" mask="inicio/mar-mask.png" hz={0.292} pos={[0.16, 0.5]} posSm={[1, 0.6]} imgClass="object-[16%_50%] sm:object-[100%_60%]" className={className} />;
+}
+
+/** Encabezado de sección con el mar a todo el ancho y el título abajo, sobre un degradado que lo hace legible.
+    "inicio" usa el mar del Inicio (para lo que vive en el Inicio, como las misiones) */
+export function OceanHero({ mar, children, className, height = 'min-h-[21rem] sm:min-h-[24rem]' }: { mar: Mar | 'inicio'; children?: React.ReactNode; className?: string; height?: string }) {
   return (
     <section className={cx('relative isolate overflow-hidden -mx-4 sm:-mx-6 lg:mx-0 lg:rounded-[1.75rem] -mt-5 lg:mt-0 text-white flex flex-col justify-end bg-[#0a2a52]', height, className)}>
-      <div className="absolute inset-0 -z-[2]">{mar === 'libro' ? <OceanFloor /> : <OceanLive mar={mar} />}</div>
+      <div className="absolute inset-0 -z-[2]">{mar === 'libro' ? <OceanFloor /> : mar === 'inicio' ? <HomeSea hero /> : <OceanLive mar={mar} />}</div>
       <div className="absolute inset-0 -z-[1] bg-[linear-gradient(180deg,rgb(4_14_34/.18)_0%,rgb(4_14_34/0)_30%,rgb(4_14_34/.35)_62%,rgb(4_14_34/.88)_100%)]" aria-hidden />
       <div className="px-4 sm:px-8 pt-24 pb-7 sm:pb-9">{children}</div>
     </section>

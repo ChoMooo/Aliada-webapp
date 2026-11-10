@@ -28,8 +28,8 @@ export default function EscudoHub() {
       </Card></Item>
       <Item className="flex flex-col gap-3">
         <RowList>
-          <RowLink to="/digital/escudo/analizador" tone="amber" icon={<ScanSearch />} title="Analizar un mensaje" sub="Pegá un mensaje sospechoso y mirá qué señales de alerta tiene" />
-          <RowLink to="/digital/escudo/simulador" tone="amber" icon={<Gamepad2 />} title="Simulador de estafas" sub="Practicá con 10 situaciones reales" />
+          <RowLink to="/digital/escudo/analizador" tone="amber" icon={<ScanSearch />} title="Analizar un mensaje" />
+          <RowLink to="/digital/escudo/simulador" tone="amber" icon={<Gamepad2 />} title="Simulador de estafas" />
         </RowList>
       </Item>
       <Item><Card className="flex flex-col gap-3">

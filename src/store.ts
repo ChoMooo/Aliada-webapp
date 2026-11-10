@@ -10,7 +10,7 @@ export const DEF = () => ({
   v: 2,
   lastBackup: 0,
   perfil: { nombre: '', etapa: '' as '' | 'falta' | 'tramitando' | 'jubilado', sexo: '' as '' | 'mujer' | 'hombre' | 'nd', onb: false },
-  aj: { fs: '1', tema: 'auto' as 'auto' | 'light' | 'dark', voz: true, vel: '1' },
+  aj: { fs: '1', tema: 'auto' as 'auto' | 'light' | 'dark', voz: true, vel: '1', bat: false },
   acceso: { ok: false },
   plata: {
     ing: [{ id: uid(), n: 'Ingreso principal', m: '' }] as Row[],

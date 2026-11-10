@@ -47,7 +47,7 @@ export default function InvHub() {
         </OceanHero>
       </Item>
       <Item><AhorrosCard /></Item>
-      <Item><RowLink to="/inversiones/calculadora" icon={<Calculator />} tone="sky" title="¿Dónde rinde más mi plata?" sub="Compará plazo fijo y billetera con las tasas que te ofrecen hoy" /></Item>
+      <Item><RowLink to="/inversiones/calculadora" icon={<Calculator />} tone="sky" title="¿Dónde rinde más mi plata?" /></Item>
       <Item className="flex flex-col gap-3">
         <h2 className="text-[1.35rem]">{done ? 'Seguí aprendiendo' : 'Empezá por acá'}</h2>
         <div className="grid sm:grid-cols-2 gap-3">
@@ -56,7 +56,7 @@ export default function InvHub() {
       </Item>
       <Item className="flex flex-col gap-3">
         <h2 className="text-[1.35rem]">Para consultar</h2>
-        <RowLink to="/inversiones/glosario" icon={<BookA />} tone="mint" title="Glosario" sub="Las palabras de las inversiones, en simple" />
+        <RowLink to="/inversiones/glosario" icon={<BookA />} tone="mint" title="Glosario" />
       </Item>
       <Item><Card tone="sunk" className="flex flex-col gap-2">
         <h3 className="text-[1.1rem] flex items-center gap-2"><ShieldCheck className="size-5 text-accent" />Antes de abrir una cuenta</h3>

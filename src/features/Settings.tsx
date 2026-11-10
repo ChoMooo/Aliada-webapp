@@ -42,6 +42,9 @@ export default function Settings() {
         <h2 className="text-[1.3rem]">Cómo lo ves</h2>
         <Field label="Tamaño de letra"><Chips options={[['1', 'Normal'], ['2', 'Grande'], ['3', 'Muy grande']]} value={d.aj.fs} onChange={(v) => v && mut((x) => { x.aj.fs = v; })} /></Field>
         <Field label="Colores"><Chips options={[['auto', 'Automático'], ['light', 'Claro'], ['dark', 'Oscuro']]} value={d.aj.tema} onChange={(v) => v && mut((x) => { x.aj.tema = v; })} /></Field>
+        <Field label="Ahorro de batería" hint="Saca algunas animaciones: el agua en movimiento, los videos de fondo y algunos brillos. La app funciona igual y gasta menos batería.">
+          <Chips options={[['0', 'Apagado'], ['1', 'Encendido']]} value={d.aj.bat ? '1' : '0'} onChange={(v) => v && mut((x) => { x.aj.bat = v === '1'; })} />
+        </Field>
         <Field label="Botones “Escuchar”"><Chips options={[['1', 'Mostrar'], ['0', 'Ocultar']]} value={d.aj.voz ? '1' : '0'} onChange={(v) => v && mut((x) => { x.aj.voz = v === '1'; })} /></Field>
         <div className="flex flex-col gap-3">
           <SpeedSlider />
@@ -55,7 +58,7 @@ export default function Settings() {
         <Field label="Tu momento">
           <Choices options={ETAPAS} value={d.perfil.etapa} onChange={(v) => mut((x) => { x.perfil.etapa = v; })} />
         </Field>
-        <Field label="¿Cómo te identificás?" hint="Si elegís “Mujer”, aparece la sección Mi nueva versión."><Chips options={SEXOS} value={d.perfil.sexo} onChange={(v) => mut((x) => { x.perfil.sexo = v; })} /></Field>
+        <Field label="¿Cómo te identificás?"><Chips options={SEXOS} value={d.perfil.sexo} onChange={(v) => mut((x) => { x.perfil.sexo = v; })} /></Field>
       </Card>
       <Card className="flex flex-col gap-4">
         <h2 className="text-[1.3rem]">Tus datos</h2>

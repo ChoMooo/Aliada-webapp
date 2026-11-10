@@ -1,6 +1,7 @@
 /* Primera vez: "¿Qué te gustaría resolver primero?"
    Pantalla completa sobre una foto del mar al atardecer, con tarjetas de vidrio numeradas para elegir varias
    y la opción de contarlo hablando. Con lo elegido se arma "tu plan" de misiones (las elegidas van primero). */
+import { HomeSea } from '../ui/ocean';
 import React, { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -62,7 +63,7 @@ export default function Empezar() {
 
   return (
     <div className="relative min-h-dvh text-white isolate overflow-hidden">
-      <img src="fotos/misiones.webp" alt="" className="fixed inset-0 -z-[2] size-full object-cover" />
+      <div className="fixed inset-0 -z-[2]"><HomeSea /></div>
       <div className="fixed inset-0 -z-[1] bg-[linear-gradient(180deg,rgb(7_15_28/.55),rgb(7_15_28/.35)_35%,rgb(7_15_28/.82)_75%,rgb(7_15_28/.94))]" />
       <div className="max-w-[36rem] mx-auto px-4 pt-[calc(1.25rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] flex flex-col gap-6 min-h-dvh">
         <AnimatePresence mode="wait">

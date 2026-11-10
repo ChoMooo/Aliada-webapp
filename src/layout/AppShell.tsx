@@ -22,8 +22,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const h = track(pathname);
   const home = pathname === '/';
   useEffect(() => { window.scrollTo({ top: 0 }); }, [pathname]);
-  const mujer = useD((d) => d.perfil.sexo === 'mujer');
-  const NAV = NAV_ALL.filter((n) => !n.women || mujer);
+  /* Mi libro está para todos, sin importar cómo se identifique la persona */
+  const NAV = NAV_ALL;
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
       {h.veil?.kind === 'section' && <SectionVeil key={h.veilKey} id={h.veil.id} />}

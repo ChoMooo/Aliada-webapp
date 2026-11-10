@@ -1,6 +1,7 @@
 /* Foto del mar "viva": la marea se mueve todo el tiempo con un shader WebGL muy liviano.
    Una máscara (mar-mask.png) dice qué partes son agua: el escritorio, la silla y el cielo quedan quietos.
    Si el dispositivo no tiene WebGL o pidió "reducir movimiento", queda la foto fija. */
+import { useAhorro } from '../lib/ahorro';
 import React, { useEffect, useRef, useState } from 'react';
 import { cx } from './cx';
 
@@ -33,14 +34,16 @@ type Props = { src: string; srcSet?: string; mask: string; hz: number; className
 export function LivingSea({ src, mask, hz, className, imgClass, pos, posSm }: Props) {
   const cv = useRef<HTMLCanvasElement>(null);
   const [live, setLive] = useState(false);
+  const bat = useAhorro();
 
   useEffect(() => {
+    if (bat) { setLive(false); return; }
     /* Todo va protegido: si algo falla (WebGL raro, imagen bloqueada), queda la foto fija y la app sigue andando */
     let cleanup: void | (() => void);
     try { cleanup = start(); } catch (e) { console.warn('[mar] sin animación:', e); }
     return () => { try { cleanup && cleanup(); } catch { /* */ } };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [bat]);
 
   function start(): void | (() => void) {
     const canvas = cv.current;

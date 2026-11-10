@@ -43,10 +43,10 @@ export function PlataHub() {
       </Item>
       <Item className="flex flex-col gap-3">
         <RowList>
-          <RowLink to="/finanzas/plata/numeros/0" icon={<ListChecks />} title="Mis números" sub={c.has ? 'Ingresos, gastos, ahorros y deudas · editar' : 'Empezá acá'} />
-          <RowLink to="/finanzas/plata/resultado" icon={<PiggyBank />} title="Mi resultado y mi meta" sub="Brecha mensual, colchón y meta de ahorro" />
-          <RowLink to="/finanzas/plata/inflacion" icon={<LineChart />} title="Simulador de inflación" sub="¿Qué pasa con tu plata si los precios suben?" />
-          <RowLink to="/finanzas/plata/seguimiento" icon={<CalendarDays />} title="Seguimiento del mes" sub="Lo que planeaste contra lo que gastaste" />
+          <RowLink to="/finanzas/plata/numeros/0" icon={<ListChecks />} title="Mis números" sub={c.has ? undefined : 'Empezá acá'} />
+          <RowLink to="/finanzas/plata/resultado" icon={<PiggyBank />} title="Mi resultado y mi meta" />
+          <RowLink to="/finanzas/plata/inflacion" icon={<LineChart />} title="Simulador de inflación" />
+          <RowLink to="/finanzas/plata/seguimiento" icon={<CalendarDays />} title="Seguimiento del mes" />
           <RowLink to="/finanzas/plata/grande" icon={<Calculator />} title="Planificador de un monto grande" sub="Indemnización, herencia o venta: cómo repartirlo" />
         </RowList>
       </Item>

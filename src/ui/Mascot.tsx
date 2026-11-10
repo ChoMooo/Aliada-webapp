@@ -2,6 +2,7 @@
    y tres acciones animadas recortadas del video de la mascota (act): festeja, piensa y señala.
    Al tocarla salta, tira un chorrito de agua y dice algo; puede mostrar un globo de diálogo (say).
    Aparece en: bienvenida, inicio, encuesta, misiones, logros, fin de lección y libro. */
+import { useAhorro } from '../lib/ahorro';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion, useAnimationControls } from 'framer-motion';
 import { cx } from './cx';
@@ -61,6 +62,7 @@ export function Bubble({ text, side = 'left' }: { text: string; side?: 'left' | 
 
 export function Mascot({ pose = 'neutral', gesture = 'none', size = 120, className, idle = true, label, say, sayFor = 4500, side = 'left', act }: { pose?: 'neutral' | 'wave'; gesture?: Gesture; size?: number; className?: string; idle?: boolean; label?: string; say?: string; sayFor?: number; side?: 'left' | 'right'; act?: Act }) {
   const [play, setPlay] = useState(0);
+  if (useAhorro()) idle = false;
   const reduce = useReducedMotion();
   const [bubble, setBubble] = useState<string | null>(null);
   const [spout, setSpout] = useState(0);

@@ -62,8 +62,8 @@ export function TramHub() {
       </Item>
       <Item className="flex flex-col gap-3">
         <RowList>
-          <RowLink to="/finanzas/tramites/preparar" icon={<ClipboardList />} tone="sky" title="Preparar mi consulta" sub="Datos, documentos y preguntas antes de ir a ANSES o PAMI" />
-          <RowLink to="/finanzas/tramites/docs" icon={<FolderCheck />} tone="sky" title="Mis documentos" sub="Qué tenés y qué te falta, en un solo lugar" />
+          <RowLink to="/finanzas/tramites/preparar" icon={<ClipboardList />} tone="sky" title="Preparar mi consulta" />
+          <RowLink to="/finanzas/tramites/docs" icon={<FolderCheck />} tone="sky" title="Mis documentos" />
           <RowLink to="/finanzas/tramites/ayuda" icon={<LifeBuoy />} tone="sky" title="Me trabé con algo" sub="Faltan papeles, datos incorrectos, sin turno…" />
           <RowLink to="/finanzas/tramites/guias" icon={<BookOpen />} tone="sky" title="Todas las guías" sub={GUIAS.length + ' guías con fuente y fecha'} />
         </RowList>

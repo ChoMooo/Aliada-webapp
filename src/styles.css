@@ -144,3 +144,6 @@ details > summary{ list-style:none; } details > summary::-webkit-details-marker{
   --st-good:#0ca30c; --st-warn:#fab219; --st-bad:#d03b3b; }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --viz-1:#3987e5; --viz-2:#d95926; --viz-3:#199e70; --viz-4:#c98500; --viz-5:#d55181; --viz-seq:#3987e5; --viz-dim:#3a4a63; --viz-track:#1d2d47; } }
 :root[data-theme="dark"]{ --viz-1:#3987e5; --viz-2:#d95926; --viz-3:#199e70; --viz-4:#c98500; --viz-5:#d55181; --viz-seq:#3987e5; --viz-dim:#3a4a63; --viz-track:#1d2d47; }
+
+/* Ahorro de batería: se frenan las animaciones decorativas que corren sin parar */
+html[data-bat="1"] [class*="animate-"], html[data-bat="1"] .venc-alerta::before { animation: none !important; }

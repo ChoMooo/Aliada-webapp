@@ -164,7 +164,7 @@ export const MISIONES: Mision[] = [
     res: (d) => ({ big: String(d.salud.meds.filter((m) => m.n).length), t: d.salud.meds.filter((m) => m.n).length === 1 ? 'medicamento anotado' : 'medicamentos anotados', s: 'Revisala cuando cambie algún tratamiento.' })
   },
   {
-    id: 'etapa', area: 'bienestar', t: 'Me cuesta esta etapa', min: 15, solo: (d) => d.perfil.sexo === 'mujer',
+    id: 'etapa', area: 'bienestar', t: 'Me cuesta esta etapa', min: 15,
     para: 'Para vos si sentís que tu cuerpo y tu forma de verte cambiaron.',
     tendras: 'Un programa de 30 días en marcha, a tu ritmo.',
     pasos: [

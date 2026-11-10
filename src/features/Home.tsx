@@ -63,9 +63,9 @@ export default function Home() {
     </Item>
     {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este celular. Hacé una copia desde Ajustes para no perderlos si lo cambiás.</Note></Item>}
     <Item className="flex flex-col gap-1">
-      <QuietLink to="/salud" icon={<HeartPulse />} title="Mi ficha de salud" sub="Medicamentos, alergias y a quién avisar" />
-      <QuietLink to="/resumen" icon={<FileText />} title="Mi resumen" sub="Todo lo tuyo en una hoja, para imprimir o compartir" />
-      <QuietLink to="/ajustes" icon={<Settings />} title="Ajustes" sub="Letra, colores, voz y copia de tus datos" />
+      <QuietLink to="/salud" icon={<HeartPulse />} title="Mi ficha de salud" />
+      <QuietLink to="/resumen" icon={<FileText />} title="Mi resumen" />
+      <QuietLink to="/ajustes" icon={<Settings />} title="Ajustes" />
     </Item>
     <Item><p className="text-[.78rem] text-muted border-t border-line pt-4">{LEGAL}</p></Item>
   </>);
@@ -178,13 +178,13 @@ function useSections(): Sec[] {
   const d = useStore((s) => s.d), c = calc(d), urg = urgentes(d);
   const nl = nextLesson(d), ip = INV_MODULES.reduce((a, m) => ({ n: a.n + modProg(d, m).n, t: a.t + modProg(d, m).t }), { n: 0, t: 0 });
   const libro = Object.keys(d.libro.dias).length;
-  const fin = urg.length ? `${urg[0].n}: ${urg[0].txt.toLowerCase()}` : c.has ? (c.brecha >= 0 ? `Te sobran ${money(c.brecha)} por mes` : `Te faltan ${money(-c.brecha)} por mes`) : 'Tu plata del mes, pagos y trámites';
+  const fin = urg.length ? `${urg[0].n}: ${urg[0].txt.toLowerCase()}` : c.has ? (c.brecha >= 0 ? `Te sobran ${money(c.brecha)} por mes` : `Te faltan ${money(-c.brecha)} por mes`) : '';
   const L: Sec[] = [
     { to: '/finanzas', t: 'Finanzas', status: fin, icon: <Wallet />, tone: 'mint', alert: urg.some((e) => e.diff <= 0) },
-    { to: '/inversiones', t: 'Invertir', status: ip.n ? `${ip.n} de ${ip.t} lecciones hechas` : 'Cómo se invierte, paso a paso', icon: <TrendingUp />, tone: 'sky' },
+    { to: '/inversiones', t: 'Invertir', status: ip.n ? `${ip.n} de ${ip.t} lecciones hechas` : '', icon: <TrendingUp />, tone: 'sky' },
     { to: '/digital', t: 'Mundo digital', status: !d.md.diag.done ? 'Armá tu ruta en 3 minutos' : nl ? 'Sigue: ' + nl.l.t : 'Todo al día', icon: <Smartphone />, tone: 'violet' }
   ];
-  if (d.perfil.sexo === 'mujer') L.push({ to: '/libro', t: 'Mi libro', status: libro ? `Día ${Math.min(libro + 1, 30)} de 30` : 'Tu libro y tu cuaderno', icon: <BookHeart />, tone: 'amber' });
+  L.push({ to: '/libro', t: 'Mi libro', status: libro ? `Día ${Math.min(libro + 1, 30)} de 30` : '', icon: <BookHeart />, tone: 'amber' });
   return L;
 }
 const TILE: Record<Sec['tone'], string> = { mint: 'bg-mint text-teal', sky: 'bg-skysoft text-sky', violet: 'bg-violetsoft text-violet', amber: 'bg-ambersoft text-amber' };
@@ -204,11 +204,11 @@ function SectionTile({ to, t, status, icon, tone, alert, wide }: Sec & { wide?: 
     </Link>
   );
 }
-function QuietLink({ to, icon, title, sub }: { to: string; icon: React.ReactNode; title: string; sub: string }) {
+function QuietLink({ to, icon, title, sub }: { to: string; icon: React.ReactNode; title: string; sub?: string }) {
   return (
     <Link to={to} className="press flex items-center gap-3.5 rounded-xl px-2 py-2.5 -mx-2 hover:bg-sunk/70 transition-colors duration-150">
       <span className="grid place-items-center size-10 rounded-full bg-sunk text-ink [&_svg]:size-5 shrink-0">{icon}</span>
-      <span className="flex-1 min-w-0"><b className="block font-semibold leading-tight">{title}</b><span className="block text-[.86rem] text-muted">{sub}</span></span>
+      <span className="flex-1 min-w-0"><b className="block font-semibold leading-tight">{title}</b>{sub && <span className="block text-[.86rem] text-muted">{sub}</span>}</span>
       <ChevronRight className="size-5 text-muted shrink-0" />
     </Link>
   );

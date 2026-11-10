@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { StarsBackground } from '../ui/aceternity/stars-background';
-import { ShootingStars } from '../ui/aceternity/shooting-stars';
+import { HomeSea } from '../ui/ocean';
 import { ShineButton } from '../ui/sunset';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet, Smartphone, Lock, ArrowRight, TrendingUp } from 'lucide-react';
@@ -36,12 +35,8 @@ export default function Welcome() {
   };
   return (
     <div className="min-h-dvh bg-brand text-onbrand relative overflow-hidden isolate">
-      {/* El mar en la hora azul (foto), con estrellas fugaces encima (Aceternity) y un velo para leer bien */}
-      <img src="fotos/bienvenida.webp" alt="" className="fixed inset-0 -z-[2] size-full object-cover object-[60%_50%]" />
-      <div className="fixed inset-0 -z-[1] pointer-events-none" aria-hidden>
-        <StarsBackground starDensity={0.00014} allStarsTwinkle={false} twinkleProbability={0.6} />
-        <ShootingStars minDelay={2200} maxDelay={5200} starColor="#9fe8d2" trailColor="#2650C4" />
-      </div>
+      {/* El mismo mar del Inicio, con su movimiento, y un velo para leer bien */}
+      <div className="fixed inset-0 -z-[2]"><HomeSea /></div>
       <div className="fixed inset-0 -z-[1] bg-[linear-gradient(180deg,rgb(7_15_28/.35),rgb(7_15_28/.2)_30%,rgb(7_15_28/.7)_62%,rgb(7_15_28/.94))]" />
       <div className="relative max-w-[34rem] mx-auto px-5 py-8 sm:py-14 min-h-dvh flex flex-col">
         <AnimatePresence mode="wait">
