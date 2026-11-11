@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, Wallet, Smartphone, Settings, TrendingUp, BookHeart, ChevronLeft } from 'lucide-react';
+import { Home, Wallet, Smartphone, Settings, TrendingUp, BookHeart, ChevronLeft, Mic } from 'lucide-react';
 import { useD } from '../store';
 import { cx, IconButton, LOGO, SectionVeil, SavedMark } from '../ui';
 import { volver } from '../lib/back';
@@ -63,6 +63,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <main className="px-4 sm:px-6 pt-5 pb-32 lg:pb-16 w-full max-w-[46rem] mx-auto lg:mx-0 lg:px-10">{children}</main>
       <VolverMision />
+      {/* Inicio: botón redondo para anotar un gasto con la voz, en la esquina, sin tapar el contenido */}
+      {home && (
+        <button type="button" onClick={() => nav('/finanzas/cargar?voz=1')} aria-label="Anotar un gasto con la voz"
+          className="no-print press fixed z-30 right-4 lg:right-8 bottom-[calc(5.4rem+env(safe-area-inset-bottom,0px))] lg:bottom-8 grid place-items-center size-14 rounded-full bg-accent text-onaccent shadow-[0_6px_20px_rgb(0_0_0/.22)] ring-1 ring-white/20">
+          <Mic className="size-6" />
+        </button>
+      )}
 
       {/* Navegación inferior (celular) */}
       <nav aria-label="Secciones" className="no-print lg:hidden fixed inset-x-0 bottom-0 z-40 bg-surface/95 backdrop-blur-md border-t border-line safe-b">

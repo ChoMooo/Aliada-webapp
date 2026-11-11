@@ -231,7 +231,7 @@ export function Seguimiento() {
       <PageHeader back={BACK} kicker="Mi plata" title="Seguimiento del mes" lead="Anotá lo que gastaste en cada rubro y comparalo con lo que planeaste." />
       <div className="flex items-center justify-between">
         <button onClick={() => move(-1)} aria-label="Mes anterior" className="grid place-items-center size-12 rounded-full border border-line bg-surface"><ChevronLeft className="size-5" /></button>
-        <AnimatePresence mode="wait"><motion.h2 key={ym} initial={{ opacity: 0, transform: 'translate(0px, 6px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="text-[1.4rem] capitalize">{label}</motion.h2></AnimatePresence>
+        <AnimatePresence mode="wait"><motion.h2 key={ym} initial={{ opacity: 0, transform: 'translate(0px, 6px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0 }} className="text-[1.4rem] first-letter:uppercase">{label}</motion.h2></AnimatePresence>
         <button onClick={() => move(1)} aria-label="Mes siguiente" className="grid place-items-center size-12 rounded-full border border-line bg-surface"><ChevronRight className="size-5" /></button>
       </div>
       {gas.length ? (<>

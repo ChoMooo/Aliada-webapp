@@ -146,6 +146,7 @@ function Nuevo({ onDone, first }: { onDone: () => void; first: boolean }) {
       <div className="flex flex-wrap gap-3">
         <Button icon={<Plus />} disabled={!ok} onClick={save}>Agregar</Button>
         {!first && <Button variant="ghost" onClick={onDone}>Cancelar</Button>}
+        {first && <Button variant="ghost" icon={<Camera />} to="/finanzas/cargar">Con una foto o la voz</Button>}
       </div>
     </motion.div>
   );

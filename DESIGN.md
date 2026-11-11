@@ -124,3 +124,4 @@ Nombre largo (el saludo usa solo el primer nombre), montos de 11 dígitos (la ci
 - En la revisión cada fila muestra nombre, monto y destino; el lápiz abre la corrección. Lo que es plata que entró viene destildado.
 - "Lo último que cargaste" permite deshacer cada gasto.
 - Textos de privacidad cortos y concretos al pie de cada puerta (qué queda en el celular y qué no).
+- En el Inicio hay un botón redondo con micrófono, fijo abajo a la derecha (sobre la barra), que abre "Cargar sin escribir" ya escuchando. Solo en el Inicio, para no tapar contenido en otras pantallas.

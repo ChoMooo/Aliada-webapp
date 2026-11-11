@@ -9,40 +9,44 @@ import { ErrorBoundary } from './ui/ErrorBoundary';
 import { ACCESS_REQUIRED } from './config';
 import Welcome from './features/Welcome';
 import Empezar from './features/Empezar';
-import Logros from './features/Logros';
-import Revision from './features/Revision';
-import PanelFinanzas from './features/finanzas/Panel';
-import PanelInversiones from './features/inversiones/Panel';
 import AccessGate from './features/AccessGate';
 import Home from './features/Home';
-import Settings from './features/Settings';
-import Resumen from './features/Resumen';
 import { MisionesPage, MisionPage } from './features/Misiones';
 const Lab = import.meta.env.DEV ? React.lazy(() => import('./features/Lab')) : null; // banco de pruebas, solo en desarrollo
 import FinanzasHub from './features/finanzas/Hub';
-import * as Plata from './features/finanzas/plata';
-import * as Tram from './features/finanzas/tramites';
-import * as Tal from './features/finanzas/talento';
-import * as Tal2 from './features/finanzas/talento2';
-import DigitalHub from './features/digital/Hub';
-import Diagnostico from './features/digital/Diagnostico';
-import PrimerosAjustes from './features/digital/PrimerosAjustes';
-import Modulo from './features/learn/Modulo';
-import Leccion from './features/learn/Leccion';
-import EscudoHub from './features/escudo/Hub';
-import InvHub from './features/inversiones/Hub';
-import Calculadora from './features/inversiones/Calculadora';
-import Glosario from './features/inversiones/Glosario';
-import Libro from './features/libro/Libro';
-import Salud from './features/Salud';
-import Vencimientos from './features/finanzas/vencimientos';
-import Cuotas from './features/finanzas/cuotas';
-import Familiar from './features/Familiar';
 import { copiaAutomatica } from './lib/copia';
+/* Cada sección se baja aparte, la primera vez que se abre: el Inicio arranca más rápido.
+   (Una vez instalada, la app ya tiene todo guardado y funciona sin internet igual que antes.) */
+const lazy = React.lazy;
+const nombrado = <M extends Record<string, any>>(f: () => Promise<M>, k: keyof M) => React.lazy(() => f().then((m) => ({ default: m[k] as React.ComponentType<any> })));
+const Logros = lazy(() => import('./features/Logros'));
+const Revision = lazy(() => import('./features/Revision'));
+const PanelFinanzas = lazy(() => import('./features/finanzas/Panel'));
+const PanelInversiones = lazy(() => import('./features/inversiones/Panel'));
+const Settings = lazy(() => import('./features/Settings'));
+const Resumen = lazy(() => import('./features/Resumen'));
+const DigitalHub = lazy(() => import('./features/digital/Hub'));
+const Diagnostico = lazy(() => import('./features/digital/Diagnostico'));
+const PrimerosAjustes = lazy(() => import('./features/digital/PrimerosAjustes'));
+const Modulo = lazy(() => import('./features/learn/Modulo'));
+const Leccion = lazy(() => import('./features/learn/Leccion'));
+const EscudoHub = lazy(() => import('./features/escudo/Hub'));
+const InvHub = lazy(() => import('./features/inversiones/Hub'));
+const Calculadora = lazy(() => import('./features/inversiones/Calculadora'));
+const Glosario = lazy(() => import('./features/inversiones/Glosario'));
+const Libro = lazy(() => import('./features/libro/Libro'));
+const Salud = lazy(() => import('./features/Salud'));
+const Vencimientos = lazy(() => import('./features/finanzas/vencimientos'));
+const Cuotas = lazy(() => import('./features/finanzas/cuotas'));
+const Simulador = lazy(() => import('./features/escudo/Simulador'));
+const Analizador = lazy(() => import('./features/escudo/Analizador'));
+const Familiar = lazy(() => import('./features/Familiar'));
+const Plata = { Grande: nombrado(() => import('./features/finanzas/plata'), 'Grande'), Inflacion: nombrado(() => import('./features/finanzas/plata'), 'Inflacion'), Numeros: nombrado(() => import('./features/finanzas/plata'), 'Numeros'), PlataHub: nombrado(() => import('./features/finanzas/plata'), 'PlataHub'), Resultado: nombrado(() => import('./features/finanzas/plata'), 'Resultado'), Seguimiento: nombrado(() => import('./features/finanzas/plata'), 'Seguimiento') };
+const Tram = { Ayuda: nombrado(() => import('./features/finanzas/tramites'), 'Ayuda'), Docs: nombrado(() => import('./features/finanzas/tramites'), 'Docs'), Guia: nombrado(() => import('./features/finanzas/tramites'), 'Guia'), Guias: nombrado(() => import('./features/finanzas/tramites'), 'Guias'), Preparar: nombrado(() => import('./features/finanzas/tramites'), 'Preparar'), Situacion: nombrado(() => import('./features/finanzas/tramites'), 'Situacion'), TramHub: nombrado(() => import('./features/finanzas/tramites'), 'TramHub') };
+const Tal = { Comparar: nombrado(() => import('./features/finanzas/talento'), 'Comparar'), Ideas: nombrado(() => import('./features/finanzas/talento'), 'Ideas'), Op: nombrado(() => import('./features/finanzas/talento'), 'Op'), Perfil: nombrado(() => import('./features/finanzas/talento'), 'Perfil'), TalHub: nombrado(() => import('./features/finanzas/talento'), 'TalHub') };
+const Tal2 = { Materiales: nombrado(() => import('./features/finanzas/talento2'), 'Materiales'), Oferta: nombrado(() => import('./features/finanzas/talento2'), 'Oferta'), Plan: nombrado(() => import('./features/finanzas/talento2'), 'Plan'), Precio: nombrado(() => import('./features/finanzas/talento2'), 'Precio'), Seg: nombrado(() => import('./features/finanzas/talento2'), 'Seg') };
 /* Cargar sin escribir trae piezas pesadas (lector de fotos y de PDF): se baja aparte, cuando se abre */
 const Cargar = React.lazy(() => import('./features/finanzas/Cargar'));
-import Simulador from './features/escudo/Simulador';
-import Analizador from './features/escudo/Analizador';
 
 function useThemeSync() {
   const aj = useD((d) => d.aj);
@@ -78,7 +82,7 @@ export default function App() {
   if (!onb) return <><Welcome /><Toaster /></>;
   /* Primera vez: la encuesta va a pantalla completa, sin la barra de navegación */
   if (loc.pathname === '/empezar') return <><Empezar /><Toaster /></>;
-  const R = (el: React.ReactNode) => <Page>{el}</Page>;
+  const R = (el: React.ReactNode) => <React.Suspense fallback={<div className="min-h-[60vh]" aria-busy="true" />}><Page>{el}</Page></React.Suspense>;
   return (
     <AppShell>
       <ErrorBoundary resetKey={loc.pathname}>
@@ -92,7 +96,7 @@ export default function App() {
           <Route path="/inversiones/panel" element={R(<PanelInversiones />)} />
           <Route path="/finanzas/vencimientos" element={R(<Vencimientos />)} />
           <Route path="/finanzas/cuotas" element={R(<Cuotas />)} />
-          <Route path="/finanzas/cargar" element={R(<React.Suspense fallback={null}><Cargar /></React.Suspense>)} />
+          <Route path="/finanzas/cargar" element={R(<Cargar />)} />
           <Route path="/familiar" element={R(<Familiar />)} />
           <Route path="/finanzas/plata" element={R(<Plata.PlataHub />)} />
           <Route path="/finanzas/plata/numeros/:i" element={R(<Plata.Numeros />)} />

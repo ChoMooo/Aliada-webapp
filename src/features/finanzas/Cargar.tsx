@@ -52,6 +52,14 @@ export default function Cargar() {
     } catch (e) { setAviso(porQueFallo(e)); setPaso({ k: 'inicio' }); }
   };
 
+  /* Desde el botón del micrófono del Inicio: se pone a escuchar apenas abre */
+  useEffect(() => {
+    if (qs.get('voz') !== '1') return;
+    setQs({}, { replace: true });
+    if (hayDictado()) dic.empezar(); else document.querySelector<HTMLTextAreaElement>('textarea')?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   /* Lo que llegó desde "Compartir" de otra app: el celular lo dejó guardado y acá lo levantamos */
   useEffect(() => {
     if (qs.get('de') !== 'compartido') return;
