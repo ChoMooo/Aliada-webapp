@@ -2,7 +2,7 @@
    Marcás lo que ya pagaste, ves lo que falta y podés llevar recordatorios al calendario del celular. */
 import React, { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Plus, Check, CalendarPlus, Share2, Trash2, Pencil } from 'lucide-react';
+import { Plus, Check, CalendarPlus, Share2, Trash2, Pencil, Camera } from 'lucide-react';
 import { useStore, mut, type Data } from '../../store';
 import { PageHeader, Stagger, Item, Button, MoneyInput, TextInput, Note, cx } from '../../ui';
 import { money, pn, uid } from '../../lib/format';
@@ -46,7 +46,7 @@ function ics(d: Data) {
   });
   return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Aliada Digital//Vencimientos//ES', 'CALSCALE:GREGORIAN', ...ev, 'END:VCALENDAR'].join('\r\n');
 }
-function textoMes(d: Data) {
+export function textoMes(d: Data) {
   const E = estados(d), now = new Date();
   const L = ['Mis pagos de ' + MESES[now.getMonth()], ''];
   E.forEach((e) => L.push(`${e.pagado ? '✔' : '•'} ${e.n}: ${e.m > 0 ? money(e.m) : 'monto a confirmar'} · ${e.pagado ? 'pagado' : 'vence el ' + e.dia}`));
@@ -110,7 +110,7 @@ export default function Vencimientos() {
       <Item>
         <AnimatePresence initial={false} mode="wait">
           {nuevo ? <Nuevo key="n" onDone={() => setNuevo(false)} first={E.length === 0} />
-            : <Button key="b" variant="secondary" icon={<Plus />} onClick={() => setNuevo(true)}>Agregar un pago</Button>}
+            : <div key="b" className="flex flex-wrap gap-3"><Button variant="secondary" icon={<Plus />} onClick={() => setNuevo(true)}>Agregar un pago</Button><Button variant="ghost" icon={<Camera />} to="/finanzas/cargar">Con una foto o la voz</Button></div>}
         </AnimatePresence>
       </Item>
 

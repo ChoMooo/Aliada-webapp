@@ -27,6 +27,8 @@ export const DEF = () => ({
     meta: { n: '', m: '' },
     inf: { gas: '', ing: '', aho: '', inf: '30', aum: '25', anios: '10' },
     seg: {} as Record<string, Record<string, string>>,
+    /* Lo cargado sin escribir (voz, foto, resumen, compartido): queda anotado para poder deshacerlo */
+    mov: [] as { id: string; f: string; n: string; m: number; r: string; src: string }[],
     grande: { monto: '', meses: '12', proy: [] as Row[] }
   },
   tr: {
@@ -58,6 +60,10 @@ export const DEF = () => ({
     meds: [] as { id: string; n: string; dosis: string; cuando: string }[],
     contactos: [] as { id: string; n: string; rel: string; tel: string }[]
   },
+  /* Persona de confianza (un familiar): solo su nombre y su WhatsApp, para pedirle ayuda o mandarle un resumen */
+  fam: { n: '', tel: '' },
+  /* Copia automática en Google Drive: si está activada y cuándo fue la última */
+  drive: { on: false, at: 0 },
   libro: { dias: {} as Record<string, 1>, desc: 0 },
   /* Misiones: pasos marcados a mano ("mision:paso"), cuándo se terminó cada una y la misión en curso (para el botón de volver) */
   mis: { ck: {} as Record<string, 1>, fin: {} as Record<string, number>, act: '', pref: [] as string[], enc: false },

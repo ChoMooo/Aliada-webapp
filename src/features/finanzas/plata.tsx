@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, ArrowRight, ArrowLeft, ListChecks, LineChart, CalendarDays, PiggyBank, Calculator, Share2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, ArrowRight, ArrowLeft, ListChecks, LineChart, CalendarDays, PiggyBank, Calculator, Share2, FileText, ChevronLeft, ChevronRight, Mic } from 'lucide-react';
 import { useStore, mut } from '../../store';
 import Counter from '../../ui/bits/Counter/Counter'; // dígitos que giran como un contador (React Bits)
 import { PageHeader, Card, Hero, Button, Field, MoneyInput, TextInput, Progress, KV, Note, RowLink, RowList, Stagger, Item, CountUp, ListenButton, Legal, ease, cx } from '../../ui';
@@ -235,6 +235,7 @@ export function Seguimiento() {
         <button onClick={() => move(1)} aria-label="Mes siguiente" className="grid place-items-center size-12 rounded-full border border-line bg-surface"><ChevronRight className="size-5" /></button>
       </div>
       {gas.length ? (<>
+        <div><Button variant="secondary" icon={<Mic />} to="/finanzas/cargar">Cargar sin escribir</Button></div>
         <Card className="flex flex-col gap-4">
           {gas.map((g) => {
             const v = real[g.id] ?? '', x = pn(v) - pn(g.m);

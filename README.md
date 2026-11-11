@@ -70,3 +70,31 @@ AZURE_KEY=… AZURE_REGION=eastus PROVIDER=azure VOICE=es-AR-TomasNeural python3
 - Revisar las guías de trámites contra las fuentes oficiales y actualizar `CONTENIDO_VERSION`.
 - Activar el acceso con código (`ACCESS_REQUIRED`) y cargar los códigos vendidos.
 - Revisión legal: términos, privacidad y botón de arrepentimiento.
+
+## Cargar sin escribir
+
+`/finanzas/cargar` junta cuatro formas de anotar gastos y pagos sin tipear. Todas terminan en la misma
+pantalla de revisión ("Esto entendí") y nada se guarda hasta que la persona confirma.
+
+| Puerta | Cómo funciona | Dónde está |
+|---|---|---|
+| Voz o una frase | Dictado del propio celular (Web Speech) + reglas de texto | `src/lib/voz.ts`, `entenderDicho` |
+| Foto de boleta o ticket | OCR en el dispositivo (Tesseract, archivos en `public/ocr/`) | `src/lib/leer.ts`, `entenderBoleta` |
+| Resumen del banco o billetera | PDF (pdf.js) o CSV, leídos en el dispositivo | `src/lib/leer.ts`, `entenderTexto`, `entenderCSV` |
+| Compartir desde otra app (Android) | `share_target` del manifest + `public/sw-compartir.js` | `vite.config.ts` |
+
+Las reglas que entienden montos, fechas y rubros están en `src/lib/entender.ts`, con pruebas en
+`src/lib/entender.test.ts` (`npm test`; también corren en `npm run build`). Sin inteligencia artificial ni servidores.
+
+## Copia automática en Google Drive (opcional)
+
+La copia manual ("Guardar copia de mis datos") funciona siempre. La automática aparece en Ajustes solo si
+se define la variable de entorno `VITE_GOOGLE_CLIENT_ID` al compilar. No va en ningún archivo del proyecto.
+
+1. En Google Cloud Console: crear un proyecto, activar "Google Drive API".
+2. Pantalla de consentimiento OAuth: tipo "Externo", permiso `.../auth/drive.appdata`, y publicarla ("En producción").
+3. Credenciales → "ID de cliente de OAuth" → Aplicación web → en "Orígenes de JavaScript autorizados", la dirección donde se publica la app.
+4. Compilar con `VITE_GOOGLE_CLIENT_ID=<el id> npm run build`.
+
+La app guarda un solo archivo en el espacio privado de la app dentro del Drive de la persona (`appDataFolder`):
+no ve sus otros archivos y nunca ve su contraseña.

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
-import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, HeartPulse, Wallet, Smartphone, BookHeart } from 'lucide-react';
+import { TrendingUp, ArrowRight, ChevronRight, FileText, Settings, HeartPulse, HandHeart, Wallet, Smartphone, BookHeart } from 'lucide-react';
 import { useStore, useD } from '../store';
 import { Button, Stagger, Item, Note, cx, Mascot, LivingSea } from '../ui';
 import { MisionCard, misionesOrdenadas } from './Misiones';
@@ -61,9 +61,10 @@ export default function Home() {
         {secs.map((x, i) => <SectionTile key={x.to} {...x} wide={secs.length === 3 && i === 0} />)}
       </div>
     </Item>
-    {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este celular. Hacé una copia desde Ajustes para no perderlos si lo cambiás.</Note></Item>}
+    {due && <Item><Note tone="info" title="Guardá una copia de tus datos">Tus datos viven en este celular. Hacé una copia para no perderlos si lo cambiás. <Link to="/ajustes" className="font-semibold underline underline-offset-4">Ir a Ajustes</Link></Note></Item>}
     <Item className="flex flex-col gap-1">
       <QuietLink to="/salud" icon={<HeartPulse />} title="Mi ficha de salud" />
+      <QuietLink to="/familiar" icon={<HandHeart />} title="Mi persona de confianza" />
       <QuietLink to="/resumen" icon={<FileText />} title="Mi resumen" />
       <QuietLink to="/ajustes" icon={<Settings />} title="Ajustes" />
     </Item>

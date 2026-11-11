@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Wallet, FileCheck2, Lightbulb, CreditCard, CalendarClock, Scale, ArrowRight } from 'lucide-react';
+import { Wallet, FileCheck2, Lightbulb, CreditCard, CalendarClock, Scale, ArrowRight, Mic } from 'lucide-react';
 import { useStore } from '../../store';
 import { RowLink, RowList, Stagger, Item, cx } from '../../ui';
 import { OceanHero } from '../../ui/ocean';
@@ -49,6 +49,7 @@ export default function FinanzasHub() {
       <Item className="flex flex-col gap-3">
         <h2 className="text-[1.25rem]">Herramientas</h2>
         <RowList>
+          <RowLink to="/finanzas/cargar" icon={<Mic />} tone="mint" title="Cargar sin escribir" sub="Con la voz, una foto o el resumen del banco" />
           <RowLink to="/finanzas/vencimientos" icon={<CalendarClock />} tone="amber" title="Mis vencimientos" sub={E.length ? (pend.length ? `${pend.length} por pagar este mes` : 'Todo pagado este mes') : undefined} />
           <RowLink to="/finanzas/plata" icon={<Wallet />} tone="mint" title="Mi plata" sub={c.has ? (c.anios == null ? 'Tus ingresos cubren tus gastos' : `Tus ahorros alcanzan unos ${fmt(c.anios, 1)} años`) : undefined} />
           <RowLink to="/finanzas/cuotas" icon={<Scale />} tone="sky" title="¿Cuotas o contado?" />

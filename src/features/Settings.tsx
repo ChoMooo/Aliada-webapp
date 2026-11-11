@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Download, Upload, Smartphone, Copy, Trash2 } from 'lucide-react';
-import { useStore, useD, mut, mergeData } from '../store';
+import { Download, Upload, Smartphone, Copy, Trash2, CloudUpload, CloudDownload, HandHeart } from 'lucide-react';
+import { useStore, mut } from '../store';
 import { PageHeader, Card, Chips, Field, TextInput, Button, Note, Section, TextArea, Choices, ListenButton, SpeedSlider } from '../ui';
 import { toast } from '../ui/toast';
-import { copyText, downloadText } from '../lib/share';
+import { copyText } from '../lib/share';
+import { textoCopia, compartirCopia, restaurarCopia, hayDrive, activarDrive, copiarAhoraEnDrive, recuperarDeDrive, desactivarDrive } from '../lib/copia';
 import { isIOS, isStandalone } from '../lib/device';
 import { LEGAL } from '../config';
 import { CONTENIDO_VERSION } from '../content/finanzas';
@@ -18,22 +19,23 @@ if (typeof window !== 'undefined') window.addEventListener('beforeinstallprompt'
 
 export default function Settings() {
   const d = useStore((s) => s.d);
-  const replace = useStore((s) => s.replace);
   const reset = useStore((s) => s.reset);
   const [bk, setBk] = useState('');
   const [paste, setPaste] = useState('');
   const [confirm, setConfirm] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const backup = () => {
-    const j = JSON.stringify({ app: 'aliada', ...d, lastBackup: Date.now() });
-    mut((x) => { x.lastBackup = Date.now(); });
-    const ok = downloadText('aliada-copia-' + new Date().toISOString().slice(0, 10) + '.json', j);
-    setBk(j);
-    toast(ok ? 'Copia lista' : 'Copiá el texto de abajo');
+  const [nube, setNube] = useState(false); // hay un pedido a Drive en curso
+  const backup = async () => {
+    const r = await compartirCopia();
+    if (r === 'fallo') { setBk(textoCopia()); toast('Copiá el texto de abajo'); }
+    else if (r !== 'cancelada') toast(r === 'compartida' ? 'Copia lista' : 'Copia descargada');
   };
-  const restore = (txt: string) => {
-    try { const o = JSON.parse(txt); if (!o || !(o.v === 2 || o.v === 1) || !o.plata) throw 0; const nd = mergeData(o); nd.perfil.onb = true; replace(nd); toast('Datos recuperados'); }
-    catch { toast('Ese archivo o texto no es una copia válida'); }
+  const restore = (txt: string) => toast(restaurarCopia(txt) ? 'Datos recuperados' : 'Ese archivo o texto no es una copia válida');
+  const drive = async (fn: () => Promise<unknown>, ok: string) => {
+    setNube(true);
+    try { const r = await fn(); toast(r === 'vacio' ? 'Todavía no hay una copia en tu Drive' : r === 'invalida' ? 'La copia de Drive no se pudo leer' : ok); }
+    catch { toast(navigator.onLine ? 'No se pudo conectar con Google. Probá de nuevo.' : 'Hace falta internet para usar Drive'); }
+    finally { setNube(false); }
   };
   return (
     <div className="flex flex-col gap-6">
@@ -64,6 +66,26 @@ export default function Settings() {
         <h2 className="text-[1.3rem]">Tus datos</h2>
         <p className="text-muted">Todo lo que cargás se guarda <b className="text-ink">solo en este dispositivo</b>. Hacé una copia de vez en cuando para no perderlo si cambiás de celular.</p>
         <div className="flex flex-wrap gap-3"><Button icon={<Download />} onClick={backup}>Guardar copia de mis datos</Button></div>
+        <p className="text-[.88rem] text-muted">Se abre «Compartir»: elegí Drive, WhatsApp o tu correo para guardarla fuera del celular.{d.lastBackup ? ` Última copia: ${new Date(d.lastBackup).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' })}.` : ''}</p>
+        {hayDrive() && (
+          <div className="rounded-xl2 bg-sunk p-4 flex flex-col gap-3">
+            <b className="text-[1.05rem]">Copia automática en Google Drive</b>
+            {d.drive.on ? (<>
+              <p className="text-[.95rem]">Activada. {d.drive.at ? `Última copia: ${new Date(d.drive.at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' })}.` : ''} Se actualiza sola cuando abrís la app con internet.</p>
+              <div className="flex flex-wrap gap-3">
+                <Button size="sm" variant="secondary" icon={<CloudUpload />} disabled={nube} onClick={() => drive(() => copiarAhoraEnDrive(false), 'Copia guardada en tu Drive')}>Copiar ahora</Button>
+                <Button size="sm" variant="ghost" disabled={nube} onClick={() => { desactivarDrive(); toast('Copia automática desactivada'); }}>Desactivar</Button>
+              </div>
+            </>) : (<>
+              <p className="text-[.95rem] text-muted">Entrás una vez con tu cuenta de Google y Aliada guarda sola una copia en tu Drive. El ingreso lo hace Google en su propia ventana: Aliada nunca ve tu contraseña ni tus otros archivos.</p>
+              <div className="flex flex-wrap gap-3">
+                <Button size="sm" icon={<CloudUpload />} disabled={nube} onClick={() => drive(activarDrive, 'Copia automática activada')}>Activar</Button>
+                <Button size="sm" variant="ghost" icon={<CloudDownload />} disabled={nube} onClick={() => drive(recuperarDeDrive, 'Datos recuperados desde tu Drive')}>Recuperar desde Drive</Button>
+              </div>
+            </>)}
+          </div>
+        )}
+        <div><Button variant="ghost" icon={<HandHeart />} to="/familiar">{d.fam.n ? `Mandarle una copia a ${d.fam.n.split(',')[0]}` : 'Elegir una persona de confianza'}</Button></div>
         {bk && (
           <Field label="Si no se descargó, copiá este texto y guardalo en tus notas o mandátelo por WhatsApp:">
             <textarea readOnly value={bk} className="!min-h-[5rem] text-[.75rem]" />

@@ -8,6 +8,11 @@ import '@fontsource-variable/atkinson-hyperlegible-next/wght.css'; // tipografí
 import '@fontsource/instrument-serif/latin-400-italic.css'; // títulos grandes con emoción (solo cursiva, solo latín)
 import './styles.css';
 
+/* Llegó algo desde "Compartir" de otra app: limpiamos la dirección y abrimos "Cargar sin escribir" */
+if (new URLSearchParams(location.search).has('compartido')) {
+  history.replaceState(null, '', location.pathname + '#/finanzas/cargar?de=compartido');
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <MotionConfig reducedMotion="user">

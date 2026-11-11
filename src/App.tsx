@@ -37,6 +37,10 @@ import Libro from './features/libro/Libro';
 import Salud from './features/Salud';
 import Vencimientos from './features/finanzas/vencimientos';
 import Cuotas from './features/finanzas/cuotas';
+import Familiar from './features/Familiar';
+import { copiaAutomatica } from './lib/copia';
+/* Cargar sin escribir trae piezas pesadas (lector de fotos y de PDF): se baja aparte, cuando se abre */
+const Cargar = React.lazy(() => import('./features/finanzas/Cargar'));
 import Simulador from './features/escudo/Simulador';
 import Analizador from './features/escudo/Analizador';
 
@@ -66,6 +70,7 @@ function Page({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   useThemeSync();
+  useEffect(() => { copiaAutomatica(); }, []); // copia en Drive, si la persona la activó
   const loc = useLocation();
   const onb = useD((d) => d.perfil.onb);
   const acceso = useD((d) => d.acceso.ok);
@@ -87,6 +92,8 @@ export default function App() {
           <Route path="/inversiones/panel" element={R(<PanelInversiones />)} />
           <Route path="/finanzas/vencimientos" element={R(<Vencimientos />)} />
           <Route path="/finanzas/cuotas" element={R(<Cuotas />)} />
+          <Route path="/finanzas/cargar" element={R(<React.Suspense fallback={null}><Cargar /></React.Suspense>)} />
+          <Route path="/familiar" element={R(<Familiar />)} />
           <Route path="/finanzas/plata" element={R(<Plata.PlataHub />)} />
           <Route path="/finanzas/plata/numeros/:i" element={R(<Plata.Numeros />)} />
           <Route path="/finanzas/plata/resultado" element={R(<Plata.Resultado />)} />

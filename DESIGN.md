@@ -116,3 +116,11 @@ Adaptados a la marca y a React 18 (framer-motion en lugar de motion/react). Todo
 ## Casos extremos probados
 
 Nombre largo (el saludo usa solo el primer nombre), montos de 11 dígitos (la cifra del `Hero` achica su tamaño), nombres de pagos largos, pantalla de 320 px, modo oscuro.
+
+## Cargar sin escribir
+
+- Una sola entrada ("Cargar sin escribir", en Finanzas, Seguimiento y Vencimientos) para voz, foto, resumen y compartir.
+- Siempre el mismo recorrido: elegir puerta → "Esto entendí" → Guardar. Nunca se guarda sin confirmar.
+- En la revisión cada fila muestra nombre, monto y destino; el lápiz abre la corrección. Lo que es plata que entró viene destildado.
+- "Lo último que cargaste" permite deshacer cada gasto.
+- Textos de privacidad cortos y concretos al pie de cada puerta (qué queda en el celular y qué no).
