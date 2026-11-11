@@ -21,6 +21,7 @@ async function prepararFoto(file: Blob, max = 2000): Promise<HTMLCanvasElement> 
 
 /** Texto de una foto (OCR). `onProg` recibe el avance de 0 a 1 */
 export async function textoDeFoto(file: Blob, onProg?: (p: number) => void): Promise<string> {
+  if (__PREVIEW__) throw new Error('foto-preview'); // la vista previa no puede alojar el lector
   const [{ createWorker }, lienzo] = await Promise.all([import('tesseract.js'), prepararFoto(file)]);
   const base = new URL('ocr/', document.baseURI).href;
   const worker = await createWorker('spa', 1, {
@@ -73,7 +74,7 @@ export async function leerArchivo(file: File, onProg?: (p: number) => void): Pro
 /** Mensaje claro para cada cosa que puede salir mal */
 export function porQueFallo(e: unknown): string {
   const m = String((e as Error)?.message || e);
-  if (m === 'pdf-preview') return 'En esta vista previa no se pueden abrir PDF. En la app instalada sí.';
+  if (m === 'pdf-preview' || m === 'foto-preview') return 'En esta vista previa no se pueden leer fotos ni PDF. En la app instalada sí. Acá podés probar con la voz, una frase o un archivo CSV.';
   if (m === 'pdf-sin-texto') return 'Ese PDF es una imagen escaneada. Probá sacándole una foto a la hoja.';
   if (m === 'excel') return 'Todavía no leo planillas de Excel. Si podés, descargala como CSV o como PDF.';
   if (!navigator.onLine) return 'La primera vez hace falta internet para bajar el lector. Conectate y probá de nuevo.';
