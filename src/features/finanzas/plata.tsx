@@ -70,6 +70,7 @@ export function Numeros() {
         <motion.div key={i} initial={{ opacity: 0, transform: 'translate(20px, 0px)' }} animate={{ opacity: 1, transform: 'translate(0px, 0px)' }} exit={{ opacity: 0, transform: 'translate(-20px, 0px)' }} transition={{ duration: 0.22, ease }} className="flex flex-col gap-5">
           <div><div className="text-accent font-bold text-[.85rem]">Paso {i + 1} de 4</div><h1 className="text-[1.9rem] mt-1">{st.t}</h1><p className="text-muted mt-1">{st.h}</p></div>
           <ListenButton text={N.ask(st.t, st.h)} />
+          {st.k === 'gas' && <div><Button variant="secondary" icon={<FileText />} to="/finanzas/cargar?para=numeros">Armarlo con el resumen del banco</Button></div>}
           {st.k === 'aho' ? <AhorrosPaso /> : (<>
             <Card><RowEditor path={'plata.' + st.k} rows={(d.plata as any)[st.k]} addLabel={st.add} /></Card>
             <Card tone="sunk" className="flex items-center justify-between gap-3"><span>{st.label}</span><b className="font-head font-semibold text-[1.6rem]"><CountUp value={tot} format={money} /></b></Card>

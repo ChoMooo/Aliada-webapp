@@ -47,3 +47,19 @@ export function deshacer(id: string) {
   });
   return true;
 }
+
+/** Suma por rubro de lo tildado, como promedio mensual si el resumen trae más de un mes */
+export function planPorRubro(filas: Fila[]): { r: string; m: number }[] {
+  const ok = filas.filter((f) => f.ok && f.m > 0 && f.r);
+  const meses = Math.max(1, new Set(ok.map((f) => (f.f || '').slice(0, 7)).filter(Boolean)).size);
+  const tot = new Map<string, number>();
+  for (const f of ok) tot.set(f.r, (tot.get(f.r) || 0) + f.m);
+  return [...tot].map(([r, m]) => ({ r, m: Math.round(m / meses) }));
+}
+
+/** Arma "Mis números" con el resumen: el gasto por mes de cada rubro pasa a ser lo que muestra el resumen */
+export function guardarComoPlan(filas: Fila[]) {
+  const plan = planPorRubro(filas);
+  mut((d) => { for (const p of plan) { const g = d.plata.gas.find((x) => x.id === p.r); if (g) g.m = miles(p.m); } });
+  return plan.length;
+}

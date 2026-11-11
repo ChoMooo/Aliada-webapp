@@ -10,7 +10,7 @@ import { PageHeader, Stagger, Item, Button, MoneyInput, TextInput, Note, Chips, 
 import { toast } from '../../ui/toast';
 import { money, pn } from '../../lib/format';
 import { entenderDicho, entenderTexto, rubroPara, type Borrador } from '../../lib/entender';
-import { guardar, deshacer, type Fila, type Origen } from '../../lib/cargar';
+import { guardar, deshacer, guardarComoPlan, planPorRubro, type Fila, type Origen } from '../../lib/cargar';
 import { leerArchivo, porQueFallo } from '../../lib/leer';
 import { hayDictado, useDictado } from '../../lib/voz';
 import { isIOS } from '../../lib/device';
@@ -20,7 +20,7 @@ const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'o
 const fechaCorta = (f?: string) => { if (!f) return ''; const [, m, d] = f.split('-').map(Number); return `${d} ${MESES[m - 1]}`; };
 export const CACHE_COMPARTIDO = 'aliada-compartido';
 
-type Paso = { k: 'inicio' } | { k: 'leyendo'; p: number; que: string } | { k: 'revisar'; src: Origen; clase: string } | { k: 'listo'; gastos: number; pagos: number };
+type Paso = { k: 'inicio' } | { k: 'leyendo'; p: number; que: string } | { k: 'revisar'; src: Origen; clase: string } | { k: 'listo'; gastos: number; pagos: number; rubros?: number };
 
 export default function Cargar() {
   const d = useStore((s) => s.d);
@@ -31,8 +31,10 @@ export default function Cargar() {
   const [filas, setFilas] = useState<Fila[]>([]);
   const [frase, setFrase] = useState('');
   const [aviso, setAviso] = useState('');
+  /* Modo "armar Mis números": lo que se confirma pasa a ser el gasto por mes de cada rubro (no el seguimiento) */
+  const [plan] = useState(() => qs.get('para') === 'numeros');
 
-  const aFilas = (items: Borrador[]): Fila[] => items.map((b) => ({ ...b, ok: !b.ingreso, r: rubroPara(b.n, rubros) }));
+  const aFilas = (items: Borrador[]): Fila[] => items.map((b) => ({ ...b, ...(plan ? { tipo: 'gasto' as const } : {}), ok: !b.ingreso, r: rubroPara(b.n, rubros) }));
   const revisar = (items: Borrador[], src: Origen, clase = '') => {
     if (!items.length) { setAviso(src === 'voz' ? 'No encontré un monto. Decí qué fue y cuánto, por ejemplo: «farmacia ocho mil quinientos».' : 'No encontré montos ahí. Probá con otra foto o archivo, o decilo con tus palabras.'); setPaso({ k: 'inicio' }); return; }
     setAviso(''); setFilas(aFilas(items)); setPaso({ k: 'revisar', src, clase });
@@ -87,7 +89,7 @@ export default function Cargar() {
   const totalG = elegidas.filter((f) => f.tipo === 'gasto').reduce((t, f) => t + f.m, 0);
   const confirmar = () => {
     if (paso.k !== 'revisar') return;
-    const r = guardar(filas, paso.src);
+    const r = plan ? { gastos: 0, pagos: 0, rubros: guardarComoPlan(filas) } : guardar(filas, paso.src);
     setFilas([]); setFrase(''); setPaso({ k: 'listo', ...r });
     window.scrollTo({ top: 0 });
   };
@@ -95,27 +97,30 @@ export default function Cargar() {
   return (
     <Stagger className="flex flex-col gap-5">
       <Item>
-        <PageHeader back={{ to: '/finanzas', label: 'Finanzas' }} title={paso.k === 'revisar' ? 'Esto entendí' : 'Cargar sin escribir'}
-          lead={paso.k === 'revisar' ? 'Revisá y corregí lo que haga falta. Nada se guarda hasta que toques Guardar.' : 'Decilo, sacale una foto o traé el resumen. Antes de guardar, siempre vas a ver lo que entendí.'} />
+        <PageHeader back={{ to: '/finanzas', label: 'Finanzas' }} title={paso.k === 'revisar' ? 'Esto entendí' : plan ? 'Armar mis números' : 'Cargar sin escribir'}
+          lead={paso.k === 'revisar' ? 'Revisá y corregí lo que haga falta. Nada se guarda hasta que toques Guardar.'
+            : plan ? 'Traé el resumen de un mes de tu banco o billetera y te propongo cuánto gastás en cada rubro. Vos lo revisás y lo corregís.'
+            : 'Decilo, sacale una foto o traé el resumen. Antes de guardar, siempre vas a ver lo que entendí.'} />
       </Item>
 
       {aviso && paso.k === 'inicio' && <Item><Note tone="warn">{aviso}</Note></Item>}
 
       {paso.k === 'inicio' && (<>
-        <Item><Decilo frase={frase} setFrase={setFrase} dic={dic} onEntender={entenderFrase} /></Item>
+        {!plan && <Item><Decilo frase={frase} setFrase={setFrase} dic={dic} onEntender={entenderFrase} /></Item>}
         <Item className="grid grid-cols-2 gap-3">
           <Puerta icon={<Camera />} title="Foto de una boleta" accept="image/*" capture onFile={(f) => leer(f, 'foto')} />
           <Puerta icon={<FileText />} title="Resumen del banco" accept=".pdf,.csv,.txt,image/*,application/pdf,text/csv,text/plain" onFile={(f) => leer(f, 'archivo')} />
         </Item>
-        <Item>
+        {plan && <Item><Decilo frase={frase} setFrase={setFrase} dic={dic} onEntender={entenderFrase} titulo="O decí tus gastos del mes" ejemplo="«comida 300 mil, luz 25 mil y nafta 60 mil»" /></Item>}
+        {!plan && <Item>
           <Disclosure title="Mandarlo desde otra app" icon={<Share2 className="size-5 text-muted" />}>
             <div className="flex flex-col gap-3">
               <Bullets ordered items={['En la app del banco o de la billetera, abrí el comprobante o el resumen.', <>Tocá <b>Compartir</b>.</>, <>Elegí <b>Aliada</b> en la lista. Se abre acá, listo para revisar.</>]} />
               <p className="text-[.9rem] text-muted">{isIOS() ? 'En iPhone, Aliada no aparece en esa lista: sacá una captura de pantalla y usá «Foto de una boleta».' : 'Aliada aparece en la lista cuando está instalada en el celular (Ajustes → Instalar).'}</p>
             </div>
           </Disclosure>
-        </Item>
-        <Item><Recientes /></Item>
+        </Item>}
+        {!plan && <Item><Recientes /></Item>}
         <Item><p className="text-[.85rem] text-muted">La foto y los archivos se leen en este celular: no se envían a ningún lado. La primera foto tarda un poco más porque se baja el lector (unos 6 MB).</p></Item>
       </>)}
 
@@ -139,15 +144,23 @@ export default function Cargar() {
         {!rubros.length && <Item><Note tone="warn">Todavía no tenés rubros de gastos. Cargalos en «Mis números» para poder anotar gastos.</Note></Item>}
         <Item>
           <ul className="rounded-xl2 bg-surface border border-line shadow-card divide-y divide-line overflow-hidden">
-            {filas.map((f) => <FilaRev key={f.id} f={f} rubros={rubros} abierta={filas.length <= 2} onChange={(nf) => setFilas((L) => L.map((x) => (x.id === f.id ? nf : x)))} />)}
+            {filas.map((f) => <FilaRev key={f.id} f={f} rubros={rubros} abierta={filas.length <= 2} soloGasto={plan} onChange={(nf) => setFilas((L) => L.map((x) => (x.id === f.id ? nf : x)))} />)}
           </ul>
         </Item>
         <Item>
           <section className="rounded-xl2 bg-sunk p-4 flex flex-col gap-3">
+            {plan && elegidas.length > 0 ? (
+              <div className="flex flex-col gap-1">
+                <b className="text-[1.05rem]">Así quedarían tus gastos por mes</b>
+                {planPorRubro(filas).map((p) => <div key={p.r} className="flex justify-between gap-3 py-1 border-b border-line last:border-0"><span className="min-w-0">{rubros.find((r) => r.id === p.r)?.n}</span><b className="num whitespace-nowrap">{money(p.m)}</b></div>)}
+                <p className="text-[.88rem] text-muted mt-1.5">Reemplaza lo que tenías cargado en esos rubros. Después lo podés cambiar a mano.</p>
+              </div>
+            ) : (
             <p className="text-[1.02rem]">
               {elegidas.length === 0 ? 'No hay nada tildado para guardar.'
                 : <>Vas a guardar {nG > 0 && <b>{nG} {nG === 1 ? 'gasto' : 'gastos'} por {money(totalG)}</b>}{nG > 0 && nP > 0 && ' y '}{nP > 0 && <b>{nP} {nP === 1 ? 'pago' : 'pagos'} en Mis vencimientos</b>}.</>}
             </p>
+            )}
             <div className="flex flex-wrap gap-3">
               <Button icon={<Check />} disabled={!elegidas.length} onClick={confirmar}>Guardar</Button>
               <Button variant="ghost" onClick={() => { setFilas([]); setPaso({ k: 'inicio' }); }}>Descartar</Button>
@@ -163,11 +176,13 @@ export default function Cargar() {
               <Mascot size={76} act="festeja" />
               <div className="min-w-0">
                 <h2 className="text-[1.35rem] leading-tight">¡Listo, guardado!</h2>
-                <p className="text-muted mt-1">{[paso.gastos && `${paso.gastos} ${paso.gastos === 1 ? 'gasto anotado' : 'gastos anotados'} en tu mes`, paso.pagos && `${paso.pagos} ${paso.pagos === 1 ? 'pago' : 'pagos'} en Mis vencimientos`].filter(Boolean).join(' y ')}.</p>
+                <p className="text-muted mt-1">{paso.rubros ? `Tus números quedaron armados en ${paso.rubros} ${paso.rubros === 1 ? 'rubro' : 'rubros'}` : [paso.gastos && `${paso.gastos} ${paso.gastos === 1 ? 'gasto anotado' : 'gastos anotados'} en tu mes`, paso.pagos && `${paso.pagos} ${paso.pagos === 1 ? 'pago' : 'pagos'} en Mis vencimientos`].filter(Boolean).join(' y ')}.</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button icon={<Sparkles />} onClick={() => setPaso({ k: 'inicio' })}>Cargar otra cosa</Button>
+              {paso.rubros ? <Button iconRight={<ArrowRight />} onClick={() => nav('/finanzas/plata/numeros/1')}>Ver mis números</Button>
+                : <Button icon={<Sparkles />} onClick={() => setPaso({ k: 'inicio' })}>Cargar otra cosa</Button>}
+              {paso.rubros ? <Button variant="secondary" onClick={() => nav('/finanzas/panel')}>Ver mi panel</Button> : null}
               {paso.gastos > 0 && <Button variant="secondary" iconRight={<ArrowRight />} onClick={() => nav('/revision')}>Ver cómo va mi mes</Button>}
               {paso.pagos > 0 && <Button variant="secondary" iconRight={<ArrowRight />} onClick={() => nav('/finanzas/vencimientos')}>Ver mis vencimientos</Button>}
             </div>
@@ -179,7 +194,7 @@ export default function Cargar() {
 }
 
 /* ---------- Decirlo (o escribirlo) en una frase ---------- */
-function Decilo({ frase, setFrase, dic, onEntender }: { frase: string; setFrase: (v: string) => void; dic: ReturnType<typeof useDictado>; onEntender: () => void }) {
+function Decilo({ frase, setFrase, dic, onEntender, titulo, ejemplo }: { frase: string; setFrase: (v: string) => void; dic: ReturnType<typeof useDictado>; onEntender: () => void; titulo?: string; ejemplo?: string }) {
   const voz = hayDictado();
   return (
     <section className="rounded-xl3 border border-line bg-surface p-4 sm:p-5 flex flex-col gap-4">
@@ -192,8 +207,8 @@ function Decilo({ frase, setFrase, dic, onEntender }: { frase: string; setFrase:
           </button>
         )}
         <div className="min-w-0">
-          <h2 className="text-[1.25rem] leading-tight">{dic.on ? 'Te escucho…' : voz ? 'Decilo' : 'Escribilo en una frase'}</h2>
-          <p className="text-muted text-[.95rem] mt-1">{dic.on ? 'Decí qué fue y cuánto.' : <>Por ejemplo: «farmacia ocho mil quinientos» o «luz 25 mil, vence el 10».</>}</p>
+          <h2 className="text-[1.25rem] leading-tight">{dic.on ? 'Te escucho…' : titulo || (voz ? 'Decilo' : 'Escribilo en una frase')}</h2>
+          <p className="text-muted text-[.95rem] mt-1">{dic.on ? 'Decí qué fue y cuánto.' : <>Por ejemplo: {ejemplo || '«farmacia ocho mil quinientos» o «luz 25 mil, vence el 10».'}</>}</p>
         </div>
       </div>
       <div className="flex flex-col gap-2.5">
@@ -223,7 +238,7 @@ function Puerta({ icon, title, accept, capture, onFile }: { icon: React.ReactNod
 }
 
 /* ---------- Una fila de la revisión ---------- */
-function FilaRev({ f, rubros, abierta, onChange }: { f: Fila; rubros: { id: string; n: string }[]; abierta: boolean; onChange: (f: Fila) => void }) {
+function FilaRev({ f, rubros, abierta, soloGasto, onChange }: { f: Fila; rubros: { id: string; n: string }[]; abierta: boolean; soloGasto?: boolean; onChange: (f: Fila) => void }) {
   const [edit, setEdit] = useState(abierta);
   const [monto, setMonto] = useState(() => new Intl.NumberFormat('es-AR').format(f.m));
   const reduce = useReducedMotion();
@@ -250,9 +265,9 @@ function FilaRev({ f, rubros, abierta, onChange }: { f: Fila; rubros: { id: stri
                 <Field label="Qué fue"><TextInput value={f.n} onChange={(v) => onChange({ ...f, n: v })} label="Qué fue" /></Field>
                 <Field label="Cuánto"><MoneyInput value={monto} onChange={(v) => { setMonto(v); onChange({ ...f, m: Math.round(pn(v)) }); }} label="Cuánto" /></Field>
               </div>
-              <Field label="¿Qué es?">
+              {!soloGasto && <Field label="¿Qué es?">
                 <Chips options={[['gasto', 'Un gasto de este mes'], ['pago', 'Un pago de todos los meses']]} value={f.tipo} onChange={(v) => v && onChange({ ...f, tipo: v })} />
-              </Field>
+              </Field>}
               {f.tipo === 'gasto' ? (
                 <Field label="Rubro" htmlFor={'r' + f.id}>
                   <select id={'r' + f.id} value={f.r} onChange={(e) => onChange({ ...f, r: e.target.value })}>
